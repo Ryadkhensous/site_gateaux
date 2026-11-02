@@ -1,0 +1,203 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  CLIENT
+  ARTISAN
+  ADMIN
+}
+
+enum IdDocType {
+  CNI
+  PASSEPORT
+  PERMIS
+}
+
+enum OrderStatus {
+  PENDING             // En attente de validation artisan
+  CONFIRMED           // Confirmée
+  PREPARING_BASE      // Préparation de la base / génoise
+  BAKING_ASSEMBLY     // Cuisson & Montage des étages
+  DECORATING          // Glaçage, Décoration & Figurines 3D
+  READY               // Prêt pour retrait ou expédition
+  DELIVERING          // En cours de livraison
+  DELIVERED           // Livré avec succès
+  CANCELLED           // Annulée
+}
+
+enum PaymentMethod {
+  CASH_ON_DELIVERY    // Espèces à la livraison / retrait
+  CIB_EDAHABIA        // Carte CIB ou Edahabia
+  BANK_TRANSFER       // Virement bancaire (B2B)
+}
+
+enum ProductCategory {
+  TRADITIONNEL
+  MODERNE
+  MARIAGE
+  ANNIVERSAIRE
+  B2B_ENTREPRISE
+}
+
+model User {
+  id             String          @id @default(uuid())
+  email          String          @unique
+  passwordHash   String
+  fullName       String
+  phone          String
+  role           Role            @default(CLIENT)
+  wilayaCode     Int?
+  wilayaName     String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  artisanProfile ArtisanProfile?
+  clientOrders   Order[]         @relation("ClientOrders")
+  reviews        Review[]
+}
+
+model ArtisanProfile {
+  id           String    @id @default(uuid())
+  userId       String    @unique
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  storeName    String
+  wilayaCode   Int
+  wilayaName   String
+  address      String
+  phone        String
+  rating       Float     @default(5.0)
+  reviewsCount Int       @default(0)
+  bio          String
+  avatar       String?
+  banner       String?
+  isVerified   Boolean   @default(true)
+  specialties  String[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  products     Product[]
+  orders       Order[]   @relation("ArtisanOrders")
+  reviews      Review[]
+}
+
+model Product {
+  id             String          @id @default(uuid())
+  artisanId      String
+  artisan        ArtisanProfile  @relation(fields: [artisanId], references: [id], onDelete: Cascade)
+  name           String
+  category       ProductCategory
+  description    String
+  priceDZD       Float
+  servings       Int             @default(10)
+  prepTimeDays   Int             @default(3)
+  imageUrl       String
+  isCustomizable Boolean         @default(false)
+  tags           String[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  orders         Order[]
+}
+
+model CustomizationOption {
+  id          String   @id @default(uuid())
+  category    String   // SIZE, FLAVOR, FILLING, COLOR, TOPPING, EXTRA_3D
+  name        String
+  priceDZD    Float
+  description String?
+  colorHex    String?
+  createdAt   DateTime @default(now())
+}
+
+model Order {
+  id                  String             @id @default(uuid())
+  orderNumber         String             @unique
+  clientId            String?
+  client              User?              @relation("ClientOrders", fields: [clientId], references: [id])
+  artisanId           String
+  artisan             ArtisanProfile     @relation("ArtisanOrders", fields: [artisanId], references: [id])
+  productId           String?
+  product             Product?           @relation(fields: [productId], references: [id])
+
+  // Données d'identité du client (exigées)
+  customerName        String
+  customerPhone       String
+  customerIdDocType   IdDocType          @default(CNI)
+  customerIdDocNumber String
+
+  // Logistique & Livraison en Algérie
+  deliveryWilayaCode  Int
+  deliveryWilayaName  String
+  deliveryAddress     String
+  eventDate           DateTime
+
+  // B2B & Spécifications
+  isB2B               Boolean            @default(false)
+  companyName         String?
+  companyNIF          String?
+
+  // Statut & Paiement
+  status              OrderStatus        @default(PENDING)
+  paymentMethod       PaymentMethod      @default(CASH_ON_DELIVERY)
+  isDepositPaid       Boolean            @default(false)
+  totalPriceDZD       Float
+  notes               String?
+
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+
+  // Personnalisation sur mesure
+  customization       OrderCustomization?
+  trackingSteps       OrderTrackingStep[]
+  review              Review?
+}
+
+model OrderCustomization {
+  id             String   @id @default(uuid())
+  orderId        String   @unique
+  order          Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  sizeName       String?
+  servingsCount  Int?
+  flavorName     String?
+  fillingName    String?
+  colorHex       String?
+  colorName      String?
+  toppingsList   String[]
+  extra3dType    String?
+  photoUrl       String?
+  messageOnCake  String?
+}
+
+model OrderTrackingStep {
+  id             String      @id @default(uuid())
+  orderId        String
+  order          Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  status         OrderStatus
+  title          String
+  description    String
+  photoProofUrl  String?
+  stepOrder      Int
+  completed      Boolean     @default(false)
+  completedAt    DateTime?
+}
+
+model Review {
+  id        String          @id @default(uuid())
+  orderId   String          @unique
+  order     Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  artisanId String
+  artisan   ArtisanProfile  @relation(fields: [artisanId], references: [id])
+  clientId  String
+  client    User            @relation(fields: [clientId], references: [id])
+  rating    Int
+  comment   String
+  createdAt DateTime        @default(now())
+}
+

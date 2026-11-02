@@ -1,0 +1,16 @@
+{
+  "name": "el-gateau-dz",
+  "version": "1.0.0",
+  "description": "Plateforme B2C & B2B de Confiserie et Pâtisserie Artisanale en Algérie",
+  "scripts": {
+    "install:all": "npm install && cd backend && npm install && cd ../client-web && npm install && cd ../artisan-admin && npm install",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:client": "cd client-web && npm run dev",
+    "dev:admin": "cd artisan-admin && npm run dev",
+    "dev": "concurrently \"npm:dev:backend\" \"npm:dev:client\" \"npm:dev:admin\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
+

@@ -1,0 +1,375 @@
+import React, { useState } from 'react';
+import {
+  Cake,
+  Sparkles,
+  Truck,
+  Search,
+  Store,
+  Building2,
+  MapPin,
+  ChevronDown,
+  Menu,
+  X,
+  Phone,
+  Mail,
+  ShoppingBag,
+  User,
+  Heart
+} from 'lucide-react';
+import { Wilaya } from '../types';
+
+interface NavbarProps {
+  currentTab: string;
+  setCurrentTab: (tab: string) => void;
+  wilayas: Wilaya[];
+  selectedWilaya: number;
+  setSelectedWilaya: (code: number) => void;
+  orderNumberSearch: string;
+  setOrderNumberSearch: (val: string) => void;
+  onSearchOrder: () => void;
+}
+
+export const Navbar: React.FC<NavbarProps> = ({
+  currentTab,
+  setCurrentTab,
+  wilayas,
+  selectedWilaya,
+  setSelectedWilaya,
+  orderNumberSearch,
+  setOrderNumberSearch,
+  onSearchOrder
+}) => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchFocused, setSearchFocused] = useState(false);
+  const [showSearchModal, setShowSearchModal] = useState(false);
+
+  const handleNavClick = (tab: string) => {
+    setCurrentTab(tab);
+    setMobileMenuOpen(false);
+  };
+
+  return (
+    <header className="sticky top-0 z-50 transition-all duration-300 shadow-xs">
+      {/* 1. الشريط العلوي للإعلانات باللون الوردي المطابق للتصميم (Top Announcement Bar) */}
+      <div className="bg-[#E84375] text-white text-xs py-2 px-4 shadow-xs">
+        <div className="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-3">
+          
+          {/* الجانب الأيمن (في RTL): رسالة التوصيل السريع والبهجة */}
+          <div className="flex items-center gap-2">
+            <span className="flex items-center justify-center w-5 h-5 rounded-full bg-white/20 text-white flex-shrink-0">
+              <Truck className="w-3.5 h-3.5" />
+            </span>
+            <span className="font-medium text-[11px] sm:text-xs">
+              توصيل السعادة والمذاق الرفيع إلى باب بيتكم في كافة الـ 69 ولاية! 🍰
+            </span>
+          </div>
+
+          {/* الجانب الأيسر (في RTL): الهاتف، البريد وشبكات التواصل */}
+          <div className="flex items-center gap-4 text-[11px] sm:text-xs font-light">
+            <a href="tel:+213550123456" className="hidden md:flex items-center gap-1.5 hover:text-pink-100 transition-colors">
+              <Phone className="w-3 h-3 text-pink-200" />
+              <span dir="ltr">+213 550 12 34 56</span>
+            </a>
+            <span className="hidden md:inline-block text-pink-300">•</span>
+            <a href="mailto:contact@elgateau.dz" className="hidden sm:flex items-center gap-1.5 hover:text-pink-100 transition-colors">
+              <Mail className="w-3 h-3 text-pink-200" />
+              <span>contact@elgateau.dz</span>
+            </a>
+            <span className="hidden sm:inline-block text-pink-300">•</span>
+            <div className="flex items-center gap-2">
+              <a href="#" className="w-5 h-5 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors text-[10px]" title="Facebook">f</a>
+              <a href="#" className="w-5 h-5 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors text-[10px]" title="Instagram">ig</a>
+              <a href="#" className="w-5 h-5 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors text-[10px]" title="WhatsApp">wa</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      {/* 2. شريط الملاحة الرئيسي الأبيض النظيف (Main Clean White Navbar) */}
+      <div className="bg-white border-b border-pink-100/80 shadow-[0_2px_15px_rgba(232,67,117,0.04)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-20 gap-4">
+            
+            {/* الشعار والهوية البصرية الوردية (Logo CakeShop / El-Gateau) */}
+            <button 
+              onClick={() => handleNavClick('home')}
+              className="flex items-center gap-3 text-right focus:outline-none group flex-shrink-0"
+            >
+              <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-[#E84375] to-[#F472B6] flex items-center justify-center text-white shadow-md shadow-pink-200 group-hover:scale-105 transition-all duration-300">
+                <Cake className="w-6 h-6 text-white" />
+              </div>
+
+              <div className="flex flex-col justify-center">
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-2xl font-serif font-bold tracking-tight text-stone-900 leading-none group-hover:text-[#E84375] transition-colors">
+                    CakeShop
+                  </span>
+                  <span className="text-sm font-bold text-[#E84375] font-mono leading-none">
+                    .DZ
+                  </span>
+                </div>
+                <span className="text-[10px] font-medium tracking-wide text-stone-400 mt-1 font-sans">
+                  — مخبوز بكل حب وإتقان —
+                </span>
+              </div>
+            </button>
+
+            {/* روابط التنقل الرئيسية (Navigation Links) */}
+            <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
+              {/* الرئيسية (Home) */}
+              <button
+                onClick={() => handleNavClick('home')}
+                className={`px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-200 ${
+                  currentTab === 'home'
+                    ? 'text-[#E84375] bg-pink-50/80 font-extrabold'
+                    : 'text-stone-700 hover:text-[#E84375] hover:bg-pink-50/40'
+                }`}
+              >
+                الرئيسية
+              </button>
+
+              {/* المتجر (Shop) */}
+              <button
+                onClick={() => handleNavClick('marketplace')}
+                className={`px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-200 ${
+                  currentTab === 'marketplace'
+                    ? 'text-[#E84375] bg-pink-50/80 font-extrabold'
+                    : 'text-stone-700 hover:text-[#E84375] hover:bg-pink-50/40'
+                }`}
+              >
+                المتجر والحلويات
+              </button>
+
+              {/* ورشة التصميم 3D (Custom Cake) */}
+              <button
+                onClick={() => handleNavClick('customizer')}
+                className={`px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300 shadow-xs ${
+                  currentTab === 'customizer'
+                    ? 'bg-[#E84375] text-white shadow-md shadow-pink-200 scale-[1.02]'
+                    : 'text-[#E84375] bg-pink-50 hover:bg-pink-100/80 border border-pink-200'
+                }`}
+              >
+                <Sparkles className="w-3.5 h-3.5 text-pink-500 animate-spin-slow" />
+                <span>صمّم كعكتك (3D)</span>
+              </button>
+
+              {/* عروض الشركات (Corporate B2B) */}
+              <button
+                onClick={() => handleNavClick('b2b')}
+                className={`px-3.5 py-2 rounded-xl text-sm font-bold flex items-center gap-1.5 transition-all duration-200 ${
+                  currentTab === 'b2b'
+                    ? 'text-[#E84375] bg-pink-50/80 font-extrabold'
+                    : 'text-stone-700 hover:text-[#E84375] hover:bg-pink-50/40'
+                }`}
+              >
+                <Building2 className="w-3.5 h-3.5 text-stone-400" />
+                <span>المناسبات والشركات</span>
+              </button>
+
+              {/* تتبع الطلب (Track Order) */}
+              <button
+                onClick={() => handleNavClick('tracking')}
+                className={`px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-200 ${
+                  currentTab === 'tracking'
+                    ? 'text-[#E84375] bg-pink-50/80 font-extrabold'
+                    : 'text-stone-700 hover:text-[#E84375] hover:bg-pink-50/40'
+                }`}
+              >
+                تتبع الطلب المباشر
+              </button>
+            </nav>
+
+            {/* أيقونات الإجراءات والأدوات (Icons & Tools) */}
+            <div className="flex items-center gap-2 sm:gap-3">
+              
+              {/* قائمة الـ 69 ولاية */}
+              <div className="relative hidden xl:flex items-center">
+                <MapPin className="w-3.5 h-3.5 text-[#E84375] absolute right-3 pointer-events-none" />
+                <select
+                  value={selectedWilaya}
+                  onChange={(e) => setSelectedWilaya(Number(e.target.value))}
+                  className="pr-8 pl-7 py-2 bg-stone-50 hover:bg-white border border-stone-200 hover:border-pink-300 rounded-xl text-xs font-bold text-stone-800 focus:outline-none focus:ring-2 focus:ring-pink-200 transition-all appearance-none cursor-pointer shadow-2xs"
+                >
+                  <option value={0}>كل الـ 69 ولاية</option>
+                  {wilayas.map((w) => (
+                    <option key={w.code} value={w.code}>
+                      {w.code.toString().padStart(2, '0')} - {w.nameAr}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="w-3 h-3 text-stone-400 absolute left-2.5 pointer-events-none" />
+              </div>
+
+              {/* حقل البحث السريع */}
+              <div
+                className={`hidden md:flex items-center bg-stone-50 rounded-xl p-1 border transition-all duration-200 ${
+                  searchFocused
+                    ? 'border-[#E84375] bg-white ring-2 ring-pink-100 shadow-sm'
+                    : 'border-stone-200'
+                }`}
+              >
+                <input
+                  type="text"
+                  placeholder="ابحث عن كعكة أو كود..."
+                  value={orderNumberSearch}
+                  onFocus={() => setSearchFocused(true)}
+                  onBlur={() => setSearchFocused(false)}
+                  onChange={(e) => setOrderNumberSearch(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && onSearchOrder()}
+                  className="bg-transparent text-xs px-2.5 py-1 text-stone-800 placeholder-stone-400 focus:outline-none w-36 font-medium text-right"
+                />
+                <button
+                  onClick={onSearchOrder}
+                  title="بحث"
+                  className="p-1.5 bg-[#E84375] hover:bg-[#D83264] text-white rounded-lg transition-all shadow-2xs hover:scale-105"
+                >
+                  <Search className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              {/* أيقونة المفضلة */}
+              <button
+                onClick={() => handleNavClick('marketplace')}
+                title="المفضلة"
+                className="p-2.5 rounded-xl text-stone-700 hover:text-[#E84375] hover:bg-pink-50 transition-colors hidden sm:flex"
+              >
+                <Heart className="w-5 h-5" />
+              </button>
+
+              {/* أيقونة حساب المستخدم */}
+              <button
+                onClick={() => handleNavClick('tracking')}
+                title="حسابي / طلباتي"
+                className="p-2.5 rounded-xl text-stone-700 hover:text-[#E84375] hover:bg-pink-50 transition-colors"
+              >
+                <User className="w-5 h-5" />
+              </button>
+
+              {/* أيقونة السلة مع العداد الوردي (Cart with Pink Counter Badge) */}
+              <button
+                onClick={() => handleNavClick('marketplace')}
+                title="سلة التسوق"
+                className="relative p-2.5 rounded-xl text-stone-700 hover:text-[#E84375] hover:bg-pink-50 transition-colors"
+              >
+                <ShoppingBag className="w-5 h-5" />
+                <span className="absolute 1 top-1 -right-0.5 w-4 h-4 bg-[#E84375] text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-xs">
+                  0
+                </span>
+              </button>
+
+              {/* زر فضاء الحرفيين (Vue 3) */}
+              <a
+                href="http://localhost:5174"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden lg:flex items-center gap-1.5 px-3 py-2 bg-stone-900 hover:bg-stone-800 text-white text-xs font-bold rounded-xl shadow-xs transition-all duration-200"
+              >
+                <Store className="w-3.5 h-3.5 text-pink-300" />
+                <span>لوحة الحرفي</span>
+              </a>
+
+              {/* زر القائمة للشاشات الصغيرة */}
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                aria-label="فتح القائمة"
+                className="lg:hidden p-2 rounded-xl bg-stone-50 border border-stone-200 text-stone-800 hover:bg-pink-50 transition-colors"
+              >
+                {mobileMenuOpen ? <X className="w-5 h-5 text-[#E84375]" /> : <Menu className="w-5 h-5" />}
+              </button>
+
+            </div>
+
+          </div>
+        </div>
+
+        {/* 3. القائمة للشاشات الصغيرة (Mobile Menu) */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden px-4 py-5 bg-white border-t border-pink-100 space-y-2.5 shadow-xl animate-fadeIn text-right">
+            <button
+              onClick={() => handleNavClick('home')}
+              className={`w-full text-right px-4 py-2.5 rounded-xl text-xs font-bold transition-colors ${
+                currentTab === 'home' ? 'bg-pink-50 text-[#E84375]' : 'text-stone-700 hover:bg-stone-50'
+              }`}
+            >
+              الرئيسية
+            </button>
+
+            <button
+              onClick={() => handleNavClick('marketplace')}
+              className={`w-full text-right px-4 py-2.5 rounded-xl text-xs font-bold transition-colors ${
+                currentTab === 'marketplace' ? 'bg-pink-50 text-[#E84375]' : 'text-stone-700 hover:bg-stone-50'
+              }`}
+            >
+              المتجر والحلويات
+            </button>
+
+            <button
+              onClick={() => handleNavClick('customizer')}
+              className={`w-full text-right px-4 py-2.5 rounded-xl text-xs font-bold flex items-center justify-between shadow-xs transition-colors ${
+                currentTab === 'customizer'
+                  ? 'bg-[#E84375] text-white'
+                  : 'text-[#E84375] bg-pink-50 border border-pink-200'
+              }`}
+            >
+              <span className="flex items-center gap-2">
+                <Sparkles className="w-3.5 h-3.5 text-pink-400" />
+                <span>صمّم كعكتك (3D)</span>
+              </span>
+            </button>
+
+            <button
+              onClick={() => handleNavClick('b2b')}
+              className={`w-full text-right px-4 py-2.5 rounded-xl text-xs font-bold transition-colors ${
+                currentTab === 'b2b' ? 'bg-pink-50 text-[#E84375]' : 'text-stone-700 hover:bg-stone-50'
+              }`}
+            >
+              المناسبات والشركات
+            </button>
+
+            <button
+              onClick={() => handleNavClick('tracking')}
+              className={`w-full text-right px-4 py-2.5 rounded-xl text-xs font-bold transition-colors ${
+                currentTab === 'tracking' ? 'bg-pink-50 text-[#E84375]' : 'text-stone-700 hover:bg-stone-50'
+              }`}
+            >
+              تتبع الطلب المباشر
+            </button>
+
+            {/* اختيار الولاية على الهاتف */}
+            <div className="pt-3 border-t border-pink-100">
+              <label className="text-[10px] font-bold uppercase tracking-wider text-stone-400 block mb-1.5 text-right">
+                اختر ولايتك (69 ولاية)
+              </label>
+              <select
+                value={selectedWilaya}
+                onChange={(e) => setSelectedWilaya(Number(e.target.value))}
+                className="w-full p-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs font-bold text-stone-800 text-right"
+              >
+                <option value={0}>كل الـ 69 ولاية</option>
+                {wilayas.map((w) => (
+                  <option key={w.code} value={w.code}>
+                    {w.code.toString().padStart(2, '0')} - {w.nameAr}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* رابط فضاء الحرفي على الهاتف */}
+            <div className="pt-2">
+              <a
+                href="http://localhost:5174"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-center gap-2 p-3 bg-stone-900 text-white text-xs font-bold rounded-xl shadow-sm"
+              >
+                <Store className="w-4 h-4 text-pink-400" />
+                <span>دخول فضاء الحرفيين (Vue 3)</span>
+              </a>
+            </div>
+          </div>
+        )}
+      </div>
+    </header>
+  );
+};

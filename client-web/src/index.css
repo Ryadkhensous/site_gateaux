@@ -1,0 +1,122 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #FAF7F2;
+    color: #2D231B;
+    font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, .font-serif {
+    font-family: 'Amiri', 'Playfair Display', Georgia, serif;
+    letter-spacing: normal;
+  }
+}
+
+/* Animations modernes & micro-interactions */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-float {
+  animation: float 5s ease-in-out infinite;
+}
+
+.gold-gradient-bg {
+  background: linear-gradient(135deg, #D4AF37 0%, #F3E5AB 50%, #C5A028 100%);
+}
+
+.gold-metallic-text {
+  background: linear-gradient(135deg, #A88319 0%, #D8B842 40%, #E5CD6E 70%, #876515 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.rose-gold-gradient {
+  background: linear-gradient(135deg, #D4AF37 0%, #F472B6 50%, #E11D48 100%);
+}
+
+.cake-pedestal {
+  background: radial-gradient(ellipse at center, #F8F1D2 0%, #D8B842 70%, #A88319 100%);
+  box-shadow: 0 12px 25px -8px rgba(197, 160, 40, 0.35);
+}
+
+/* Custom Scrollbar Raffinée */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FAF7F2;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #E5CD6E;
+  border-radius: 9999px;
+  border: 2px solid #FAF7F2;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #C5A028;
+}
+
+/* Animations Carrousel Hero Haut de Gamme */
+@keyframes heroFadeInScale {
+  0% {
+    opacity: 0;
+    transform: scale(1.06);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes heroTextSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(18px);
+    filter: blur(5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes heroTagPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.85) translateY(-6px);
+  }
+  70% {
+    transform: scale(1.05) translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-heroText {
+  animation: heroTextSlideIn 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-heroTag {
+  animation: heroTagPop 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-heroImage {
+  animation: heroFadeInScale 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
