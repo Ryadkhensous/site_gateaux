@@ -1,7 +1,7 @@
 import { Artisan, CustomizationOption, Order, Product, Wilaya } from "../types";
 import { WILAYAS_DZ } from "../data/wilayas";
 
-const BACKEND_URL = (import.meta.env.VITE_API_URL as string) || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://site-gateaux-backend.onrender.com');
+const BACKEND_URL = ((import.meta as any).env?.VITE_API_URL as string) || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://site-gateaux-backend.onrender.com');
 const API_BASE_URL = `${BACKEND_URL.replace(/\/$/, '')}/api`;
 
 export const api = {
