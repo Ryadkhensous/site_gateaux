@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { store, OrderItem, DEFAULT_TRACKING_STEPS } from "../services/store.js";
+import { prisma, getDbStatus } from "../services/db.js";
 import { Server } from "socket.io";
 
 export let ioInstance: Server | null = null;
@@ -7,7 +8,7 @@ export const setIoInstance = (io: Server) => {
   ioInstance = io;
 };
 
-export const createOrder = (req: Request, res: Response) => {
+export const createOrder = async (req: Request, res: Response) => {
   try {
     const {
       artisanId,
@@ -72,9 +73,66 @@ export const createOrder = (req: Request, res: Response) => {
       }))
     };
 
+    // 1. Enregistrement persistant dans PostgreSQL via Prisma si disponible
+    try {
+      if (getDbStatus()) {
+        await prisma.order.create({
+          data: {
+            id: newOrder.id,
+            orderNumber: newOrder.orderNumber,
+            artisanId: newOrder.artisanId,
+            productId: newOrder.productId || null,
+            customerName: newOrder.customerName,
+            customerPhone: newOrder.customerPhone,
+            customerIdDocType: (newOrder.customerIdDocType as any) || "CNI",
+            customerIdDocNumber: newOrder.customerIdDocNumber,
+            deliveryWilayaCode: newOrder.deliveryWilayaCode,
+            deliveryWilayaName: newOrder.deliveryWilayaName,
+            deliveryAddress: newOrder.deliveryAddress,
+            eventDate: new Date(newOrder.eventDate),
+            isB2B: newOrder.isB2B,
+            companyName: newOrder.companyName,
+            companyNIF: newOrder.companyNIF,
+            status: (newOrder.status as any) || "CONFIRMED",
+            paymentMethod: newOrder.paymentMethod === "BARIDIMOB" ? "CASH_ON_DELIVERY" : (newOrder.paymentMethod as any) || "CASH_ON_DELIVERY",
+            totalPriceDZD: newOrder.totalPriceDZD,
+            notes: newOrder.notes,
+            customization: newOrder.customization ? {
+              create: {
+                sizeName: newOrder.customization.sizeName,
+                servingsCount: newOrder.customization.servingsCount,
+                flavorName: newOrder.customization.flavorName,
+                fillingName: newOrder.customization.fillingName,
+                colorHex: newOrder.customization.colorHex,
+                colorName: newOrder.customization.colorName,
+                toppingsList: newOrder.customization.toppingsList || [],
+                extra3dType: newOrder.customization.extra3dType,
+                messageOnCake: newOrder.customization.messageOnCake
+              }
+            } : undefined,
+            trackingSteps: {
+              create: newOrder.trackingSteps.map((s, idx) => ({
+                stepOrder: s.stepId || idx + 1,
+                title: s.title,
+                description: s.description,
+                status: (s.status as any) || "CONFIRMED",
+                completed: s.completed,
+                completedAt: s.completedAt ? new Date(s.completedAt) : undefined,
+                photoProofUrl: s.photoProofUrl
+              }))
+            }
+          }
+        });
+        console.log(`[PostgreSQL] Commande ${newOrder.orderNumber} enregistrée dans la BD avec succès.`);
+      }
+    } catch (dbErr) {
+      console.warn("[PostgreSQL] Erreur sauvegarde DB (sauvegardé en mémoire):", dbErr);
+    }
+
+    // 2. Synchronisation mémoire vive
     store.orders.unshift(newOrder);
 
-    // Émission temps réel si socket connecté
+    // 3. Émission temps réel Socket.io
     if (ioInstance) {
       ioInstance.emit("new_order", newOrder);
       ioInstance.to(`artisan:${newOrder.artisanId}`).emit("artisan_new_order", newOrder);
@@ -90,8 +148,86 @@ export const createOrder = (req: Request, res: Response) => {
   }
 };
 
-export const getOrders = (req: Request, res: Response) => {
+export const getOrders = async (req: Request, res: Response) => {
   const { artisanId, status, isB2B } = req.query;
+
+  // Tentative de lecture depuis PostgreSQL
+  try {
+    if (getDbStatus()) {
+      const dbOrders = await prisma.order.findMany({
+        where: {
+          artisanId: artisanId ? (artisanId as string) : undefined,
+          status: status ? (status as any) : undefined,
+          isB2B: isB2B !== undefined ? isB2B === "true" : undefined
+        },
+        include: {
+          customization: true,
+          trackingSteps: {
+            orderBy: { stepOrder: "asc" }
+          }
+        },
+        orderBy: { createdAt: "desc" }
+      });
+
+      if (dbOrders && dbOrders.length > 0) {
+        // Formatter pour le frontend
+        const formatted = dbOrders.map((o) => ({
+          id: o.id,
+          orderNumber: o.orderNumber,
+          artisanId: o.artisanId,
+          artisanName: store.artisans.find((a) => a.id === o.artisanId)?.storeName || "Atelier Pâtisserie",
+          productId: o.productId || undefined,
+          customerName: o.customerName,
+          customerPhone: o.customerPhone,
+          customerIdDocType: o.customerIdDocType,
+          customerIdDocNumber: o.customerIdDocNumber,
+          deliveryWilayaCode: o.deliveryWilayaCode,
+          deliveryWilayaName: o.deliveryWilayaName,
+          deliveryAddress: o.deliveryAddress,
+          eventDate: o.eventDate.toISOString(),
+          isB2B: o.isB2B,
+          companyName: o.companyName || undefined,
+          companyNIF: o.companyNIF || undefined,
+          status: o.status,
+          paymentMethod: o.paymentMethod,
+          totalPriceDZD: o.totalPriceDZD,
+          notes: o.notes || undefined,
+          createdAt: o.createdAt.toISOString(),
+          customization: o.customization ? {
+            sizeName: o.customization.sizeName || undefined,
+            servingsCount: o.customization.servingsCount || undefined,
+            flavorName: o.customization.flavorName || undefined,
+            fillingName: o.customization.fillingName || undefined,
+            colorHex: o.customization.colorHex || undefined,
+            colorName: o.customization.colorName || undefined,
+            toppingsList: o.customization.toppingsList,
+            extra3dType: o.customization.extra3dType || undefined,
+            messageOnCake: o.customization.messageOnCake || undefined
+          } : undefined,
+          trackingSteps: o.trackingSteps.map((s) => ({
+            stepId: s.stepOrder,
+            title: s.title,
+            description: s.description,
+            status: s.status,
+            completed: s.completed,
+            completedAt: s.completedAt ? s.completedAt.toISOString() : undefined,
+            photoProofUrl: s.photoProofUrl || undefined
+          }))
+        }));
+
+        return res.json({
+          success: true,
+          source: "postgresql",
+          count: formatted.length,
+          data: formatted
+        });
+      }
+    }
+  } catch (err) {
+    console.warn("[PostgreSQL] Erreur lecture orders, repli sur le store:", err);
+  }
+
+  // Repli sur le store en mémoire
   let orders = store.orders;
 
   if (artisanId) {
@@ -108,13 +244,88 @@ export const getOrders = (req: Request, res: Response) => {
 
   return res.json({
     success: true,
+    source: "memory",
     count: orders.length,
     data: orders
   });
 };
 
-export const getOrderByNumberOrId = (req: Request, res: Response) => {
+export const getOrderByNumberOrId = async (req: Request, res: Response) => {
   const { idOrNumber } = req.params;
+
+  // 1. Recherche dans PostgreSQL
+  try {
+    if (getDbStatus()) {
+      const o = await prisma.order.findFirst({
+        where: {
+          OR: [
+            { id: idOrNumber },
+            { orderNumber: { equals: idOrNumber, mode: "insensitive" } }
+          ]
+        },
+        include: {
+          customization: true,
+          trackingSteps: { orderBy: { stepOrder: "asc" } }
+        }
+      });
+
+      if (o) {
+        const formatted = {
+          id: o.id,
+          orderNumber: o.orderNumber,
+          artisanId: o.artisanId,
+          artisanName: store.artisans.find((a) => a.id === o.artisanId)?.storeName || "Atelier Pâtisserie",
+          productId: o.productId || undefined,
+          customerName: o.customerName,
+          customerPhone: o.customerPhone,
+          customerIdDocType: o.customerIdDocType,
+          customerIdDocNumber: o.customerIdDocNumber,
+          deliveryWilayaCode: o.deliveryWilayaCode,
+          deliveryWilayaName: o.deliveryWilayaName,
+          deliveryAddress: o.deliveryAddress,
+          eventDate: o.eventDate.toISOString(),
+          isB2B: o.isB2B,
+          companyName: o.companyName || undefined,
+          companyNIF: o.companyNIF || undefined,
+          status: o.status,
+          paymentMethod: o.paymentMethod,
+          totalPriceDZD: o.totalPriceDZD,
+          notes: o.notes || undefined,
+          createdAt: o.createdAt.toISOString(),
+          customization: o.customization ? {
+            sizeName: o.customization.sizeName || undefined,
+            servingsCount: o.customization.servingsCount || undefined,
+            flavorName: o.customization.flavorName || undefined,
+            fillingName: o.customization.fillingName || undefined,
+            colorHex: o.customization.colorHex || undefined,
+            colorName: o.customization.colorName || undefined,
+            toppingsList: o.customization.toppingsList,
+            extra3dType: o.customization.extra3dType || undefined,
+            messageOnCake: o.customization.messageOnCake || undefined
+          } : undefined,
+          trackingSteps: o.trackingSteps.map((s) => ({
+            stepId: s.stepOrder,
+            title: s.title,
+            description: s.description,
+            status: s.status,
+            completed: s.completed,
+            completedAt: s.completedAt ? s.completedAt.toISOString() : undefined,
+            photoProofUrl: s.photoProofUrl || undefined
+          }))
+        };
+
+        return res.json({
+          success: true,
+          source: "postgresql",
+          data: formatted
+        });
+      }
+    }
+  } catch (err) {
+    console.warn("[PostgreSQL] Erreur getOrder, repli sur mémoire:", err);
+  }
+
+  // 2. Recherche en mémoire
   const order = store.orders.find(
     (o) => o.id === idOrNumber || o.orderNumber.toUpperCase() === idOrNumber.toUpperCase()
   );
@@ -125,11 +336,12 @@ export const getOrderByNumberOrId = (req: Request, res: Response) => {
 
   return res.json({
     success: true,
+    source: "memory",
     data: order
   });
 };
 
-export const updateOrderStatusAndStep = (req: Request, res: Response) => {
+export const updateOrderStatusAndStep = async (req: Request, res: Response) => {
   const { orderId } = req.params;
   const { stepId, status, photoProofUrl, note } = req.body;
 
@@ -153,9 +365,8 @@ export const updateOrderStatusAndStep = (req: Request, res: Response) => {
         order.trackingSteps[stepIdx].photoProofUrl = photoProofUrl;
       }
       if (note) {
-        order.trackingSteps[stepIdx].description += ` - Note artisan: ${note}`;
+        order.trackingSteps[stepIdx].description += ` - Note: ${note}`;
       }
-      // Marquer aussi les étapes précédentes comme terminées
       for (let i = 0; i < stepIdx; i++) {
         order.trackingSteps[i].completed = true;
       }
@@ -163,6 +374,37 @@ export const updateOrderStatusAndStep = (req: Request, res: Response) => {
   }
 
   store.orders[orderIndex] = order;
+
+  // Mise à jour PostgreSQL si actif
+  try {
+    if (getDbStatus()) {
+      const dbOrder = await prisma.order.findFirst({
+        where: { OR: [{ id: orderId }, { orderNumber: orderId }] }
+      });
+      if (dbOrder) {
+        await prisma.order.update({
+          where: { id: dbOrder.id },
+          data: {
+            status: status ? (status as any) : undefined
+          }
+        });
+
+        if (stepId !== undefined) {
+          await prisma.orderTrackingStep.updateMany({
+            where: { orderId: dbOrder.id, stepOrder: Number(stepId) },
+            data: {
+              completed: true,
+              completedAt: new Date(),
+              photoProofUrl: photoProofUrl || undefined
+            }
+          });
+        }
+        console.log(`[PostgreSQL] Commande ${order.orderNumber} mise à jour dans la BD.`);
+      }
+    }
+  } catch (err) {
+    console.warn("[PostgreSQL] Erreur updateOrderStatusAndStep dans la BD:", err);
+  }
 
   // Diffusion temps réel Socket.io
   if (ioInstance) {
@@ -182,4 +424,3 @@ export const updateOrderStatusAndStep = (req: Request, res: Response) => {
     data: order
   });
 };
-

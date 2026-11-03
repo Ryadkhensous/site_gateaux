@@ -36,13 +36,39 @@ apiRouter.get("/orders", getOrders);
 apiRouter.get("/orders/:idOrNumber", getOrderByNumberOrId);
 apiRouter.patch("/orders/:orderId/step", updateOrderStatusAndStep);
 
-// Route d'information générale
-apiRouter.get("/status", (req, res) => {
+import { prisma, getDbStatus } from "../services/db.js";
+
+// Route d'information générale & santé de la base de données
+apiRouter.get("/status", async (req, res) => {
+  let dbDetails = {
+    connected: getDbStatus(),
+    provider: "PostgreSQL",
+    ordersInDb: 0,
+    productsInDb: 0,
+    artisansInDb: 0
+  };
+
+  try {
+    if (getDbStatus()) {
+      const [ordersCount, productsCount, artisansCount] = await Promise.all([
+        prisma.order.count(),
+        prisma.product.count(),
+        prisma.artisanProfile.count()
+      ]);
+      dbDetails.ordersInDb = ordersCount;
+      dbDetails.productsInDb = productsCount;
+      dbDetails.artisansInDb = artisansCount;
+    }
+  } catch (err: any) {
+    dbDetails.connected = false;
+  }
+
   res.json({
     status: "online",
     platform: "Plateforme Pâtisserie & Confiserie Algérie",
     currency: "DZD",
     totalWilayas: 69,
+    database: dbDetails,
     timestamp: new Date().toISOString()
   });
 });

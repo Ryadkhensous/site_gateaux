@@ -6,6 +6,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { apiRouter } from "./routes/api.js";
 import { setIoInstance } from "./controllers/orderController.js";
+import { seedDatabaseIfEmpty } from "./services/db.js";
 
 dotenv.config();
 
@@ -73,9 +74,10 @@ app.get("/", (req, res) => {
   });
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, async () => {
   console.log(`🚀 Serveur Backend Pâtisserie Algérie actif sur : http://localhost:${PORT}`);
   console.log(`📦 Couverture : 69 Wilayas | Monnaie : DZD (Dinars Algériens)`);
   console.log(`⚡ Temps réel Socket.io : Actif`);
+  await seedDatabaseIfEmpty();
 });
 
