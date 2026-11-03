@@ -18,6 +18,10 @@ const artisansList = [
   { id: 'art-3', name: "إبداعات سويت وهران - أميرة منصوري (وهران - 31)" }
 ];
 
+const clientWebUrl = typeof window !== 'undefined' && window.location.hostname === 'localhost'
+  ? 'http://localhost:5173'
+  : 'https://client-web-flax.vercel.app';
+
 const onArtisanChange = async (e: Event) => {
   const target = e.target as HTMLSelectElement;
   store.selectedArtisanId = target.value;
@@ -117,7 +121,7 @@ const onArtisanChange = async (e: Event) => {
     <!-- رابط الانتقال إلى متجر الزبائن React -->
     <div class="pt-4 border-t border-dore-600/30 space-y-2">
       <a
-        href="http://localhost:5173"
+        :href="clientWebUrl"
         target="_blank"
         rel="noopener noreferrer"
         class="flex items-center justify-between px-3 py-2.5 bg-[#4D3929] hover:bg-[#5C4533] text-dore-200 text-xs font-semibold rounded-xl border border-dore-500/30 transition-colors group"

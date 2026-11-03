@@ -42,6 +42,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
+  const artisanAdminUrl = typeof window !== 'undefined' && window.location.hostname === 'localhost'
+    ? 'http://localhost:5174'
+    : 'https://artisan-admin-xi.vercel.app';
 
   const handleNavClick = (tab: string) => {
     setCurrentTab(tab);
@@ -260,7 +263,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
               {/* زر فضاء الحرفيين (Vue 3) */}
               <a
-                href="http://localhost:5174"
+                href={artisanAdminUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hidden lg:flex items-center gap-1.5 px-3 py-2 bg-stone-900 hover:bg-stone-800 text-white text-xs font-bold rounded-xl shadow-xs transition-all duration-200"
@@ -358,7 +361,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* رابط فضاء الحرفي على الهاتف */}
             <div className="pt-2">
               <a
-                href="http://localhost:5174"
+                href={artisanAdminUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full flex items-center justify-center gap-2 p-3 bg-stone-900 text-white text-xs font-bold rounded-xl shadow-sm"
