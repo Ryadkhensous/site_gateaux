@@ -341,3 +341,4 @@ export const INITIAL_PRODUCTS: ProductItem[] = [
     tags: ["تقليدي", "قسنطينة", "جوز", "عسل حر"]
   }
 ];
+
