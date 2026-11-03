@@ -29,85 +29,107 @@ export const seedDatabaseIfEmpty = async () => {
 
     console.log("[PostgreSQL] Connexion réussie à la base de données !");
 
-    // 1. Vérifier si les artisans existent déjà
-    const existingArtisansCount = await prisma.artisanProfile.count();
-    if (existingArtisansCount === 0) {
-      console.log("[PostgreSQL] Base de données vide. Initialisation des artisans et des produits...");
+    // 1. Initialiser ou synchroniser les artisans
+    for (const artisan of INITIAL_ARTISANS) {
+      const user = await prisma.user.upsert({
+        where: { email: `artisan_${artisan.id}@elgateau.dz` },
+        update: {
+          fullName: artisan.name,
+          phone: artisan.phone,
+          wilayaCode: artisan.wilayaCode,
+          wilayaName: artisan.wilayaName
+        },
+        create: {
+          email: `artisan_${artisan.id}@elgateau.dz`,
+          passwordHash: "hash_dz_2026",
+          fullName: artisan.name,
+          phone: artisan.phone,
+          role: "ARTISAN",
+          wilayaCode: artisan.wilayaCode,
+          wilayaName: artisan.wilayaName
+        }
+      });
 
-      for (const artisan of INITIAL_ARTISANS) {
-        // Créer l'utilisateur rattaché
-        const user = await prisma.user.upsert({
-          where: { email: `artisan_${artisan.id}@elgateau.dz` },
-          update: {},
-          create: {
-            email: `artisan_${artisan.id}@elgateau.dz`,
-            passwordHash: "hash_dz_2026",
-            fullName: artisan.name,
-            phone: artisan.phone,
-            role: "ARTISAN",
-            wilayaCode: artisan.wilayaCode,
-            wilayaName: artisan.wilayaName
-          }
-        });
+      await prisma.artisanProfile.upsert({
+        where: { id: artisan.id },
+        update: {
+          storeName: artisan.storeName,
+          bio: artisan.bio,
+          phone: artisan.phone,
+          address: artisan.address,
+          avatar: artisan.avatar,
+          banner: artisan.banner,
+          specialties: artisan.specialties
+        },
+        create: {
+          id: artisan.id,
+          userId: user.id,
+          storeName: artisan.storeName,
+          wilayaCode: artisan.wilayaCode,
+          wilayaName: artisan.wilayaName,
+          address: artisan.address,
+          phone: artisan.phone,
+          rating: artisan.rating,
+          reviewsCount: artisan.reviewsCount,
+          bio: artisan.bio,
+          avatar: artisan.avatar,
+          banner: artisan.banner,
+          specialties: artisan.specialties
+        }
+      });
+    }
 
-        // Créer le profil artisan
-        await prisma.artisanProfile.upsert({
-          where: { id: artisan.id },
-          update: {},
-          create: {
-            id: artisan.id,
-            userId: user.id,
-            storeName: artisan.storeName,
-            wilayaCode: artisan.wilayaCode,
-            wilayaName: artisan.wilayaName,
-            address: artisan.address,
-            phone: artisan.phone,
-            rating: artisan.rating,
-            reviewsCount: artisan.reviewsCount,
-            bio: artisan.bio,
-            avatar: artisan.avatar,
-            banner: artisan.banner,
-            specialties: artisan.specialties
-          }
-        });
-      }
+    // 2. Insérer ou mettre à jour tous les produits du catalogue
+    for (const prod of INITIAL_PRODUCTS) {
+      await prisma.product.upsert({
+        where: { id: prod.id },
+        update: {
+          name: prod.name,
+          category: prod.category as any,
+          description: prod.description,
+          priceDZD: prod.priceDZD,
+          servings: prod.servings,
+          prepTimeDays: prod.prepTimeDays,
+          imageUrl: prod.imageUrl,
+          isCustomizable: prod.isCustomizable,
+          tags: prod.tags
+        },
+        create: {
+          id: prod.id,
+          artisanId: prod.artisanId,
+          name: prod.name,
+          category: prod.category as any,
+          description: prod.description,
+          priceDZD: prod.priceDZD,
+          servings: prod.servings,
+          prepTimeDays: prod.prepTimeDays,
+          imageUrl: prod.imageUrl,
+          isCustomizable: prod.isCustomizable,
+          tags: prod.tags
+        }
+      });
+    }
 
-      // 2. Insérer les produits
-      for (const prod of INITIAL_PRODUCTS) {
-        await prisma.product.upsert({
-          where: { id: prod.id },
-          update: {},
-          create: {
-            id: prod.id,
-            artisanId: prod.artisanId,
-            name: prod.name,
-            category: prod.category as any,
-            description: prod.description,
-            priceDZD: prod.priceDZD,
-            servings: prod.servings,
-            prepTimeDays: prod.prepTimeDays,
-            imageUrl: prod.imageUrl,
-            isCustomizable: prod.isCustomizable,
-            tags: prod.tags
-          }
-        });
-      }
-
-      // 3. Insérer les options de personnalisation
-      for (const opt of CUSTOMIZATION_OPTIONS) {
-        await prisma.customizationOption.upsert({
-          where: { id: opt.id },
-          update: {},
-          create: {
-            id: opt.id,
-            category: opt.category,
-            name: opt.name,
-            priceDZD: opt.priceDZD,
-            description: opt.description,
-            colorHex: opt.colorHex
-          }
-        });
-      }
+    // 3. Insérer les options de personnalisation
+    for (const opt of CUSTOMIZATION_OPTIONS) {
+      await prisma.customizationOption.upsert({
+        where: { id: opt.id },
+        update: {
+          name: opt.name,
+          priceDZD: opt.priceDZD,
+          description: opt.description,
+          colorHex: opt.colorHex
+        },
+        create: {
+          id: opt.id,
+          category: opt.category,
+          name: opt.name,
+          priceDZD: opt.priceDZD,
+          description: opt.description,
+          colorHex: opt.colorHex
+        }
+      });
+    }
 
       // 4. Insérer les commandes initiales de démo
       const demoOrder = store.orders[0];
@@ -161,9 +183,6 @@ export const seedDatabaseIfEmpty = async () => {
       }
 
       console.log("[PostgreSQL] Données initiales insérées avec succès dans la base de données !");
-    } else {
-      console.log(`[PostgreSQL] Base déjà initialisée avec ${existingArtisansCount} artisans.`);
-    }
 
     return true;
   } catch (err) {
