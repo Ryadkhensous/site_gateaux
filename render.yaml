@@ -1,7 +1,6 @@
 databases:
   - name: patisserie-dz-db
     databaseName: patisserie_dz
-    user: postgres
     plan: free
     region: frankfurt
 
