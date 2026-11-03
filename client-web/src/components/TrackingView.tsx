@@ -43,7 +43,7 @@ export const TrackingView: React.FC<TrackingViewProps> = ({ initialOrderNumber =
 
   // الاتصال المباشر بتقنية Socket.io لتحديث الخطوات فورياً
   useEffect(() => {
-    const backendUrl = ((import.meta as any).env?.VITE_API_URL as string) || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://site-gateaux-backend.onrender.com');
+    const backendUrl = ((import.meta as any).env?.VITE_API_URL as string) || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://patisserie-dz-db.onrender.com');
     const s = io(backendUrl);
     setSocket(s);
 

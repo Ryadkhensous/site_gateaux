@@ -3,7 +3,7 @@ import { io, Socket } from 'socket.io-client';
 import { OrderItem, ArtisanProfile, Product } from '../types';
 import { INITIAL_ARTISANS, INITIAL_ORDERS, INITIAL_PRODUCTS } from '../data/initialData';
 
-const BACKEND_URL = ((import.meta as any).env?.VITE_API_URL as string) || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://site-gateaux-backend.onrender.com');
+const BACKEND_URL = ((import.meta as any).env?.VITE_API_URL as string) || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://patisserie-dz-db.onrender.com');
 const API_BASE = `${BACKEND_URL.replace(/\/$/, '')}/api`;
 
 export const useOrderStore = defineStore('orders', {

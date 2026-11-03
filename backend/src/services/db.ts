@@ -171,3 +171,4 @@ export const seedDatabaseIfEmpty = async () => {
     return false;
   }
 };
+
