@@ -39,6 +39,16 @@ export const useOrderStore = defineStore('orders', {
   },
 
   actions: {
+    selectArtisan(artisanId: string) {
+      if (this.socket && this.selectedArtisanId) {
+        this.socket.emit('leave_artisan', this.selectedArtisanId);
+      }
+      this.selectedArtisanId = artisanId;
+      if (this.socket) {
+        this.socket.emit('join_artisan', artisanId);
+      }
+    },
+
     async init() {
       await this.loadArtisanProfile(this.selectedArtisanId);
       await this.loadOrders();

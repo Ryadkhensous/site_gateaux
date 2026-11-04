@@ -24,7 +24,7 @@ const clientWebUrl = typeof window !== 'undefined' && window.location.hostname =
 
 const onArtisanChange = async (e: Event) => {
   const target = e.target as HTMLSelectElement;
-  store.selectedArtisanId = target.value;
+  store.selectArtisan(target.value);
   await store.loadArtisanProfile(target.value);
   await store.loadOrders();
   await store.loadProducts();

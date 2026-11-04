@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { store, OrderItem, DEFAULT_TRACKING_STEPS } from "../services/store.js";
 import { prisma, getDbStatus } from "../services/db.js";
+import { sanitizeString, sanitizeOrderInput } from "../utils/security.js";
 import { Server } from "socket.io";
 
 export let ioInstance: Server | null = null;
@@ -13,21 +14,18 @@ export const createOrder = async (req: Request, res: Response) => {
     const {
       artisanId,
       productId,
-      customerName,
-      customerPhone,
       customerIdDocType,
-      customerIdDocNumber,
       deliveryWilayaCode,
-      deliveryAddress,
       eventDate,
       isB2B,
-      companyName,
-      companyNIF,
       paymentMethod,
       totalPriceDZD,
-      notes,
       customization
     } = req.body;
+
+    // Assainissement rigoureux des entrées utilisateur (Anti-XSS & Injection)
+    const sanitized = sanitizeOrderInput(req.body);
+    const { customerName, customerPhone, deliveryAddress, customerIdDocNumber, companyName, companyNIF, notes, messageOnCake } = sanitized;
 
     // Validation des données obligatoires
     if (!customerName || !customerPhone || !deliveryWilayaCode || !deliveryAddress || !eventDate) {
@@ -40,6 +38,15 @@ export const createOrder = async (req: Request, res: Response) => {
     const wilaya = store.wilayas.find((w) => w.code === Number(deliveryWilayaCode));
     const artisan = store.artisans.find((a) => a.id === artisanId) || store.artisans[0];
 
+    // Vérifier si le productId existe réellement dans la BD ou le catalogue
+    let safeProductId: string | null = null;
+    if (productId) {
+      const prodExists = store.products.some((p) => p.id === productId);
+      if (prodExists) {
+        safeProductId = productId;
+      }
+    }
+
     const count = store.orders.length + 1;
     const orderNumber = `CMD-2026-DZ${count.toString().padStart(3, "0")}`;
 
@@ -48,11 +55,11 @@ export const createOrder = async (req: Request, res: Response) => {
       orderNumber,
       artisanId: artisan.id,
       artisanName: artisan.storeName,
-      productId,
+      productId: safeProductId || undefined,
       customerName,
       customerPhone,
       customerIdDocType: customerIdDocType || "CNI",
-      customerIdDocNumber: customerIdDocNumber?.trim() || "DZ-CLIENT-WEB",
+      customerIdDocNumber: customerIdDocNumber || "DZ-CLIENT-WEB",
       deliveryWilayaCode: wilaya ? wilaya.code : Number(deliveryWilayaCode),
       deliveryWilayaName: wilaya ? wilaya.name : `Wilaya ${deliveryWilayaCode}`,
       deliveryAddress,
@@ -62,10 +69,13 @@ export const createOrder = async (req: Request, res: Response) => {
       companyNIF,
       status: "CONFIRMED",
       paymentMethod: paymentMethod || "CASH_ON_DELIVERY",
-      totalPriceDZD: Number(totalPriceDZD) || 8500,
+      totalPriceDZD: Math.max(100, Math.round(Number(totalPriceDZD) || 8500)),
       notes,
       createdAt: new Date().toISOString(),
-      customization,
+      customization: customization ? {
+        ...customization,
+        messageOnCake: messageOnCake || customization.messageOnCake
+      } : undefined,
       trackingSteps: DEFAULT_TRACKING_STEPS.map((step, idx) => ({
         ...step,
         completed: idx === 0,
@@ -81,7 +91,7 @@ export const createOrder = async (req: Request, res: Response) => {
             id: newOrder.id,
             orderNumber: newOrder.orderNumber,
             artisanId: newOrder.artisanId,
-            productId: newOrder.productId || null,
+            productId: safeProductId,
             customerName: newOrder.customerName,
             customerPhone: newOrder.customerPhone,
             customerIdDocType: (newOrder.customerIdDocType as any) || "CNI",
@@ -345,7 +355,57 @@ export const updateOrderStatusAndStep = async (req: Request, res: Response) => {
   const { orderId } = req.params;
   const { stepId, status, photoProofUrl, note } = req.body;
 
-  const orderIndex = store.orders.findIndex((o) => o.id === orderId || o.orderNumber === orderId);
+  let orderIndex = store.orders.findIndex((o) => o.id === orderId || o.orderNumber === orderId);
+
+  // Si non trouvé en mémoire, essayer de récupérer depuis PostgreSQL
+  if (orderIndex === -1 && getDbStatus()) {
+    try {
+      const dbOrder = await prisma.order.findFirst({
+        where: { OR: [{ id: orderId }, { orderNumber: orderId }] },
+        include: { customization: true, trackingSteps: { orderBy: { stepOrder: "asc" } } }
+      });
+      if (dbOrder) {
+        const artisan = store.artisans.find((a) => a.id === dbOrder.artisanId);
+        const restored: OrderItem = {
+          id: dbOrder.id,
+          orderNumber: dbOrder.orderNumber,
+          artisanId: dbOrder.artisanId,
+          artisanName: artisan?.storeName || "Atelier Pâtisserie",
+          productId: dbOrder.productId || undefined,
+          customerName: dbOrder.customerName,
+          customerPhone: dbOrder.customerPhone,
+          customerIdDocType: dbOrder.customerIdDocType,
+          customerIdDocNumber: dbOrder.customerIdDocNumber,
+          deliveryWilayaCode: dbOrder.deliveryWilayaCode,
+          deliveryWilayaName: dbOrder.deliveryWilayaName,
+          deliveryAddress: dbOrder.deliveryAddress,
+          eventDate: dbOrder.eventDate.toISOString(),
+          isB2B: dbOrder.isB2B,
+          companyName: dbOrder.companyName || undefined,
+          companyNIF: dbOrder.companyNIF || undefined,
+          status: dbOrder.status,
+          paymentMethod: dbOrder.paymentMethod,
+          totalPriceDZD: dbOrder.totalPriceDZD,
+          notes: dbOrder.notes || undefined,
+          createdAt: dbOrder.createdAt.toISOString(),
+          trackingSteps: dbOrder.trackingSteps.map((s) => ({
+            stepId: s.stepOrder,
+            title: s.title,
+            description: s.description,
+            status: s.status,
+            completed: s.completed,
+            completedAt: s.completedAt ? s.completedAt.toISOString() : undefined,
+            photoProofUrl: s.photoProofUrl || undefined
+          }))
+        };
+        store.orders.unshift(restored);
+        orderIndex = 0;
+      }
+    } catch (e) {
+      console.warn("[PostgreSQL] Erreur chargement commande manquante:", e);
+    }
+  }
+
   if (orderIndex === -1) {
     return res.status(404).json({ success: false, message: "Commande introuvable" });
   }
@@ -356,16 +416,19 @@ export const updateOrderStatusAndStep = async (req: Request, res: Response) => {
     order.status = status;
   }
 
+  const cleanPhotoProof = photoProofUrl ? sanitizeString(photoProofUrl) : undefined;
+  const cleanNote = note ? sanitizeString(note) : undefined;
+
   if (stepId !== undefined) {
     const stepIdx = order.trackingSteps.findIndex((s) => s.stepId === Number(stepId));
     if (stepIdx !== -1) {
       order.trackingSteps[stepIdx].completed = true;
       order.trackingSteps[stepIdx].completedAt = new Date().toISOString();
-      if (photoProofUrl) {
-        order.trackingSteps[stepIdx].photoProofUrl = photoProofUrl;
+      if (cleanPhotoProof) {
+        order.trackingSteps[stepIdx].photoProofUrl = cleanPhotoProof;
       }
-      if (note) {
-        order.trackingSteps[stepIdx].description += ` - Note: ${note}`;
+      if (cleanNote) {
+        order.trackingSteps[stepIdx].description += ` - Note: ${cleanNote}`;
       }
       for (let i = 0; i < stepIdx; i++) {
         order.trackingSteps[i].completed = true;
@@ -395,7 +458,7 @@ export const updateOrderStatusAndStep = async (req: Request, res: Response) => {
             data: {
               completed: true,
               completedAt: new Date(),
-              photoProofUrl: photoProofUrl || undefined
+              photoProofUrl: cleanPhotoProof || undefined
             }
           });
         }

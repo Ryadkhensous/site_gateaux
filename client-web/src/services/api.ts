@@ -4,62 +4,112 @@ import { WILAYAS_DZ } from "../data/wilayas";
 const BACKEND_URL = ((import.meta as any).env?.VITE_API_URL as string) || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://patisserie-dz-db.onrender.com');
 const API_BASE_URL = `${BACKEND_URL.replace(/\/$/, '')}/api`;
 
+// Système de cache mémoire SWR (Stale-While-Revalidate) pour chargement instantané (0ms)
+const cache = new Map<string, { data: any; timestamp: number }>();
+
+async function fetchWithCache<T>(key: string, ttlMs: number, fetcher: () => Promise<T>): Promise<T> {
+  const cached = cache.get(key);
+  const now = Date.now();
+
+  // Si le cache est encore frais, le renvoyer instantanément
+  if (cached && (now - cached.timestamp < ttlMs)) {
+    return cached.data;
+  }
+
+  try {
+    const data = await fetcher();
+    if (data) {
+      cache.set(key, { data, timestamp: now });
+    }
+    return data;
+  } catch (err) {
+    // Si la requête réseau échoue mais qu'on a du cache (même périmé), l'utiliser en secours
+    if (cached) {
+      return cached.data;
+    }
+    throw err;
+  }
+}
+
 export const api = {
   async getWilayas(): Promise<Wilaya[]> {
-    try {
-      const res = await fetch(`${API_BASE_URL}/wilayas`);
-      const data = await res.json();
-      if (data.success && data.data) return data.data;
-    } catch {
-      // fallback
-    }
-    return WILAYAS_DZ;
+    return fetchWithCache("wilayas", 30 * 60 * 1000, async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/wilayas`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && data.data && Array.isArray(data.data)) return data.data;
+        }
+      } catch {
+        // Fallback immédiat
+      }
+      return WILAYAS_DZ;
+    });
   },
 
   async getArtisans(wilayaCode?: number): Promise<Artisan[]> {
-    try {
-      const url = wilayaCode ? `${API_BASE_URL}/artisans?wilaya=${wilayaCode}` : `${API_BASE_URL}/artisans`;
-      const res = await fetch(url);
-      const data = await res.json();
-      if (data.success && data.data) return data.data;
-    } catch {
-      // fallback
-    }
-    return [];
+    const cacheKey = `artisans_${wilayaCode || 'all'}`;
+    return fetchWithCache(cacheKey, 3 * 60 * 1000, async () => {
+      try {
+        const url = wilayaCode ? `${API_BASE_URL}/artisans?wilaya=${wilayaCode}` : `${API_BASE_URL}/artisans`;
+        const res = await fetch(url);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && data.data) return data.data;
+        }
+      } catch {
+        // Fallback
+      }
+      return [];
+    });
   },
 
   async getArtisanById(id: string): Promise<Artisan | null> {
-    try {
-      const res = await fetch(`${API_BASE_URL}/artisans/${id}`);
-      const data = await res.json();
-      if (data.success && data.data) return data.data;
-    } catch {
-      // fallback
-    }
-    return null;
+    const cacheKey = `artisan_${id}`;
+    return fetchWithCache(cacheKey, 3 * 60 * 1000, async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/artisans/${id}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && data.data) return data.data;
+        }
+      } catch {
+        // Fallback
+      }
+      return null;
+    });
   },
 
   async getProducts(category?: string): Promise<Product[]> {
-    try {
-      const url = category ? `${API_BASE_URL}/products?category=${category}` : `${API_BASE_URL}/products`;
-      const res = await fetch(url);
-      const data = await res.json();
-      if (data.success && data.data) return data.data;
-    } catch {
-      // fallback
-    }
-    return [];
+    const cacheKey = `products_${category || 'all'}`;
+    return fetchWithCache(cacheKey, 2 * 60 * 1000, async () => {
+      try {
+        const url = category ? `${API_BASE_URL}/products?category=${category}` : `${API_BASE_URL}/products`;
+        const res = await fetch(url);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && data.data && Array.isArray(data.data)) return data.data;
+        }
+      } catch {
+        // Fallback
+      }
+      return [];
+    });
   },
 
   async getCustomizationOptions(): Promise<CustomizationOption[]> {
-    try {
-      const res = await fetch(`${API_BASE_URL}/customization-options`);
-      const data = await res.json();
-      if (data.success && data.data) return data.data;
-    } catch {
-      // fallback
-    }
-    return [];
+    return fetchWithCache("customization_options", 5 * 60 * 1000, async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/customization-options`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && data.data) return data.data;
+        }
+      } catch {
+        // Fallback
+      }
+      return [];
+    });
   },
 
   async createOrder(orderPayload: any): Promise<{ success: boolean; data?: Order; message?: string }> {
@@ -277,4 +327,3 @@ export const api = {
     return { success: false, message: "لم يتم العثور على طلبية بهذا الرقم" };
   }
 };
-

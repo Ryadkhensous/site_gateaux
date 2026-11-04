@@ -62,10 +62,22 @@ export const OrderModal: React.FC<OrderModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading) return;
     setError(null);
 
-    if (!customerName.trim() || !customerPhone.trim() || !deliveryAddress.trim() || !eventDate) {
+    const cleanPhone = customerPhone.replace(/[\s\.-]/g, '');
+    const cleanName = customerName.trim();
+    const cleanAddress = deliveryAddress.trim();
+
+    if (!cleanName || !cleanPhone || !cleanAddress || !eventDate) {
       setError('يرجى ملء جميع الحقول المطلوبة (الاسم الكامل، رقم الهاتف، ولاية الاستلام، العنوان وتاريخ التسليم).');
+      return;
+    }
+
+    // Validation du numéro de téléphone algérien (Mobilis, Djezzy, Ooredoo)
+    const dzPhoneRegex = /^(0|\+213)[5-7][0-9]{8}$/;
+    if (!dzPhoneRegex.test(cleanPhone) && cleanPhone.length < 9) {
+      setError('يرجى إدخال رقم هاتف جزائري صحيح (مثال: 0555123456 أو 0661123456 أو 0770123456).');
       return;
     }
 
@@ -75,12 +87,12 @@ export const OrderModal: React.FC<OrderModalProps> = ({
       const payload = {
         artisanId: config.artisanId || 'art-1',
         productId: config.productId,
-        customerName: customerName.trim(),
-        customerPhone: customerPhone.trim(),
+        customerName: cleanName,
+        customerPhone: cleanPhone,
         customerIdDocType: idDocType,
         customerIdDocNumber: idDocNumber.trim() || 'DZ-CLIENT-WEB',
         deliveryWilayaCode,
-        deliveryAddress: deliveryAddress.trim(),
+        deliveryAddress: cleanAddress,
         eventDate: new Date(eventDate).toISOString(),
         isB2B,
         companyName: isB2B ? companyName.trim() : undefined,

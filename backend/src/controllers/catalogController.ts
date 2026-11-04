@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { store } from "../services/store.js";
 import { prisma, getDbStatus } from "../services/db.js";
+import { sanitizeString, validateBase64Image } from "../utils/security.js";
 import fs from "fs";
 import path from "path";
 
@@ -187,18 +188,26 @@ export const createProduct = async (req: Request, res: Response) => {
     return res.status(400).json({ success: false, message: "Champs obligatoires manquants" });
   }
 
+  const cleanName = sanitizeString(name);
+  const cleanDescription = sanitizeString(description);
+  const numPrice = Number(priceDZD);
+
+  if (numPrice <= 0 || isNaN(numPrice)) {
+    return res.status(400).json({ success: false, message: "Le prix doit être un nombre positif en Dinars Algériens." });
+  }
+
   const newProduct = {
     id: `prod-${Date.now()}`,
-    artisanId,
-    name,
+    artisanId: sanitizeString(artisanId),
+    name: cleanName,
     category: category || "MODERNE",
-    description: description || "",
-    priceDZD: Number(priceDZD),
-    servings: Number(servings) || 12,
-    prepTimeDays: Number(prepTimeDays) || 3,
+    description: cleanDescription,
+    priceDZD: Math.round(numPrice),
+    servings: Math.max(1, Math.min(200, Number(servings) || 12)),
+    prepTimeDays: Math.max(1, Math.min(30, Number(prepTimeDays) || 3)),
     imageUrl: imageUrl || "/images/hero_wedding_cake.jpg",
     isCustomizable: Boolean(isCustomizable),
-    tags: tags || []
+    tags: Array.isArray(tags) ? tags.map((t: any) => sanitizeString(String(t))).filter(Boolean) : []
   };
 
   // 1. Sauvegarde dans PostgreSQL si actif
@@ -265,21 +274,21 @@ export const uploadImage = async (req: Request, res: Response) => {
       return res.status(400).json({ success: false, message: "Aucune image fournie" });
     }
 
-    const matches = imageBase64.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-    if (!matches || matches.length !== 3) {
-      if (imageBase64.startsWith("http") || imageBase64.startsWith("/")) {
-        return res.json({ success: true, url: imageBase64 });
-      }
-      return res.status(400).json({ success: false, message: "Format d'image base64 invalide" });
+    const validation = validateBase64Image(imageBase64);
+    if (!validation.valid) {
+      return res.status(400).json({ success: false, message: validation.error || "Image non valide" });
     }
 
-    const mime = matches[1];
-    let ext = "jpg";
-    if (mime.includes("png")) ext = "png";
-    else if (mime.includes("webp")) ext = "webp";
-    else if (mime.includes("gif")) ext = "gif";
+    // Si c'est déjà une URL
+    if (!validation.buffer) {
+      return res.json({ success: true, url: imageBase64 });
+    }
 
-    const buffer = Buffer.from(matches[2], "base64");
+    let ext = "jpg";
+    if (validation.mime?.includes("png")) ext = "png";
+    else if (validation.mime?.includes("webp")) ext = "webp";
+
+    const buffer = validation.buffer;
     const safeName = `cake_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${ext}`;
 
     // Target upload directories
