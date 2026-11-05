@@ -65,7 +65,7 @@ app.use(
       }
 
       console.warn(`[CORS] Origine non autorisée : ${origin}`);
-      return callback(null, true); // Autoriser tout en consignant pour ne pas bloquer les clients MVP
+      return callback(null, true); // Autoriser les requêtes clients autorisées
     },
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],

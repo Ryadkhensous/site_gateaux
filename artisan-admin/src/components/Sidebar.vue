@@ -41,8 +41,8 @@ const onArtisanChange = async (e: Event) => {
         </div>
         <div>
           <h2 class="text-base font-bold text-white font-serif tracking-tight">ورشة الحرفي</h2>
-          <span class="text-[10px] uppercase tracking-wider text-dore-300 font-mono font-semibold block">
-            Vue 3 • الإدارة والتحكم
+          <span class="text-[10px] uppercase tracking-wider text-dore-300 font-sans font-semibold block">
+            لوحة الإدارة والتحكم
           </span>
         </div>
       </div>
