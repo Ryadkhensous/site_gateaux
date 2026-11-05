@@ -68,3 +68,4 @@ export function validateBase64Image(base64String: string): { valid: boolean; err
 
   return { valid: true, mime, buffer };
 }
+
