@@ -36,6 +36,18 @@ export const HomeView: React.FC<HomeViewProps> = ({
   // بيانات شرائح العرض الرئيسية المطابقة لتصميم Mockup
   const heroSlides = [
     {
+      id: 'slide-traditional-tray',
+      tag: '🇩🇿 أصالة وتراث الأجداد الجزائري',
+      titlePart1: 'حلويات جزائرية تقليدية',
+      titlePart2: 'صواني الضيافة والأعراس الفاخرة',
+      subtitle:
+        'تشكيلة ملوكية أصيلة على صواني نحاسية مطروقة تضم البقلاوة المورقة، مقروط اللوز المذاب، التشاراك والدزيريات، تُخبز بأجود أنواع اللوز البلدي والعسل الحر الصافي.',
+      image: '/images/traditional_algerian_sweets.jpg',
+      badge: 'تراث وأصالة جزائرية',
+      linkTab: 'traditional',
+      linkText: 'اكتشف الحلويات التقليدية'
+    },
+    {
       id: 'slide-1',
       tag: 'إبداع يدوي بالورود الطبيعية',
       titlePart1: 'كعكات شهية ومميزة',
@@ -43,7 +55,21 @@ export const HomeView: React.FC<HomeViewProps> = ({
       subtitle:
         'تُصنع يدوياً بكل شغف وحب باستخدام أرقى المكونات الطبيعية الفاخرة. اطلب كعكتك المفضلة أونلاين واستلمها طازجة ومبردة إلى باب منزلك عبر الـ 69 ولاية.',
       image: '/images/pink_flower_hero_cake.jpg',
-      badge: 'الأكثر طلباً للأعياد'
+      badge: 'الأكثر طلباً للأعياد',
+      linkTab: 'marketplace',
+      linkText: 'تسوق الآن'
+    },
+    {
+      id: 'slide-baklawa',
+      tag: 'مذاق قسنطينة الأسطوري',
+      titlePart1: 'بقلاوة قسنطينية ملكية',
+      titlePart2: 'مورقة باللوز والجوز والعسل الحر',
+      subtitle:
+        'طبقات رقيقة ومقرمشة بالسمن الطبيعي، محشوة بقلب اللوز والجوز المحمص ومسقية بالعسل الصافي، مقطعة هندسياً ومزينة بحبات لوز ذهبية تليق بأبهى مناسباتكم.',
+      image: '/images/traditional_baklawa.jpg',
+      badge: 'عسل حر 100%',
+      linkTab: 'traditional',
+      linkText: 'طلب البقلاوة الملكية'
     },
     {
       id: 'slide-2',
@@ -53,7 +79,21 @@ export const HomeView: React.FC<HomeViewProps> = ({
       subtitle:
         'تحفة ملكية فاخرة مزينة بزهور الباستيل، ورق الذهب الخالص عيار 24 قيراط ولآلئ السكر المنسدلة على قاعدة شامبانيا ساحرة.',
       image: '/images/hero_wedding_cake.jpg',
-      badge: 'كعكة ملكية فاخرة'
+      badge: 'كعكة ملكية فاخرة',
+      linkTab: 'marketplace',
+      linkText: 'تسوق الآن'
+    },
+    {
+      id: 'slide-makroud',
+      tag: 'حلوى العاصمة البيضاء',
+      titlePart1: 'مقروط اللوز العاصمي',
+      titlePart2: 'يذوب في الفم بماء الزهر والليمون',
+      subtitle:
+        'حلوى ملوكية جزائرية لا تغيب عن بهجة الأعراس والمناسبات السعيدة، غنية بنكهة قشور الليمون الطازجة وماء زهر البرتقال ومغلفة بنعومة السكر الأبيض.',
+      image: '/images/traditional_makroud_el_louz.jpg',
+      badge: 'طراوة ومذاق ساحر',
+      linkTab: 'traditional',
+      linkText: 'طلب مقروط اللوز'
     },
     {
       id: 'slide-3',
@@ -63,7 +103,9 @@ export const HomeView: React.FC<HomeViewProps> = ({
       subtitle:
         'طبقات إسفنجية غنية بكاكاو 70%، حشوة البراليني المقرمشة بالبندق المحمص وصوص الشوكولاتة المرآة اللامع المذهب.',
       image: '/images/chocolate_praline_layer_cake.jpg',
-      badge: 'مذاق استثنائي'
+      badge: 'مذاق استثنائي',
+      linkTab: 'marketplace',
+      linkText: 'تسوق الآن'
     }
   ];
 
@@ -380,23 +422,33 @@ export const HomeView: React.FC<HomeViewProps> = ({
 
             {/* أزرار الإجراء السريع CTA */}
             <div className="flex flex-wrap items-center gap-4 pt-2">
-              {/* زر تسوق الآن الوردي الصلب */}
+              {/* زر الإجراء الأساسي */}
               <button
-                onClick={() => onNavigate('marketplace')}
+                onClick={() => onNavigate(activeSlide.linkTab || 'marketplace')}
                 className="px-8 py-3.5 bg-[#E84375] hover:bg-[#D83264] text-white font-bold rounded-xl text-sm shadow-md shadow-pink-200/80 transition-all duration-300 hover:scale-[1.02] flex items-center justify-center gap-2 group cursor-pointer"
               >
-                <span>تسوق الآن</span>
+                <span>{activeSlide.linkText || 'تسوق الآن'}</span>
                 <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
               </button>
 
-              {/* زر صمّم كعكتك الأبيض ذو الإطار الأنيق */}
-              <button
-                onClick={() => onNavigate('customizer')}
-                className="px-7 py-3.5 bg-white/95 hover:bg-white text-stone-800 hover:text-[#E84375] border-2 border-pink-200/80 hover:border-[#E84375] font-bold rounded-xl text-sm shadow-xs transition-all duration-200 flex items-center justify-center gap-2 backdrop-blur-xs cursor-pointer"
-              >
-                <Cake className="w-4 h-4 text-[#E84375]" />
-                <span>صمّم كعكتك ثلاثية الأبعاد (3D)</span>
-              </button>
+              {/* زر الإجراء الثانوي */}
+              {activeSlide.linkTab === 'traditional' ? (
+                <button
+                  onClick={() => onNavigate('marketplace')}
+                  className="px-7 py-3.5 bg-white/95 hover:bg-white text-stone-800 hover:text-[#E84375] border-2 border-pink-200/80 hover:border-[#E84375] font-bold rounded-xl text-sm shadow-xs transition-all duration-200 flex items-center justify-center gap-2 backdrop-blur-xs cursor-pointer"
+                >
+                  <Store className="w-4 h-4 text-[#E84375]" />
+                  <span>تصفح كل المعرض</span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => onNavigate('customizer')}
+                  className="px-7 py-3.5 bg-white/95 hover:bg-white text-stone-800 hover:text-[#E84375] border-2 border-pink-200/80 hover:border-[#E84375] font-bold rounded-xl text-sm shadow-xs transition-all duration-200 flex items-center justify-center gap-2 backdrop-blur-xs cursor-pointer"
+                >
+                  <Cake className="w-4 h-4 text-[#E84375]" />
+                  <span>صمّم كعكتك ثلاثية الأبعاد (3D)</span>
+                </button>
+              )}
             </div>
 
           </div>
