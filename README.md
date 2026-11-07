@@ -1,4 +1,4 @@
-# 🎂 El-Gateau DZ — Plateforme de Haute Pâtisserie & Confiserie en Algérie
+# 🎂 SweetBox DZ — Plateforme de Haute Pâtisserie & Confiserie en Algérie
 
 Plateforme B2C & B2B moderne dédiée au secteur agroalimentaire de la pâtisserie, chocolaterie et confiserie artisanale en Algérie.
 

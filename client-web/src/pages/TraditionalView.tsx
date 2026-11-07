@@ -353,3 +353,4 @@ export const TraditionalView: React.FC<TraditionalViewProps> = ({
     </div>
   );
 };
+

@@ -91,9 +91,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span dir="ltr">+213 550 12 34 56</span>
             </a>
             <span className="hidden md:inline-block text-pink-300">•</span>
-            <a href="mailto:contact@elgateau.dz" className="hidden sm:flex items-center gap-1.5 hover:text-pink-100 transition-colors">
+            <a href="mailto:contact@sweetbox.dz" className="hidden sm:flex items-center gap-1.5 hover:text-pink-100 transition-colors">
               <Mail className="w-3 h-3 text-pink-200" />
-              <span>contact@elgateau.dz</span>
+              <span>contact@sweetbox.dz</span>
             </a>
             <span className="hidden sm:inline-block text-pink-300">•</span>
             <div className="flex items-center gap-2">
@@ -111,10 +111,10 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20 gap-4">
             
-            {/* الشعار والهوية البصرية الوردية (Logo CakeShop / El-Gateau) */}
+            {/* الشعار والهوية البصرية الوردية (Logo SweetBox DZ) */}
             <button 
               onClick={() => handleNavClick('home')}
-              className="flex items-center gap-3 text-right focus:outline-none group flex-shrink-0"
+              className="flex items-center gap-3 text-right focus:outline-none group flex-shrink-0 cursor-pointer"
             >
               <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-[#E84375] to-[#F472B6] flex items-center justify-center text-white shadow-md shadow-pink-200 group-hover:scale-105 transition-all duration-300">
                 <Cake className="w-6 h-6 text-white" />
@@ -123,7 +123,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <div className="flex flex-col justify-center">
                 <div className="flex items-baseline gap-1.5">
                   <span className="text-2xl font-serif font-bold tracking-tight text-stone-900 leading-none group-hover:text-[#E84375] transition-colors">
-                    CakeShop
+                    SweetBox
                   </span>
                   <span className="text-sm font-bold text-[#E84375] font-mono leading-none">
                     .DZ

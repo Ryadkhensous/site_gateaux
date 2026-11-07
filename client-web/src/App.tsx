@@ -175,7 +175,7 @@ export const App: React.FC = () => {
         onGoToShop={() => setCurrentTab('marketplace')}
       />
 
-      {/* تذييل الصفحة الأنيق المطابق لموكاب CakeShop الوردي الناعم (Footer) */}
+      {/* تذييل الصفحة الأنيق المطابق لموكاب SweetBox الوردي الناعم (Footer) */}
       <footer className="bg-white text-stone-700 pt-16 pb-8 border-t border-pink-100 text-right mt-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           
@@ -187,7 +187,7 @@ export const App: React.FC = () => {
               </div>
               <div>
                 <span className="text-xl font-serif font-bold text-stone-900 block leading-tight">
-                  CakeShop <span className="text-[#E84375] text-sm">.DZ</span>
+                  SweetBox <span className="text-[#E84375] text-sm">.DZ</span>
                 </span>
                 <span className="text-[10px] text-stone-400 font-sans block">
                   — مخبوز بكل حب وإتقان —
@@ -326,7 +326,7 @@ export const App: React.FC = () => {
         {/* الشريط السفلي لحقوق النشر ووسائل الدفع الجزائرية (Bottom Bar) */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 mt-10 border-t border-stone-100 flex flex-wrap justify-between items-center gap-4 text-xs text-stone-400">
           <p>
-            © 2026 CakeShop DZ (El-Gateau DZ). جميع الحقوق محفوظة. صُمم بحب في الجزائر.
+            © 2026 SweetBox DZ (سويت بوكس الجزائر). جميع الحقوق محفوظة. صُمم بحب في الجزائر.
           </p>
 
           {/* أيقونات وشارات الدفع المعتمدة */}
