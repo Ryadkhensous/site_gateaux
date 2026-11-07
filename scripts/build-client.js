@@ -25,3 +25,4 @@ if (fs.existsSync(rootDist)) {
 fs.cpSync(clientDist, rootDist, { recursive: true });
 
 console.log('===> [Vercel Root Build] Successfully completed! dist ready for Vercel.');
+
