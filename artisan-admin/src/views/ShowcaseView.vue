@@ -9,7 +9,10 @@ import {
   Sparkles,
   UploadCloud,
   Trash2,
-  Image as ImageIcon
+  Image as ImageIcon,
+  MapPin,
+  Phone,
+  Star
 } from 'lucide-vue-next';
 import { formatDZD } from '../utils/format';
 
@@ -153,12 +156,21 @@ const getCategoryLabel = (cat: string) => {
           <p class="text-xs text-stone-600 leading-relaxed font-light">
             {{ store.currentArtisan.bioAr || store.currentArtisan.bio }}
           </p>
-          <div class="flex flex-wrap gap-2 pt-1 text-xs text-stone-500">
-            <span>📍 {{ store.currentArtisan.address }} (ولاية {{ store.currentArtisan.wilayaCode.toString().padStart(2, '0') }})</span>
+          <div class="flex flex-wrap items-center gap-3 pt-1 text-xs text-stone-500">
+            <span class="flex items-center gap-1">
+              <MapPin class="w-3.5 h-3.5 text-[#E84375]" />
+              {{ store.currentArtisan.address }} (ولاية {{ store.currentArtisan.wilayaCode.toString().padStart(2, '0') }})
+            </span>
             <span>•</span>
-            <span class="font-mono text-left" dir="ltr">📞 {{ store.currentArtisan.phone }}</span>
+            <span class="font-mono text-left flex items-center gap-1" dir="ltr">
+              <Phone class="w-3.5 h-3.5 text-stone-400" />
+              {{ store.currentArtisan.phone }}
+            </span>
             <span>•</span>
-            <span class="font-bold text-dore-700">★ {{ store.currentArtisan.rating }} ({{ store.currentArtisan.reviewsCount }} تقييم)</span>
+            <span class="font-bold text-stone-700 flex items-center gap-1">
+              <Star class="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+              {{ store.currentArtisan.rating }} ({{ store.currentArtisan.reviewsCount }} تقييم)
+            </span>
           </div>
         </div>
       </div>

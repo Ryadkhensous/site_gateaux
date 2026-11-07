@@ -236,7 +236,6 @@ export const App: React.FC = () => {
               <li>
                 <button onClick={() => handleNavigate('marketplace', 'TRADITIONNEL')} className="hover:text-[#E84375] transition-colors cursor-pointer flex items-center gap-1.5 text-amber-700 font-bold">
                   <span>حلويات تقليدية جزائرية</span>
-                  <span className="text-amber-500 text-xs">✨</span>
                 </button>
               </li>
               <li>
@@ -326,7 +325,7 @@ export const App: React.FC = () => {
 
             {newsletterSubscribed && (
               <span className="text-[11px] text-emerald-600 font-bold block mt-2 text-center">
-                ✓ تم اشتراكك بنجاح في النشرة البريدية!
+                تم اشتراكك بنجاح في النشرة البريدية!
               </span>
             )}
           </div>

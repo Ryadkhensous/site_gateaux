@@ -37,7 +37,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
   const heroSlides = [
     {
       id: 'slide-traditional-tray',
-      tag: '🇩🇿 أصالة وتراث الأجداد الجزائري',
+      tag: 'أصالة وتراث الأجداد الجزائري',
       titlePart1: 'حلويات جزائرية تقليدية',
       titlePart2: 'صواني الضيافة والأعراس الفاخرة',
       subtitle:
@@ -626,8 +626,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
 
                   {/* تقييم النجوم: 5 نجوم ذهبية مع عدد التقييمات */}
                   <div className="flex items-center gap-1.5 mt-2">
-                    <div className="flex text-amber-400 text-xs">
-                      {'★'.repeat(5)}
+                    <div className="flex text-amber-400 gap-0.5">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                      ))}
                     </div>
                     <span className="text-[11px] text-stone-500 font-medium">
                       ({item.reviewsCount} تقييم ممتاز)
@@ -666,7 +668,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
               <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-pink-100 text-[#E84375] text-xs font-bold mb-2 border border-pink-200">
-                <span>🇩🇿 أصالة وتراث الأجداد</span>
+                <span>أصالة وتراث الأجداد</span>
               </div>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-stone-900 tracking-tight">
                 الحلويات التقليدية الجزائرية

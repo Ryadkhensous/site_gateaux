@@ -133,10 +133,10 @@ export const CakeCustomizer: React.FC<CakeCustomizerProps> = ({
 
   // خيارات الزينة والورود
   const toppingOptions = [
-    { name: 'تاج من 8 حبات ماكارون مشكلة', price: 1400, icon: '🍬' },
-    { name: 'باقة ورود طبيعية معقمة صالحة للحلويات', price: 2200, icon: '🌸' },
-    { name: 'تذهيب بورق الذهب الخالص عيار 24 قيراط', price: 1800, icon: '✨' },
-    { name: 'شلال دريب ذهبي أو شوكولاتة مرآة لامعة', price: 800, icon: '🍯' }
+    { name: 'تاج من 8 حبات ماكارون مشكلة', price: 1400, icon: Crown },
+    { name: 'باقة ورود طبيعية معقمة صالحة للحلويات', price: 2200, icon: Heart },
+    { name: 'تذهيب بورق الذهب الخالص عيار 24 قيراط', price: 1800, icon: Sparkles },
+    { name: 'شلال دريب ذهبي أو شوكولاتة مرآة لامعة', price: 800, icon: Award }
   ];
 
   // خيارات الإضافات ثلاثية الأبعاد والصور
@@ -298,9 +298,9 @@ export const CakeCustomizer: React.FC<CakeCustomizerProps> = ({
                 {/* طبقة رقائق الذهب المتحركة إذا تم اختيار تذهيب الذهب 24k */}
                 {selectedToppings.includes('تذهيب بورق الذهب الخالص عيار 24 قيراط') && (
                   <div className="absolute inset-0 pointer-events-none flex justify-around items-center">
-                    <span className="text-amber-300 text-sm animate-ping opacity-75">✦</span>
-                    <span className="text-amber-200 text-xs animate-pulse opacity-90">✦</span>
-                    <span className="text-amber-400 text-base animate-pulse opacity-80">✦</span>
+                    <Sparkles className="w-5 h-5 text-amber-300 animate-ping opacity-75" />
+                    <Sparkles className="w-4 h-4 text-amber-200 animate-pulse opacity-90" />
+                    <Sparkles className="w-6 h-6 text-amber-400 animate-pulse opacity-80" />
                   </div>
                 )}
 
@@ -308,7 +308,7 @@ export const CakeCustomizer: React.FC<CakeCustomizerProps> = ({
                 {selected3DExtra.includes('توبر أكريليك') && (
                   <div className="absolute top-7 inset-x-0 flex flex-col items-center z-30 animate-float pointer-events-none will-change-transform transform-gpu">
                     <div className="px-5 py-2 rounded-full bg-gradient-to-l from-[#BF953F] via-[#FCF6BA] to-[#B38728] text-stone-900 text-xs font-serif font-extrabold shadow-xl border border-[#FBF5B7] tracking-wider text-center max-w-[260px] truncate drop-shadow-md">
-                      ✨ {messageOnCake.slice(0, 22) || 'ألف مبروك'} ✨
+                      {messageOnCake.slice(0, 22) || 'ألف مبروك'}
                     </div>
                     {/* ساق التوبر الشفاف في الكعكة */}
                     <div className="w-1 h-6 bg-gradient-to-b from-[#B38728] to-transparent opacity-90 shadow-sm"></div>
@@ -318,7 +318,8 @@ export const CakeCustomizer: React.FC<CakeCustomizerProps> = ({
                 {/* شارة المجسم السكري 3D */}
                 {selected3DExtra.includes('مجسم سكري') && (
                   <div className="absolute top-4 left-4 z-30 bg-white/95 px-3 py-1.5 rounded-full border border-dore-300 shadow-md flex items-center gap-1.5 text-xs font-bold text-stone-900 animate-float will-change-transform transform-gpu">
-                    <span>👑 مجسم سكري 3D منحوت</span>
+                    <Crown className="w-3.5 h-3.5 text-amber-500" />
+                    <span>مجسم سكري 3D منحوت</span>
                   </div>
                 )}
 
@@ -359,7 +360,7 @@ export const CakeCustomizer: React.FC<CakeCustomizerProps> = ({
                 {/* توبر الأكريليك في المخطط */}
                 {selected3DExtra.includes('توبر أكريليك') && (
                   <div className="absolute top-8 px-4 py-1 rounded-full bg-gradient-to-l from-[#D4AF37] via-[#F3E5AB] to-[#D4AF37] text-stone-900 text-xs font-serif font-bold shadow-md border border-[#C5A028] z-30 animate-float">
-                    ✨ {messageOnCake.slice(0, 20) || 'ألف مبروك'} ✨
+                    {messageOnCake.slice(0, 20) || 'ألف مبروك'}
                   </div>
                 )}
 
@@ -493,7 +494,7 @@ export const CakeCustomizer: React.FC<CakeCustomizerProps> = ({
             >
               {artisans.map((art) => (
                 <option key={art.id} value={art.id}>
-                  {art.storeNameAr || art.storeName} ({art.wilayaNameAr || art.wilayaName} - ولاية {art.wilayaCode.toString().padStart(2, '0')}) • تقييم ★ {art.rating}
+                  {art.storeNameAr || art.storeName} ({art.wilayaNameAr || art.wilayaName} - ولاية {art.wilayaCode.toString().padStart(2, '0')}) • تقييم {art.rating} / 5
                 </option>
               ))}
             </select>
@@ -682,7 +683,9 @@ export const CakeCustomizer: React.FC<CakeCustomizerProps> = ({
                       }`}
                     >
                       <div className="flex items-center gap-2.5">
-                        <span className="text-xl">{top.icon}</span>
+                        <div className="w-8 h-8 rounded-xl bg-pink-50 text-[#E84375] flex items-center justify-center flex-shrink-0 shadow-2xs">
+                          {React.createElement(top.icon, { className: 'w-4 h-4 text-[#E84375]' })}
+                        </div>
                         <div>
                           <span className="text-xs font-bold text-stone-900 block">{top.name}</span>
                           {renderPrice(top.price, '+')}

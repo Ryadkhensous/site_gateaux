@@ -269,8 +269,8 @@ export const OrderModal: React.FC<OrderModalProps> = ({
               {isAuthenticated && user && (
                 <div className="p-3 bg-pink-50/70 border border-pink-200/80 rounded-xl flex items-center justify-between text-xs text-stone-800">
                   <div className="flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-full bg-[#E84375] text-white flex items-center justify-center text-[10px] font-bold">
-                      ✓
+                    <span className="w-6 h-6 rounded-full bg-[#E84375] text-white flex items-center justify-center shadow-xs">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-white" />
                     </span>
                     <span>
                       مرحباً <strong className="text-[#E84375]">{user.fullName}</strong>، تم ملء بياناتك وعنوانك تلقائياً!

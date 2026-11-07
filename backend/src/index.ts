@@ -171,8 +171,8 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 });
 
 server.listen(PORT, async () => {
-  console.log(`🚀 Serveur Backend Pâtisserie Algérie actif sur : http://localhost:${PORT}`);
-  console.log(`🔒 Sécurité activée : Helmet, Rate-Limit, CORS sécurisé, Sanitization`);
-  console.log(`⚡ Performance : Compression Brotli/Gzip, Cache-Control HTTP`);
+  console.log(`[SweetBox DZ Backend] Serveur actif sur : http://localhost:${PORT}`);
+  console.log(`[SweetBox DZ Backend] Securite activee : Helmet, Rate-Limit, CORS securise, Sanitization`);
+  console.log(`[SweetBox DZ Backend] Performance : Compression Brotli/Gzip, Cache-Control HTTP`);
   await seedDatabaseIfEmpty();
 });

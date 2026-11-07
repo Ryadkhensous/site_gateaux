@@ -98,19 +98,19 @@ export const TraditionalView: React.FC<TraditionalViewProps> = ({
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
               <div className="p-3 bg-white rounded-xl border border-pink-100/80 shadow-2xs flex items-center gap-2.5">
                 <span className="w-7 h-7 rounded-lg bg-pink-50 text-[#E84375] flex items-center justify-center font-bold text-xs flex-shrink-0">
-                  🍯
+                  <Award className="w-4 h-4 text-[#E84375]" />
                 </span>
                 <span className="text-xs font-bold text-stone-800">عسل حر ولوز بلدي</span>
               </div>
               <div className="p-3 bg-white rounded-xl border border-pink-100/80 shadow-2xs flex items-center gap-2.5">
                 <span className="w-7 h-7 rounded-lg bg-pink-50 text-[#E84375] flex items-center justify-center font-bold text-xs flex-shrink-0">
-                  🏛️
+                  <ShieldCheck className="w-4 h-4 text-[#E84375]" />
                 </span>
                 <span className="text-xs font-bold text-stone-800">وصفات أصيلة متوارثة</span>
               </div>
               <div className="p-3 bg-white rounded-xl border border-pink-100/80 shadow-2xs flex items-center gap-2.5 col-span-2 sm:col-span-1">
                 <span className="w-7 h-7 rounded-lg bg-pink-50 text-[#E84375] flex items-center justify-center font-bold text-xs flex-shrink-0">
-                  🚚
+                  <Truck className="w-4 h-4 text-[#E84375]" />
                 </span>
                 <span className="text-xs font-bold text-stone-800">شحن مبرد لـ 69 ولاية</span>
               </div>
@@ -211,8 +211,8 @@ export const TraditionalView: React.FC<TraditionalViewProps> = ({
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {traditionalProducts.length === 0 ? (
           <div className="text-center py-16 bg-white rounded-3xl border border-pink-100 p-8 space-y-4">
-            <div className="w-16 h-16 mx-auto rounded-full bg-pink-50 text-[#E84375] flex items-center justify-center text-2xl font-bold">
-              🍯
+            <div className="w-16 h-16 mx-auto rounded-full bg-pink-50 text-[#E84375] flex items-center justify-center">
+              <Sparkles className="w-8 h-8 text-[#E84375]" />
             </div>
             <h3 className="text-lg font-bold text-stone-800">لا توجد منتجات تقليدية مطابقة في هذه الولاية حالياً</h3>
             <p className="text-xs text-stone-500 max-w-md mx-auto">

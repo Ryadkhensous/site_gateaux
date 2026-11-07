@@ -187,7 +187,7 @@ const getStatusBadge = (status: string) => {
                 {{ new Date(order.eventDate).toLocaleDateString('ar-DZ') }}
               </span>
               <span class="text-[10px] text-rose-600 block">
-                {{ order.paymentMethod === 'CASH_ON_DELIVERY' ? '💵 نقداً عند الاستلام' : '💳 بطاقة بنكية' }}
+                {{ order.paymentMethod === 'CASH_ON_DELIVERY' ? 'الدفع نقداً عند الاستلام' : 'بطاقة بنكية' }}
               </span>
             </div>
           </div>
@@ -275,7 +275,7 @@ const getStatusBadge = (status: string) => {
                   :key="step.stepId"
                   :value="step.stepId"
                 >
-                  المرحلة {{ step.stepId }} : {{ step.titleAr || step.title }} {{ step.completed ? '(مكتملة ✓)' : '' }}
+                  المرحلة {{ step.stepId }} : {{ step.titleAr || step.title }} {{ step.completed ? '(مكتملة)' : '' }}
                 </option>
               </select>
             </div>
@@ -298,7 +298,7 @@ const getStatusBadge = (status: string) => {
               <div v-if="photoProofInput" class="p-2.5 bg-rose-50 border border-rose-200 rounded-xl flex items-center justify-between gap-2 mb-2">
                 <div class="flex items-center gap-2 overflow-hidden">
                   <img :src="photoProofInput" alt="معاينة الإثبات" class="w-12 h-12 rounded-lg object-cover border border-rose-300 flex-shrink-0 bg-white" />
-                  <span class="text-xs text-stone-800 font-bold truncate">تم تحديد صورة الإثبات بنجاح ✓</span>
+                  <span class="text-xs text-stone-800 font-bold truncate">تم تحديد صورة الإثبات بنجاح</span>
                 </div>
                 <div class="flex items-center gap-1">
                   <button type="button" @click="triggerProofFileInput" class="px-2 py-1 bg-white text-stone-700 text-[10px] font-bold rounded border border-beige-300">

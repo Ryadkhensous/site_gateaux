@@ -132,10 +132,10 @@ export const TrackingView: React.FC<TrackingViewProps> = ({ initialOrderNumber =
                 </div>
                 <span className="text-[11px] text-rose-600 font-semibold block mt-1">
                   {order.paymentMethod === 'CASH_ON_DELIVERY' 
-                    ? '💵 الدفع نقداً عند الاستلام' 
+                    ? 'الدفع نقداً عند الاستلام' 
                     : order.paymentMethod === 'BARIDIMOB'
-                    ? '📱 بريدي موب (BaridiMob)'
-                    : '💳 البطاقة الذهبية / CIB'}
+                    ? 'بريدي موب (BaridiMob)'
+                    : 'البطاقة الذهبية / CIB'}
                 </span>
               </div>
             </div>

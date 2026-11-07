@@ -106,7 +106,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
     setSaving(false);
 
     if (res.success) {
-      setSuccessMsg('تم حفظ وتحديث معلوماتك بنجاح! ✨');
+      setSuccessMsg('تم حفظ وتحديث معلوماتك بنجاح!');
       setNewPassword('');
       setConfirmPassword('');
       setTimeout(() => setSuccessMsg(null), 4000);

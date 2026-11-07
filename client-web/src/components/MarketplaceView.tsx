@@ -14,7 +14,9 @@ import {
   Award,
   Truck,
   Layers,
-  ChevronDown
+  ChevronDown,
+  Cake,
+  Building2
 } from 'lucide-react';
 import { Artisan, Product, Wilaya } from '../types';
 import { formatDZD } from '../utils/format';
@@ -67,10 +69,10 @@ export const MarketplaceView: React.FC<MarketplaceViewProps> = ({
   };
 
   const categories = [
-    { id: 'ALL', label: 'كافة الإبداعات', icon: '🍰' },
-    { id: 'TRADITIONNEL', label: 'حلويات تقليدية جزائرية ✨', isSpecial: true, icon: '🍯' },
-    { id: 'MARIAGE', label: 'أعراس ومناسبات كبرى', icon: '💍' },
-    { id: 'B2B_ENTREPRISE', label: 'بوفيهات وشركات B2B', icon: '🏢' }
+    { id: 'ALL', label: 'كافة الإبداعات', icon: Store },
+    { id: 'TRADITIONNEL', label: 'حلويات تقليدية جزائرية', isSpecial: true, icon: Sparkles },
+    { id: 'MARIAGE', label: 'أعراس ومناسبات كبرى', icon: Cake },
+    { id: 'B2B_ENTREPRISE', label: 'بوفيهات وشركات B2B', icon: Building2 }
   ];
 
   // تصفية المنتجات بذكاء مع دعم الحلويات التقليدية والمرشحات الفرعية
@@ -166,19 +168,19 @@ export const MarketplaceView: React.FC<MarketplaceViewProps> = ({
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
                 <div className="p-3 bg-white rounded-xl border border-pink-100/80 shadow-2xs flex items-center gap-2.5">
                   <span className="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center font-bold text-sm flex-shrink-0">
-                    🍯
+                    <Award className="w-4 h-4 text-amber-600" />
                   </span>
                   <span className="text-xs font-bold text-stone-800">عسل حر ولوز بلدي</span>
                 </div>
                 <div className="p-3 bg-white rounded-xl border border-pink-100/80 shadow-2xs flex items-center gap-2.5">
                   <span className="w-8 h-8 rounded-lg bg-pink-50 text-[#E84375] flex items-center justify-center font-bold text-sm flex-shrink-0">
-                    🏛️
+                    <ShieldCheck className="w-4 h-4 text-[#E84375]" />
                   </span>
                   <span className="text-xs font-bold text-stone-800">وصفات أصيلة متوارثة</span>
                 </div>
                 <div className="p-3 bg-white rounded-xl border border-pink-100/80 shadow-2xs flex items-center gap-2.5 col-span-2 sm:col-span-1">
                   <span className="w-8 h-8 rounded-lg bg-pink-50 text-[#E84375] flex items-center justify-center font-bold text-sm flex-shrink-0">
-                    🚚
+                    <Truck className="w-4 h-4 text-[#E84375]" />
                   </span>
                   <span className="text-xs font-bold text-stone-800">توصيل مبرد لـ 69 ولاية</span>
                 </div>
@@ -253,6 +255,7 @@ export const MarketplaceView: React.FC<MarketplaceViewProps> = ({
         <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
           {categories.map((cat) => {
             const isSelected = selectedCategory === cat.id;
+            const CategoryIcon = cat.icon;
             return (
               <button
                 key={cat.id}
@@ -267,7 +270,7 @@ export const MarketplaceView: React.FC<MarketplaceViewProps> = ({
                     : 'bg-white text-stone-700 hover:bg-pink-50 hover:text-[#E84375] border border-pink-100'
                 }`}
               >
-                <span>{cat.icon}</span>
+                <CategoryIcon className="w-3.5 h-3.5" />
                 <span>{cat.label}</span>
               </button>
             );
@@ -277,8 +280,8 @@ export const MarketplaceView: React.FC<MarketplaceViewProps> = ({
         {/* فلاتر فرعية إضافية خاصة بالحلويات التقليدية الجزائريّة */}
         {selectedCategory === 'TRADITIONNEL' && (
           <div className="bg-amber-50/50 p-3 rounded-2xl border border-amber-200/80 flex flex-wrap items-center gap-2">
-            <span className="text-xs font-bold text-amber-900 pl-2 flex items-center gap-1">
-              <span>🏺</span>
+            <span className="text-xs font-bold text-amber-900 pl-2 flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-amber-700" />
               <span>أصناف التراث:</span>
             </span>
             <button
@@ -380,8 +383,8 @@ export const MarketplaceView: React.FC<MarketplaceViewProps> = ({
         {activeTab === 'creations' ? (
           filteredProducts.length === 0 ? (
             <div className="text-center py-16 bg-white rounded-3xl border border-pink-100 p-8 space-y-4 shadow-sm">
-              <div className="w-16 h-16 mx-auto rounded-full bg-pink-50 text-[#E84375] flex items-center justify-center text-2xl font-bold">
-                🍰
+              <div className="w-16 h-16 mx-auto rounded-full bg-pink-50 text-[#E84375] flex items-center justify-center shadow-xs">
+                <Store className="w-8 h-8 text-[#E84375]" />
               </div>
               <h3 className="text-lg font-bold text-stone-800">لا توجد حلويات مطابقة لخيارات الفلترة الحالية</h3>
               <p className="text-xs text-stone-500 max-w-md mx-auto">
@@ -443,7 +446,7 @@ export const MarketplaceView: React.FC<MarketplaceViewProps> = ({
                       <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
                         {isTraditional ? (
                           <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500 text-white shadow-xs">
-                            أصالة جزائرية 🇩🇿
+                            أصالة جزائرية
                           </span>
                         ) : (
                           <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white/95 text-stone-800 shadow-xs backdrop-blur-xs border border-pink-100">

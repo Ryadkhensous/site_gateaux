@@ -88,7 +88,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <Truck className="w-3.5 h-3.5" />
             </span>
             <span className="font-medium text-[11px] sm:text-xs">
-              توصيل السعادة والمذاق الرفيع إلى باب بيتكم في كافة الـ 69 ولاية! 🍰
+              توصيل السعادة والمذاق الرفيع إلى باب بيتكم في كافة الـ 69 ولاية!
             </span>
           </div>
 
@@ -207,7 +207,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                         className="w-full text-right p-2.5 rounded-xl hover:bg-amber-50/70 transition-colors flex items-start gap-3 group cursor-pointer border border-amber-100/60 bg-amber-50/20"
                       >
                         <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 to-amber-400 text-white flex items-center justify-center flex-shrink-0 shadow-xs">
-                          <span className="text-sm">✨</span>
+                          <Sparkles className="w-4 h-4 text-white" />
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center justify-between">
@@ -215,7 +215,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                               حلويات تقليدية جزائرية
                             </span>
                             <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-800">
-                              أصالة 🇩🇿
+                              أصالة جزائرية
                             </span>
                           </div>
                           <div className="text-[10px] text-stone-500 font-light mt-0.5">
@@ -491,11 +491,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                 }`}
               >
                 <span className="flex items-center gap-1.5">
-                  <span className="text-amber-500">✨</span>
+                  <Sparkles className="w-3.5 h-3.5 text-amber-500" />
                   <span>حلويات تقليدية جزائرية</span>
                 </span>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">
-                  أصالة 🇩🇿
+                  أصالة جزائرية
                 </span>
               </button>
             </div>
