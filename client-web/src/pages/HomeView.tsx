@@ -21,7 +21,7 @@ import { Artisan, Product } from '../types';
 import { formatDZD } from '../utils/format';
 
 interface HomeViewProps {
-  onNavigate: (tab: string) => void;
+  onNavigate: (tab: string, category?: string) => void;
   featuredProducts?: Product[];
   artisans?: Artisan[];
   onSelectProductToOrder?: (product: Product) => void;
@@ -542,9 +542,11 @@ export const HomeView: React.FC<HomeViewProps> = ({
               key={cat.id}
               onClick={() => {
                 if (cat.filter === 'TRADITIONNEL') {
-                  onNavigate('traditional');
+                  onNavigate('marketplace', 'TRADITIONNEL');
+                } else if (cat.filter === 'MARIAGE' || cat.filter === 'ANNIVERSAIRE') {
+                  onNavigate('marketplace', cat.filter);
                 } else {
-                  onNavigate('marketplace');
+                  onNavigate('marketplace', 'ALL');
                 }
               }}
               className="flex flex-col items-center group cursor-pointer"
@@ -675,7 +677,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
             </div>
 
             <button
-              onClick={() => onNavigate('traditional')}
+              onClick={() => onNavigate('marketplace', 'TRADITIONNEL')}
               className="px-6 py-2.5 bg-white hover:bg-[#E84375] text-[#E84375] hover:text-white border-2 border-[#E84375] rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-2xs self-start md:self-auto cursor-pointer"
             >
               <span>استكشف كافة الحلويات التقليدية</span>

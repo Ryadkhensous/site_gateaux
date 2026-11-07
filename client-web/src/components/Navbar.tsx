@@ -23,7 +23,8 @@ import { useAuth } from '../context/AuthContext';
 
 interface NavbarProps {
   currentTab: string;
-  setCurrentTab: (tab: string) => void;
+  setCurrentTab: (tab: string, category?: string) => void;
+  marketplaceCategory?: string;
   wilayas: Wilaya[];
   selectedWilaya: number;
   setSelectedWilaya: (code: number) => void;
@@ -35,6 +36,7 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({
   currentTab,
   setCurrentTab,
+  marketplaceCategory = 'ALL',
   wilayas,
   selectedWilaya,
   setSelectedWilaya,
@@ -43,16 +45,21 @@ export const Navbar: React.FC<NavbarProps> = ({
   onSearchOrder
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [shopDropdownOpen, setShopDropdownOpen] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
   const { user, isAuthenticated, openAuthModal, openProfileModal, logout } = useAuth();
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const shopDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setUserDropdownOpen(false);
+      }
+      if (shopDropdownRef.current && !shopDropdownRef.current.contains(event.target as Node)) {
+        setShopDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -63,9 +70,10 @@ export const Navbar: React.FC<NavbarProps> = ({
     ? 'http://localhost:5174'
     : 'https://artisan-admin-xi.vercel.app';
 
-  const handleNavClick = (tab: string) => {
-    setCurrentTab(tab);
+  const handleNavClick = (tab: string, category?: string) => {
+    setCurrentTab(tab, category);
     setMobileMenuOpen(false);
+    setShopDropdownOpen(false);
   };
 
   return (
@@ -149,30 +157,93 @@ export const Navbar: React.FC<NavbarProps> = ({
                 الرئيسية
               </button>
 
-              {/* المتجر (Shop) */}
-              <button
-                onClick={() => handleNavClick('marketplace')}
-                className={`px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-200 ${
-                  currentTab === 'marketplace'
-                    ? 'text-[#E84375] bg-pink-50/80 font-extrabold'
-                    : 'text-stone-700 hover:text-[#E84375] hover:bg-pink-50/40'
-                }`}
+              {/* المتجر والحلويات الموحد مع القائمة المنسدلة الذكية (Shop & Sweets Dropdown) */}
+              <div
+                className="relative"
+                ref={shopDropdownRef}
+                onMouseEnter={() => setShopDropdownOpen(true)}
+                onMouseLeave={() => setShopDropdownOpen(false)}
               >
-                المتجر والحلويات
-              </button>
+                <button
+                  onClick={() => handleNavClick('marketplace', 'ALL')}
+                  className={`px-3.5 py-2 rounded-xl text-sm font-bold flex items-center gap-1.5 transition-all duration-200 cursor-pointer ${
+                    currentTab === 'marketplace' || currentTab === 'traditional'
+                      ? 'text-[#E84375] bg-pink-50/80 font-extrabold shadow-2xs'
+                      : 'text-stone-700 hover:text-[#E84375] hover:bg-pink-50/40'
+                  }`}
+                  aria-expanded={shopDropdownOpen}
+                >
+                  <span>المتجر والحلويات</span>
+                  <ChevronDown
+                    className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                      shopDropdownOpen ? 'rotate-180 text-[#E84375]' : 'text-stone-400'
+                    }`}
+                  />
+                </button>
 
-              {/* حلويات تقليدية (Traditional Sweets) */}
-              <button
-                onClick={() => handleNavClick('traditional')}
-                className={`px-3.5 py-2 rounded-xl text-sm font-bold flex items-center gap-1.5 transition-all duration-200 ${
-                  currentTab === 'traditional'
-                    ? 'text-[#E84375] bg-pink-50/80 font-extrabold'
-                    : 'text-stone-700 hover:text-[#E84375] hover:bg-pink-50/40'
-                }`}
-              >
-                <span className="text-amber-500">✨</span>
-                <span>حلويات تقليدية</span>
-              </button>
+                {/* القائمة المنسدلة الفاخرة للحلويات والكعكات */}
+                {shopDropdownOpen && (
+                  <div className="absolute right-0 top-full pt-2 w-72 z-50 animate-fadeIn">
+                    <div className="bg-white rounded-2xl shadow-xl border border-pink-100 p-2 space-y-1 text-right">
+                      <button
+                        onClick={() => handleNavClick('marketplace', 'ALL')}
+                        className="w-full text-right p-2.5 rounded-xl hover:bg-pink-50/70 transition-colors flex items-start gap-3 group cursor-pointer"
+                      >
+                        <div className="w-9 h-9 rounded-xl bg-pink-50 text-[#E84375] group-hover:bg-[#E84375] group-hover:text-white flex items-center justify-center flex-shrink-0 transition-colors shadow-2xs">
+                          <Store className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <div className="text-xs font-bold text-stone-900 group-hover:text-[#E84375] transition-colors">
+                            كافة الحلويات والكعكات
+                          </div>
+                          <div className="text-[10px] text-stone-500 font-light mt-0.5">
+                            تصفح التشكيلة الكاملة والتورتات العصرية
+                          </div>
+                        </div>
+                      </button>
+
+                      <button
+                        onClick={() => handleNavClick('marketplace', 'TRADITIONNEL')}
+                        className="w-full text-right p-2.5 rounded-xl hover:bg-amber-50/70 transition-colors flex items-start gap-3 group cursor-pointer border border-amber-100/60 bg-amber-50/20"
+                      >
+                        <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 to-amber-400 text-white flex items-center justify-center flex-shrink-0 shadow-xs">
+                          <span className="text-sm">✨</span>
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold text-stone-900 group-hover:text-amber-700 transition-colors">
+                              حلويات تقليدية جزائرية
+                            </span>
+                            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-800">
+                              أصالة 🇩🇿
+                            </span>
+                          </div>
+                          <div className="text-[10px] text-stone-500 font-light mt-0.5">
+                            بقلاوة، مقروط اللوز، تشاراك وصواني الأعراس
+                          </div>
+                        </div>
+                      </button>
+
+                      <button
+                        onClick={() => handleNavClick('marketplace', 'MARIAGE')}
+                        className="w-full text-right p-2.5 rounded-xl hover:bg-pink-50/70 transition-colors flex items-start gap-3 group cursor-pointer"
+                      >
+                        <div className="w-9 h-9 rounded-xl bg-pink-50 text-pink-600 group-hover:bg-pink-600 group-hover:text-white flex items-center justify-center flex-shrink-0 transition-colors shadow-2xs">
+                          <Cake className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <div className="text-xs font-bold text-stone-900 group-hover:text-[#E84375] transition-colors">
+                            كعكات الأعراس والمناسبات
+                          </div>
+                          <div className="text-[10px] text-stone-500 font-light mt-0.5">
+                            تصاميم ملكية وطبقات متعددة للأفراح
+                          </div>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
 
               {/* ورشة التصميم 3D (Custom Cake) */}
               <button
@@ -387,26 +458,47 @@ export const Navbar: React.FC<NavbarProps> = ({
               الرئيسية
             </button>
 
-            <button
-              onClick={() => handleNavClick('marketplace')}
-              className={`w-full text-right px-4 py-2.5 rounded-xl text-xs font-bold transition-colors ${
-                currentTab === 'marketplace' ? 'bg-pink-50 text-[#E84375]' : 'text-stone-700 hover:bg-stone-50'
-              }`}
-            >
-              المتجر والحلويات
-            </button>
+            {/* المتجر والحلويات (كتالوج موحد مع خيارات سريعة للشاشات الصغيرة) */}
+            <div className="bg-pink-50/40 rounded-2xl p-2.5 border border-pink-100/80 space-y-1.5">
+              <div className="text-[11px] font-extrabold text-stone-600 px-2 py-1 flex items-center justify-between">
+                <span className="flex items-center gap-1.5">
+                  <Store className="w-3.5 h-3.5 text-[#E84375]" />
+                  <span>المتجر والحلويات</span>
+                </span>
+                <span className="text-[10px] text-pink-600 font-bold bg-pink-100/80 px-2 py-0.5 rounded-full">
+                  الكتالوج الموحد
+                </span>
+              </div>
 
-            <button
-              onClick={() => handleNavClick('traditional')}
-              className={`w-full text-right px-4 py-2.5 rounded-xl text-xs font-bold flex items-center justify-between transition-colors ${
-                currentTab === 'traditional' ? 'bg-pink-50 text-[#E84375]' : 'text-stone-700 hover:bg-stone-50'
-              }`}
-            >
-              <span>حلويات تقليدية جزائرية</span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-pink-100 text-[#E84375]">
-                أصالة
-              </span>
-            </button>
+              <button
+                onClick={() => handleNavClick('marketplace', 'ALL')}
+                className={`w-full text-right px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-colors ${
+                  currentTab === 'marketplace' && marketplaceCategory !== 'TRADITIONNEL'
+                    ? 'bg-white text-[#E84375] shadow-xs'
+                    : 'text-stone-700 hover:bg-white/60'
+                }`}
+              >
+                <span>كافة الحلويات والكعكات</span>
+                <span className="text-[10px] text-stone-400">تصفح الكل</span>
+              </button>
+
+              <button
+                onClick={() => handleNavClick('marketplace', 'TRADITIONNEL')}
+                className={`w-full text-right px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-colors ${
+                  currentTab === 'traditional' || (currentTab === 'marketplace' && marketplaceCategory === 'TRADITIONNEL')
+                    ? 'bg-white text-amber-700 shadow-xs'
+                    : 'text-stone-700 hover:bg-white/60'
+                }`}
+              >
+                <span className="flex items-center gap-1.5">
+                  <span className="text-amber-500">✨</span>
+                  <span>حلويات تقليدية جزائرية</span>
+                </span>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">
+                  أصالة 🇩🇿
+                </span>
+              </button>
+            </div>
 
             <button
               onClick={() => handleNavClick('customizer')}

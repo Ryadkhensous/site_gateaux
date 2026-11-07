@@ -16,6 +16,7 @@ import { Cake, Heart, Send, Store, ShieldCheck, Truck, CreditCard } from 'lucide
 
 export const App: React.FC = () => {
   const [currentTab, setCurrentTab] = useState<string>('home');
+  const [marketplaceCategory, setMarketplaceCategory] = useState<string>('ALL');
   const [wilayas, setWilayas] = useState<Wilaya[]>(WILAYAS_DZ);
   const [selectedWilaya, setSelectedWilaya] = useState<number>(0);
   const [artisans, setArtisans] = useState<Artisan[]>([]);
@@ -30,6 +31,18 @@ export const App: React.FC = () => {
   // Modal State
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
   const [modalConfig, setModalConfig] = useState<any>({});
+
+  const handleNavigate = (tab: string, category?: string) => {
+    if (tab === 'traditional') {
+      setCurrentTab('marketplace');
+      setMarketplaceCategory('TRADITIONNEL');
+    } else {
+      setCurrentTab(tab);
+      if (category) {
+        setMarketplaceCategory(category);
+      }
+    }
+  };
 
   useEffect(() => {
     const loadData = async () => {
@@ -88,7 +101,8 @@ export const App: React.FC = () => {
       {/* شريط الملاحة والتنقل العلوي المتكامل المطابق للتصميم الوردي */}
       <Navbar
         currentTab={currentTab}
-        setCurrentTab={setCurrentTab}
+        setCurrentTab={handleNavigate}
+        marketplaceCategory={marketplaceCategory}
         wilayas={wilayas}
         selectedWilaya={selectedWilaya}
         setSelectedWilaya={setSelectedWilaya}
@@ -101,14 +115,14 @@ export const App: React.FC = () => {
       <main className="flex-1">
         {currentTab === 'home' && (
           <HomeView
-            onNavigate={setCurrentTab}
+            onNavigate={handleNavigate}
             featuredProducts={products}
             artisans={artisans}
             onSelectProductToOrder={handleSelectProductToOrder}
           />
         )}
 
-        {currentTab === 'marketplace' && (
+        {(currentTab === 'marketplace' || currentTab === 'traditional') && (
           <MarketplaceView
             artisans={artisans}
             products={products}
@@ -117,18 +131,8 @@ export const App: React.FC = () => {
             setSelectedWilaya={setSelectedWilaya}
             onSelectProductToOrder={handleSelectProductToOrder}
             onNavigateToCustomizer={() => setCurrentTab('customizer')}
-          />
-        )}
-
-        {currentTab === 'traditional' && (
-          <TraditionalView
-            products={products}
-            artisans={artisans}
-            wilayas={wilayas}
-            selectedWilaya={selectedWilaya}
-            setSelectedWilaya={setSelectedWilaya}
-            onSelectProductToOrder={handleSelectProductToOrder}
-            onNavigateToCustomizer={() => setCurrentTab('customizer')}
+            initialCategory={currentTab === 'traditional' ? 'TRADITIONNEL' : marketplaceCategory}
+            onCategoryChange={(cat) => setMarketplaceCategory(cat)}
           />
         )}
 
@@ -220,13 +224,19 @@ export const App: React.FC = () => {
             </h5>
             <ul className="space-y-2.5 text-xs text-stone-600 font-medium">
               <li>
-                <button onClick={() => setCurrentTab('home')} className="hover:text-[#E84375] transition-colors cursor-pointer">
+                <button onClick={() => handleNavigate('home')} className="hover:text-[#E84375] transition-colors cursor-pointer">
                   الصفحة الرئيسية
                 </button>
               </li>
               <li>
-                <button onClick={() => setCurrentTab('marketplace')} className="hover:text-[#E84375] transition-colors cursor-pointer">
+                <button onClick={() => handleNavigate('marketplace', 'ALL')} className="hover:text-[#E84375] transition-colors cursor-pointer">
                   متجر الكعكات والحلويات
+                </button>
+              </li>
+              <li>
+                <button onClick={() => handleNavigate('marketplace', 'TRADITIONNEL')} className="hover:text-[#E84375] transition-colors cursor-pointer flex items-center gap-1.5 text-amber-700 font-bold">
+                  <span>حلويات تقليدية جزائرية</span>
+                  <span className="text-amber-500 text-xs">✨</span>
                 </button>
               </li>
               <li>
