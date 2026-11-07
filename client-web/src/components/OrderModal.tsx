@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   X, 
   ShieldCheck, 
@@ -20,6 +20,7 @@ import confetti from 'canvas-confetti';
 import { Wilaya } from '../types';
 import { api } from '../services/api';
 import { formatDZD } from '../utils/format';
+import { useAuth } from '../context/AuthContext';
 
 interface OrderModalProps {
   isOpen: boolean;
@@ -38,6 +39,8 @@ export const OrderModal: React.FC<OrderModalProps> = ({
 }) => {
   if (!isOpen) return null;
 
+  const { user, isAuthenticated } = useAuth();
+
   // حالة استمارة الحجز
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
@@ -46,6 +49,16 @@ export const OrderModal: React.FC<OrderModalProps> = ({
   const [showOptionalDoc, setShowOptionalDoc] = useState(false);
   const [deliveryWilayaCode, setDeliveryWilayaCode] = useState<number>(16); // الجزائر العاصمة افتراضياً
   const [deliveryAddress, setDeliveryAddress] = useState('');
+
+  // Pré-remplissage automatique des coordonnées du client connecté
+  useEffect(() => {
+    if (user && isOpen) {
+      if (user.fullName) setCustomerName(user.fullName);
+      if (user.phone) setCustomerPhone(user.phone);
+      if (user.wilayaCode) setDeliveryWilayaCode(user.wilayaCode);
+      if (user.address) setDeliveryAddress(user.address);
+    }
+  }, [user, isOpen]);
   const [eventDate, setEventDate] = useState(() => {
     const d = new Date();
     d.setDate(d.getDate() + 3);
@@ -249,6 +262,20 @@ export const OrderModal: React.FC<OrderModalProps> = ({
               {error && (
                 <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs text-center font-medium">
                   {error}
+                </div>
+              )}
+
+              {/* إشعار ملء البيانات تلقائياً للعميل المسجل */}
+              {isAuthenticated && user && (
+                <div className="p-3 bg-pink-50/70 border border-pink-200/80 rounded-xl flex items-center justify-between text-xs text-stone-800">
+                  <div className="flex items-center gap-2">
+                    <span className="w-6 h-6 rounded-full bg-[#E84375] text-white flex items-center justify-center text-[10px] font-bold">
+                      ✓
+                    </span>
+                    <span>
+                      مرحباً <strong className="text-[#E84375]">{user.fullName}</strong>، تم ملء بياناتك وعنوانك تلقائياً!
+                    </span>
+                  </div>
                 </div>
               )}
 

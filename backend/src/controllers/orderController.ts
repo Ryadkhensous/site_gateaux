@@ -20,8 +20,11 @@ export const createOrder = async (req: Request, res: Response) => {
       isB2B,
       paymentMethod,
       totalPriceDZD,
-      customization
+      customization,
+      clientId
     } = req.body;
+
+    const authenticatedUserId = (req as any).user?.id || clientId || null;
 
     // Assainissement rigoureux des entrées utilisateur (Anti-XSS & Injection)
     const sanitized = sanitizeOrderInput(req.body);
@@ -47,12 +50,13 @@ export const createOrder = async (req: Request, res: Response) => {
       }
     }
 
-    const count = store.orders.length + 1;
-    const orderNumber = `CMD-2026-DZ${count.toString().padStart(3, "0")}`;
+    const randomDigits = Math.floor(1000 + Math.random() * 9000);
+    const orderNumber = `CMD-2026-DZ${randomDigits}`;
 
     const newOrder: OrderItem = {
       id: `ord-dz-${Date.now()}`,
       orderNumber,
+      clientId: authenticatedUserId || undefined,
       artisanId: artisan.id,
       artisanName: artisan.storeName,
       productId: safeProductId || undefined,
@@ -90,6 +94,7 @@ export const createOrder = async (req: Request, res: Response) => {
           data: {
             id: newOrder.id,
             orderNumber: newOrder.orderNumber,
+            clientId: authenticatedUserId,
             artisanId: newOrder.artisanId,
             productId: safeProductId,
             customerName: newOrder.customerName,

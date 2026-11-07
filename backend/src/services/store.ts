@@ -11,6 +11,7 @@ import {
 export interface OrderItem {
   id: string;
   orderNumber: string;
+  clientId?: string;
   artisanId: string;
   artisanName: string;
   productId?: string;
@@ -137,6 +138,7 @@ class MemoryStore {
   public products: ProductData[] = [...INITIAL_PRODUCTS];
   public customizationOptions: CustomizationOption[] = [...CUSTOMIZATION_OPTIONS];
   public orders: OrderItem[] = [];
+  public users: any[] = [];
 
   constructor() {
     this.seedDemoOrders();

@@ -16,6 +16,13 @@ import {
   getOrderByNumberOrId,
   updateOrderStatusAndStep
 } from "../controllers/orderController.js";
+import {
+  register,
+  login,
+  getProfile,
+  updateProfile
+} from "../controllers/authController.js";
+import { requireAuth, optionalAuth } from "../middleware/authMiddleware.js";
 import { prisma, getDbStatus } from "../services/db.js";
 
 export const apiRouter = Router();
@@ -30,10 +37,20 @@ const cacheResponse = (seconds: number) => {
   };
 };
 
+// Rate limiter spécifique pour l'authentification (Anti-Brute Force)
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 30, // Max 30 tentatives par IP
+  message: {
+    success: false,
+    message: "Trop de tentatives de connexion/inscription. Veuillez réessayer dans 15 minutes."
+  }
+});
+
 // Rate limiter spécifique pour la création de commandes (Anti-Spam)
 const createOrderLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 30, // Max 30 commandes par 15 min par IP
+  windowMs: 15 * 60 * 1000,
+  max: 30,
   message: {
     success: false,
     message: "Nombre limite de réservations atteint temporairement. Veuillez patienter."
@@ -50,7 +67,17 @@ const uploadLimiter = rateLimit({
   }
 });
 
-// Routes Wilayas & Catalogue (avec mise en cache HTTP)
+// ==========================================
+// Routes Authentification & Profil Client
+// ==========================================
+apiRouter.post("/auth/register", authLimiter, register);
+apiRouter.post("/auth/login", authLimiter, login);
+apiRouter.get("/auth/me", requireAuth, getProfile);
+apiRouter.put("/auth/profile", requireAuth, updateProfile);
+
+// ==========================================
+// Routes Wilayas & Catalogue
+// ==========================================
 apiRouter.get("/wilayas", cacheResponse(3600), getWilayas);
 apiRouter.get("/artisans", cacheResponse(120), getArtisans);
 apiRouter.get("/artisans/:id", cacheResponse(120), getArtisanById);
@@ -62,13 +89,17 @@ apiRouter.post("/upload", uploadLimiter, uploadImage);
 
 apiRouter.get("/customization-options", cacheResponse(300), getCustomizationOptions);
 
+// ==========================================
 // Routes Commandes & Réservations
-apiRouter.post("/orders", createOrderLimiter, createOrder);
+// ==========================================
+apiRouter.post("/orders", optionalAuth, createOrderLimiter, createOrder);
 apiRouter.get("/orders", getOrders);
 apiRouter.get("/orders/:idOrNumber", getOrderByNumberOrId);
 apiRouter.patch("/orders/:orderId/step", updateOrderStatusAndStep);
 
-// Route de statut & santé de la plateforme
+// ==========================================
+// Route Statut & Santé de la Plateforme
+// ==========================================
 apiRouter.get("/status", async (req: Request, res: Response) => {
   let dbDetails = {
     connected: getDbStatus(),
@@ -99,6 +130,10 @@ apiRouter.get("/status", async (req: Request, res: Response) => {
     currency: "DZD",
     totalWilayas: 69,
     security: "hardened",
+    auth: {
+      jwt: true,
+      roles: ["CLIENT", "ARTISAN", "ADMIN"]
+    },
     database: dbDetails,
     timestamp: new Date().toISOString()
   });

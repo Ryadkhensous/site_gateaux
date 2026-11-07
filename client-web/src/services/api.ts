@@ -1,4 +1,4 @@
-import { Artisan, CustomizationOption, Order, Product, Wilaya } from "../types";
+import { Artisan, CustomizationOption, Order, Product, Wilaya, UserProfile, AuthResponse } from "../types";
 import { WILAYAS_DZ } from "../data/wilayas";
 
 const BACKEND_URL = ((import.meta as any).env?.VITE_API_URL as string) || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://patisserie-dz-db.onrender.com');
@@ -112,12 +112,173 @@ export const api = {
     });
   },
 
+  // ==========================================
+  // Gestion de la Session Client & JWT
+  // ==========================================
+  getToken(): string | null {
+    try {
+      return localStorage.getItem('patisserie_client_token');
+    } catch {
+      return null;
+    }
+  },
+
+  setToken(token: string) {
+    try {
+      localStorage.setItem('patisserie_client_token', token);
+    } catch {}
+  },
+
+  removeToken() {
+    try {
+      localStorage.removeItem('patisserie_client_token');
+      localStorage.removeItem('patisserie_client_user');
+    } catch {}
+  },
+
+  getSavedUser(): UserProfile | null {
+    try {
+      const u = localStorage.getItem('patisserie_client_user');
+      return u ? JSON.parse(u) : null;
+    } catch {
+      return null;
+    }
+  },
+
+  setSavedUser(user: UserProfile) {
+    try {
+      localStorage.setItem('patisserie_client_user', JSON.stringify(user));
+    } catch {}
+  },
+
+  // ==========================================
+  // Authentification Client (Inscription / Connexion)
+  // ==========================================
+  async register(payload: {
+    fullName: string;
+    email: string;
+    phone: string;
+    password: string;
+    wilayaCode?: number;
+    address?: string;
+  }): Promise<AuthResponse> {
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (res.ok && data.success && data.token && data.user) {
+        this.setToken(data.token);
+        this.setSavedUser(data.user);
+      }
+      return data;
+    } catch (err: any) {
+      return { success: false, message: err.message || "Erreur de connexion au serveur" };
+    }
+  },
+
+  async login(payload: {
+    login: string;
+    password: string;
+  }): Promise<AuthResponse> {
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (res.ok && data.success && data.token && data.user) {
+        this.setToken(data.token);
+        this.setSavedUser(data.user);
+      }
+      return data;
+    } catch (err: any) {
+      return { success: false, message: err.message || "Erreur de connexion au serveur" };
+    }
+  },
+
+  async getProfile(): Promise<{ success: boolean; user?: UserProfile; orders?: Order[]; message?: string }> {
+    const token = this.getToken();
+    if (!token) {
+      return { success: false, message: "Non authentifié" };
+    }
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && data.user) {
+          this.setSavedUser(data.user);
+          return data;
+        }
+      } else if (res.status === 401 || res.status === 403) {
+        this.removeToken();
+      }
+    } catch (err: any) {
+      // Fallback avec utilisateur en cache local
+      const saved = this.getSavedUser();
+      if (saved) return { success: true, user: saved, orders: [] };
+    }
+
+    return { success: false, message: "Impossible de charger le profil" };
+  },
+
+  async updateProfile(payload: {
+    fullName?: string;
+    phone?: string;
+    wilayaCode?: number;
+    address?: string;
+    newPassword?: string;
+  }): Promise<{ success: boolean; user?: UserProfile; message?: string }> {
+    const token = this.getToken();
+    if (!token) return { success: false, message: "Non authentifié" };
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/profile`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (res.ok && data.success && data.user) {
+        this.setSavedUser(data.user);
+      }
+      return data;
+    } catch (err: any) {
+      return { success: false, message: err.message || "Erreur de mise à jour" };
+    }
+  },
+
   async createOrder(orderPayload: any): Promise<{ success: boolean; data?: Order; message?: string }> {
+    const token = this.getToken();
+    const savedUser = this.getSavedUser();
+
+    // Attacher automatiquement le token et l'id client si connecté
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    const finalPayload = {
+      ...orderPayload,
+      clientId: savedUser?.id || orderPayload.clientId || undefined
+    };
+
     try {
       const res = await fetch(`${API_BASE_URL}/orders`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderPayload)
+        headers,
+        body: JSON.stringify(finalPayload)
       });
       if (res.ok) {
         const json = await res.json();

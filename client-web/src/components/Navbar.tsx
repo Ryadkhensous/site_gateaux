@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Cake,
   Sparkles,
@@ -14,9 +14,12 @@ import {
   Mail,
   ShoppingBag,
   User,
-  Heart
+  Heart,
+  LogOut,
+  Package
 } from 'lucide-react';
 import { Wilaya } from '../types';
+import { useAuth } from '../context/AuthContext';
 
 interface NavbarProps {
   currentTab: string;
@@ -42,6 +45,20 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
+  const { user, isAuthenticated, openAuthModal, openProfileModal, logout } = useAuth();
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setUserDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const artisanAdminUrl = typeof window !== 'undefined' && window.location.hostname === 'localhost'
     ? 'http://localhost:5174'
     : 'https://artisan-admin-xi.vercel.app';
@@ -240,14 +257,73 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <Heart className="w-5 h-5" />
               </button>
 
-              {/* أيقونة حساب المستخدم */}
-              <button
-                onClick={() => handleNavClick('tracking')}
-                title="حسابي / طلباتي"
-                className="p-2.5 rounded-xl text-stone-700 hover:text-[#E84375] hover:bg-pink-50 transition-colors"
-              >
-                <User className="w-5 h-5" />
-              </button>
+              {/* أيقونة وحساب المستخدم / تسجيل الدخول */}
+              {!isAuthenticated ? (
+                <button
+                  onClick={() => openAuthModal('LOGIN')}
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-pink-50 hover:bg-pink-100 text-[#E84375] border border-pink-200 transition-all shadow-2xs hover:scale-102 cursor-pointer"
+                  title="تسجيل الدخول / حساب جديد"
+                >
+                  <User className="w-4 h-4 text-[#E84375]" />
+                  <span className="hidden sm:inline">دخول / تسجيل</span>
+                </button>
+              ) : (
+                <div className="relative" ref={dropdownRef}>
+                  <button
+                    onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                    className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-pink-50 hover:bg-pink-100/80 border border-pink-200 text-stone-800 text-xs font-bold transition-all shadow-2xs cursor-pointer"
+                  >
+                    <span className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#E84375] to-[#F472B6] text-white flex items-center justify-center text-xs font-bold shadow-xs">
+                      {user?.fullName?.charAt(0).toUpperCase() || 'U'}
+                    </span>
+                    <span className="hidden md:inline max-w-[100px] truncate text-stone-900">
+                      {user?.fullName?.split(' ')[0] || 'حسابي'}
+                    </span>
+                    <ChevronDown className="w-3.5 h-3.5 text-stone-500" />
+                  </button>
+
+                  {userDropdownOpen && (
+                    <div className="absolute left-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-pink-100 py-1.5 z-50 animate-fadeIn text-right">
+                      <div className="px-3.5 py-2.5 border-b border-stone-100 bg-pink-50/40 rounded-t-xl">
+                        <p className="text-xs font-bold text-stone-900 truncate">{user?.fullName}</p>
+                        <p className="text-[10px] text-stone-400 font-mono truncate">{user?.phone || user?.email}</p>
+                      </div>
+                      <button
+                        onClick={() => {
+                          setUserDropdownOpen(false);
+                          openProfileModal();
+                        }}
+                        className="w-full text-right px-3.5 py-2.5 text-xs font-bold text-stone-700 hover:text-[#E84375] hover:bg-pink-50 flex items-center gap-2 cursor-pointer transition-colors"
+                      >
+                        <User className="w-4 h-4 text-[#E84375]" />
+                        <span>بياناتي الشخصية والعنوان</span>
+                      </button>
+                      <button
+                        onClick={() => {
+                          setUserDropdownOpen(false);
+                          openProfileModal();
+                        }}
+                        className="w-full text-right px-3.5 py-2.5 text-xs font-bold text-stone-700 hover:text-[#E84375] hover:bg-pink-50 flex items-center gap-2 cursor-pointer transition-colors"
+                      >
+                        <Package className="w-4 h-4 text-[#E84375]" />
+                        <span>سجل طلباتي</span>
+                      </button>
+                      <div className="border-t border-stone-100 mt-1 pt-1">
+                        <button
+                          onClick={() => {
+                            setUserDropdownOpen(false);
+                            logout();
+                          }}
+                          className="w-full text-right px-3.5 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 flex items-center gap-2 cursor-pointer transition-colors"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          <span>تسجيل الخروج</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* أيقونة السلة مع العداد الوردي (Cart with Pink Counter Badge) */}
               <button
@@ -338,6 +414,56 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               تتبع الطلب المباشر
             </button>
+
+            {/* حساب العميل على الهاتف */}
+            <div className="pt-2 border-t border-pink-100">
+              {isAuthenticated ? (
+                <div className="bg-pink-50/70 p-3 rounded-2xl border border-pink-200/60 space-y-2">
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-8 h-8 rounded-full bg-[#E84375] text-white flex items-center justify-center text-xs font-bold shadow-xs">
+                      {user?.fullName?.charAt(0).toUpperCase() || 'U'}
+                    </span>
+                    <div>
+                      <p className="text-xs font-bold text-stone-900">{user?.fullName}</p>
+                      <p className="text-[10px] text-stone-500 font-mono">{user?.phone || user?.email}</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 pt-1">
+                    <button
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        openProfileModal();
+                      }}
+                      className="py-1.5 px-2 bg-white text-[#E84375] rounded-xl text-xs font-bold border border-pink-200 flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer"
+                    >
+                      <User className="w-3.5 h-3.5" />
+                      <span>ملفي الشخصي</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        logout();
+                      }}
+                      className="py-1.5 px-2 bg-rose-50 text-rose-600 rounded-xl text-xs font-bold border border-rose-200 flex items-center justify-center gap-1.5 cursor-pointer"
+                    >
+                      <LogOut className="w-3.5 h-3.5" />
+                      <span>خروج</span>
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    openAuthModal('LOGIN');
+                  }}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-[#E84375] text-white text-xs font-bold rounded-xl shadow-xs cursor-pointer"
+                >
+                  <User className="w-4 h-4" />
+                  <span>تسجيل الدخول / إنشاء حساب</span>
+                </button>
+              )}
+            </div>
 
             {/* اختيار الولاية على الهاتف */}
             <div className="pt-3 border-t border-pink-100">

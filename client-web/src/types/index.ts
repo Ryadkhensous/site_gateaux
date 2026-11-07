@@ -68,6 +68,7 @@ export interface TrackingStep {
 export interface Order {
   id: string;
   orderNumber: string;
+  clientId?: string;
   artisanId: string;
   artisanName: string;
   customerName: string;
@@ -108,4 +109,23 @@ export interface Order {
     messageOnCake?: string;
   };
   trackingSteps: TrackingStep[];
+}
+
+export interface UserProfile {
+  id: string;
+  email: string;
+  fullName: string;
+  phone: string;
+  role: "CLIENT" | "ARTISAN" | "ADMIN";
+  wilayaCode?: number;
+  wilayaName?: string;
+  address?: string;
+  createdAt: string;
+}
+
+export interface AuthResponse {
+  success: boolean;
+  message?: string;
+  token?: string;
+  user?: UserProfile;
 }

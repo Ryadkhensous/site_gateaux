@@ -6,6 +6,8 @@ import { CakeCustomizer } from './components/CakeCustomizer';
 import { TrackingView } from './components/TrackingView';
 import { B2BView } from './components/B2BView';
 import { OrderModal } from './components/OrderModal';
+import { AuthModal } from './components/AuthModal';
+import { ProfileModal } from './components/ProfileModal';
 import { api } from './services/api';
 import { Artisan, Product, Wilaya } from './types';
 import { WILAYAS_DZ } from './data/wilayas';
@@ -145,6 +147,19 @@ export const App: React.FC = () => {
         config={modalConfig}
         wilayas={wilayas}
         onOrderSuccess={handleOrderSuccess}
+      />
+
+      {/* نافذة تسجيل الدخول وإنشاء حساب عميل جديد */}
+      <AuthModal wilayas={wilayas} />
+
+      {/* نافذة الملف الشخصي وسجل الطلبيات للعميل */}
+      <ProfileModal
+        wilayas={wilayas}
+        onTrackOrder={(orderNumber) => {
+          setActiveTrackingNumber(orderNumber);
+          setCurrentTab('tracking');
+        }}
+        onGoToShop={() => setCurrentTab('marketplace')}
       />
 
       {/* تذييل الصفحة الأنيق المطابق لموكاب CakeShop الوردي الناعم (Footer) */}
