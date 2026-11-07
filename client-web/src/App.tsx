@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
 import { HomeView } from './pages/HomeView';
+import { TraditionalView } from './pages/TraditionalView';
 import { MarketplaceView } from './components/MarketplaceView';
 import { CakeCustomizer } from './components/CakeCustomizer';
 import { TrackingView } from './components/TrackingView';
@@ -111,6 +112,18 @@ export const App: React.FC = () => {
           <MarketplaceView
             artisans={artisans}
             products={products}
+            wilayas={wilayas}
+            selectedWilaya={selectedWilaya}
+            setSelectedWilaya={setSelectedWilaya}
+            onSelectProductToOrder={handleSelectProductToOrder}
+            onNavigateToCustomizer={() => setCurrentTab('customizer')}
+          />
+        )}
+
+        {currentTab === 'traditional' && (
+          <TraditionalView
+            products={products}
+            artisans={artisans}
             wilayas={wilayas}
             selectedWilaya={selectedWilaya}
             setSelectedWilaya={setSelectedWilaya}

@@ -11,6 +11,7 @@ interface MarketplaceViewProps {
   setSelectedWilaya: (code: number) => void;
   onSelectProductToOrder: (product: Product) => void;
   onNavigateToCustomizer: () => void;
+  initialCategory?: string;
 }
 
 export const MarketplaceView: React.FC<MarketplaceViewProps> = ({
@@ -20,16 +21,17 @@ export const MarketplaceView: React.FC<MarketplaceViewProps> = ({
   selectedWilaya,
   setSelectedWilaya,
   onSelectProductToOrder,
-  onNavigateToCustomizer
+  onNavigateToCustomizer,
+  initialCategory = 'ALL'
 }) => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
+  const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory);
   const [activeTab, setActiveTab] = useState<'creations' | 'artisans'>('creations');
 
   const categories = [
     { id: 'ALL', label: 'كافة الإبداعات' },
+    { id: 'TRADITIONNEL', label: 'حلويات تقليدية جزائرية' },
     { id: 'MARIAGE', label: 'أعراس ومناسبات كبرى' },
     { id: 'ANNIVERSAIRE', label: 'أعياد ميلاد وذكرى' },
-    { id: 'TRADITIONNEL', label: 'حلويات جزائرية أصيلة' },
     { id: 'B2B_ENTREPRISE', label: 'بوفيهات وشركات B2B' }
   ];
 

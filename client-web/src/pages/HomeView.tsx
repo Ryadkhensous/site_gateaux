@@ -112,6 +112,13 @@ export const HomeView: React.FC<HomeViewProps> = ({
   // أصناف التسوق الدائرية المطابقة تماماً لـ (Shop by Category)
   const categoriesList = [
     {
+      id: 'cat-traditional',
+      nameAr: 'حلويات تقليدية أصيلة',
+      nameEn: 'Traditional Algerian Pastries',
+      image: '/images/traditional_algerian_sweets.jpg',
+      filter: 'TRADITIONNEL'
+    },
+    {
       id: 'cat-birthday',
       nameAr: 'كعكات أعياد الميلاد',
       nameEn: 'Birthday Cakes',
@@ -145,6 +152,62 @@ export const HomeView: React.FC<HomeViewProps> = ({
       nameEn: 'Cupcakes & Macarons',
       image: '/images/category_cupcakes.jpg',
       filter: 'MODERNE'
+    }
+  ];
+
+  // تشكيلة الحلويات التقليدية الجزائرية المعروضة في الصفحة الرئيسية
+  const traditionalHighlights = [
+    {
+      id: 'prod-18',
+      nameAr: 'بقلاوة قسنطينية ملكية بالجوز واللوز',
+      nameEn: 'Royal Constantinoise Baklawa',
+      priceDZD: 7500,
+      servings: 24,
+      prepTimeDays: 2,
+      rating: 5.0,
+      reviewsCount: 94,
+      image: '/images/traditional_baklawa.jpg',
+      city: 'قسنطينة',
+      categoryAr: 'مورقة بالعسل الحر'
+    },
+    {
+      id: 'prod-19',
+      nameAr: 'مقروط اللوز العاصمي بماء الزهر والليمون',
+      nameEn: 'Algiers Makroud El Louz',
+      priceDZD: 4800,
+      servings: 20,
+      prepTimeDays: 2,
+      rating: 4.9,
+      reviewsCount: 88,
+      image: '/images/traditional_makroud_el_louz.jpg',
+      city: 'الجزائر العاصمة',
+      categoryAr: 'يذوب في الفم'
+    },
+    {
+      id: 'prod-20',
+      nameAr: 'تشاراك المسكر الملكي محشو باللوز',
+      nameEn: 'Royal Tcharek Msekker',
+      priceDZD: 4500,
+      servings: 20,
+      prepTimeDays: 2,
+      rating: 4.9,
+      reviewsCount: 76,
+      image: '/images/traditional_tcharek_msekker.jpg',
+      city: 'الجزائر العاصمة',
+      categoryAr: 'لوز وسكر ناعم'
+    },
+    {
+      id: 'prod-3',
+      nameAr: 'صينية الضيافة الملكية للأفراح والمهيبة',
+      nameEn: 'Royal Algerian Heritage Tray',
+      priceDZD: 16500,
+      servings: 30,
+      prepTimeDays: 4,
+      rating: 5.0,
+      reviewsCount: 142,
+      image: '/images/traditional_algerian_sweets.jpg',
+      city: 'تشكيلة وطنية',
+      categoryAr: 'صواني الأفراح'
     }
   ];
 
@@ -210,6 +273,27 @@ export const HomeView: React.FC<HomeViewProps> = ({
       });
     } else {
       onNavigate('marketplace');
+    }
+  };
+
+  const handleOrderTraditional = (item: any) => {
+    if (onSelectProductToOrder) {
+      onSelectProductToOrder({
+        id: item.id,
+        artisanId: 'art-2',
+        name: item.nameAr,
+        nameAr: item.nameAr,
+        category: 'TRADITIONNEL',
+        description: item.nameAr,
+        priceDZD: item.priceDZD,
+        servings: item.servings,
+        prepTimeDays: item.prepTimeDays,
+        imageUrl: item.image,
+        isCustomizable: false,
+        tags: ['حلويات تقليدية', 'أصالة', item.city]
+      });
+    } else {
+      onNavigate('traditional');
     }
   };
 
@@ -399,12 +483,18 @@ export const HomeView: React.FC<HomeViewProps> = ({
           </p>
         </div>
 
-        {/* الحاويات الدائرية الخمس */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6 sm:gap-8 justify-center">
+        {/* الحاويات الدائرية الست */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 sm:gap-6 justify-center">
           {categoriesList.map((cat) => (
             <div
               key={cat.id}
-              onClick={() => onNavigate('marketplace')}
+              onClick={() => {
+                if (cat.filter === 'TRADITIONNEL') {
+                  onNavigate('traditional');
+                } else {
+                  onNavigate('marketplace');
+                }
+              }}
               className="flex flex-col items-center group cursor-pointer"
             >
               <div className="w-28 h-28 sm:w-36 sm:h-36 rounded-full overflow-hidden border-4 border-white shadow-md group-hover:shadow-xl group-hover:border-[#E84375] transition-all duration-300 relative bg-pink-50">
@@ -512,6 +602,89 @@ export const HomeView: React.FC<HomeViewProps> = ({
 
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* قسم الحلويات التقليدية الجزائرية الأصيلة (Traditional Algerian Pastries Showcase) */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+        <div className="bg-gradient-to-b from-[#FFF5F7] via-white to-[#FFFBF8] rounded-3xl border border-pink-200/80 p-6 sm:p-10 shadow-sm text-right space-y-8">
+          
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-pink-100 text-[#E84375] text-xs font-bold mb-2 border border-pink-200">
+                <span>🇩🇿 أصالة وتراث الأجداد</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-stone-900 tracking-tight">
+                الحلويات التقليدية الجزائرية
+              </h2>
+              <p className="text-stone-600 text-xs sm:text-sm mt-1 max-w-xl">
+                أشهى صواني البقلاوة المورقة، مقروط اللوز المعسل، التشاراك والدزيريات المخبوزة بأجود أنواع اللوز الجزائري والعسل الحر.
+              </p>
+            </div>
+
+            <button
+              onClick={() => onNavigate('traditional')}
+              className="px-6 py-2.5 bg-white hover:bg-[#E84375] text-[#E84375] hover:text-white border-2 border-[#E84375] rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-2xs self-start md:self-auto cursor-pointer"
+            >
+              <span>استكشف كافة الحلويات التقليدية</span>
+              <ArrowLeft className="w-4 h-4" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {traditionalHighlights.map((item) => (
+              <div
+                key={item.id}
+                className="bg-white rounded-2xl border border-pink-100 hover:border-pink-300 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between group"
+              >
+                <div className="relative h-52 bg-stone-50 overflow-hidden">
+                  <img
+                    src={item.image}
+                    alt={item.nameAr}
+                    className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500 ease-out"
+                  />
+                  <span className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#E84375] text-white shadow-xs">
+                    {item.categoryAr}
+                  </span>
+                  <span className="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded-lg text-[10px] font-medium bg-stone-900/75 text-white backdrop-blur-xs flex items-center gap-1">
+                    <MapPin className="w-3 h-3 text-[#E84375]" />
+                    {item.city}
+                  </span>
+                </div>
+
+                <div className="p-4 space-y-3 flex-1 flex flex-col justify-between">
+                  <div>
+                    <h3 className="font-bold text-stone-900 text-sm leading-snug group-hover:text-[#E84375] transition-colors line-clamp-2">
+                      {item.nameAr}
+                    </h3>
+                    <div className="flex items-center gap-2 text-[11px] text-stone-500 mt-1">
+                      <span>{item.servings} قطعة</span>
+                      <span>•</span>
+                      <span>{item.prepTimeDays} أيام تحضير</span>
+                    </div>
+                  </div>
+
+                  <div className="pt-2 flex items-center justify-between border-t border-pink-50">
+                    <div>
+                      <span className="text-[10px] text-stone-400 block font-medium">السعر :</span>
+                      <span className="text-base font-bold text-[#E84375] font-mono">
+                        {formatDZD(item.priceDZD)}
+                      </span>
+                    </div>
+
+                    <button
+                      onClick={() => handleOrderTraditional(item)}
+                      className="px-3.5 py-1.5 bg-[#E84375] hover:bg-[#D83264] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <ShoppingBag className="w-3.5 h-3.5" />
+                      <span>طلب</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
         </div>
       </section>
 

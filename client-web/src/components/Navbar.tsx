@@ -161,6 +161,19 @@ export const Navbar: React.FC<NavbarProps> = ({
                 المتجر والحلويات
               </button>
 
+              {/* حلويات تقليدية (Traditional Sweets) */}
+              <button
+                onClick={() => handleNavClick('traditional')}
+                className={`px-3.5 py-2 rounded-xl text-sm font-bold flex items-center gap-1.5 transition-all duration-200 ${
+                  currentTab === 'traditional'
+                    ? 'text-[#E84375] bg-pink-50/80 font-extrabold'
+                    : 'text-stone-700 hover:text-[#E84375] hover:bg-pink-50/40'
+                }`}
+              >
+                <span className="text-amber-500">✨</span>
+                <span>حلويات تقليدية</span>
+              </button>
+
               {/* ورشة التصميم 3D (Custom Cake) */}
               <button
                 onClick={() => handleNavClick('customizer')}
@@ -381,6 +394,18 @@ export const Navbar: React.FC<NavbarProps> = ({
               }`}
             >
               المتجر والحلويات
+            </button>
+
+            <button
+              onClick={() => handleNavClick('traditional')}
+              className={`w-full text-right px-4 py-2.5 rounded-xl text-xs font-bold flex items-center justify-between transition-colors ${
+                currentTab === 'traditional' ? 'bg-pink-50 text-[#E84375]' : 'text-stone-700 hover:bg-stone-50'
+              }`}
+            >
+              <span>حلويات تقليدية جزائرية</span>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-pink-100 text-[#E84375]">
+                أصالة
+              </span>
             </button>
 
             <button
