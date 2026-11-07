@@ -99,10 +99,9 @@ const handleCreateProduct = async () => {
 const getCategoryLabel = (cat: string) => {
   switch (cat) {
     case 'MARIAGE': return 'أعراس ومناسبات كبرى';
-    case 'ANNIVERSAIRE': return 'أعياد ميلاد وذكرى';
     case 'TRADITIONNEL': return 'حلويات تقليدية أصيلة';
     case 'B2B_ENTREPRISE': return 'بوفيهات الشركات B2B';
-    default: return 'عصري وفاخر';
+    default: return 'عصري وتورتات فاخرة';
   }
 };
 </script>
@@ -235,10 +234,9 @@ const getCategoryLabel = (cat: string) => {
                 v-model="newCategory"
                 class="w-full p-2.5 bg-beige-50 border border-beige-300 rounded-xl text-xs font-medium"
               >
-                <option value="MODERNE">عصري وفاخر</option>
+                <option value="MODERNE">عصري وتورتات فاخرة</option>
                 <option value="TRADITIONNEL">حلويات تقليدية أصيلة</option>
                 <option value="MARIAGE">أعراس ومناسبات كبرى</option>
-                <option value="ANNIVERSAIRE">أعياد ميلاد وذكرى</option>
                 <option value="B2B_ENTREPRISE">بوفيهات الشركات B2B</option>
               </select>
             </div>

@@ -55,7 +55,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
       subtitle:
         'تُصنع يدوياً بكل شغف وحب باستخدام أرقى المكونات الطبيعية الفاخرة. اطلب كعكتك المفضلة أونلاين واستلمها طازجة ومبردة إلى باب منزلك عبر الـ 69 ولاية.',
       image: '/images/pink_flower_hero_cake.jpg',
-      badge: 'الأكثر طلباً للأعياد',
+      badge: 'الأكثر طلباً للمناسبات',
       linkTab: 'marketplace',
       linkText: 'تسوق الآن'
     },
@@ -161,11 +161,11 @@ export const HomeView: React.FC<HomeViewProps> = ({
       filter: 'TRADITIONNEL'
     },
     {
-      id: 'cat-birthday',
-      nameAr: 'كعكات أعياد الميلاد',
-      nameEn: 'Birthday Cakes',
+      id: 'cat-layer-cake',
+      nameAr: 'تورتات ولاير كيك فاخرة',
+      nameEn: 'Luxury Layer Cakes',
       image: '/images/category_birthday_cake.jpg',
-      filter: 'ANNIVERSAIRE'
+      filter: 'ALL'
     },
     {
       id: 'cat-wedding',
@@ -175,11 +175,11 @@ export const HomeView: React.FC<HomeViewProps> = ({
       filter: 'MARIAGE'
     },
     {
-      id: 'cat-anniversary',
-      nameAr: 'كعكات الذكرى والخطوبة',
-      nameEn: 'Anniversary Cakes',
+      id: 'cat-engagement',
+      nameAr: 'كعكات الخطوبة والمناسبات',
+      nameEn: 'Engagement & Celebrations',
       image: '/images/category_anniversary_cake.jpg',
-      filter: 'ANNIVERSAIRE'
+      filter: 'MARIAGE'
     },
     {
       id: 'cat-photo',
@@ -543,8 +543,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
               onClick={() => {
                 if (cat.filter === 'TRADITIONNEL') {
                   onNavigate('marketplace', 'TRADITIONNEL');
-                } else if (cat.filter === 'MARIAGE' || cat.filter === 'ANNIVERSAIRE') {
-                  onNavigate('marketplace', cat.filter);
+                } else if (cat.filter === 'MARIAGE') {
+                  onNavigate('marketplace', 'MARIAGE');
                 } else {
                   onNavigate('marketplace', 'ALL');
                 }

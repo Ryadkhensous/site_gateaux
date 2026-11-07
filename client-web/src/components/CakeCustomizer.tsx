@@ -46,7 +46,7 @@ export const CakeCustomizer: React.FC<CakeCustomizerProps> = ({
     'تذهيب بورق الذهب الخالص عيار 24 قيراط'
   ]);
   const [selected3DExtra, setSelected3DExtra] = useState<string>('مجسم سكري 3D منحوت يدوياً (شخصية أو ثيم)');
-  const [messageOnCake, setMessageOnCake] = useState<string>('عيد ميلاد سعيد');
+  const [messageOnCake, setMessageOnCake] = useState<string>('ألف مبروك النجاح والتميز');
   const [photoUrl, setPhotoUrl] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -83,7 +83,7 @@ export const CakeCustomizer: React.FC<CakeCustomizerProps> = ({
       name: 'طابق واحد مرتفع بريستيج (15 - 20 قطعة)',
       servings: 18,
       basePrice: 9500,
-      desc: 'ارتفاع 18 سم - خيار رائع وشهير لأعياد الميلاد والنجاح',
+      desc: 'ارتفاع 18 سم - خيار رائع وشهير لحفلات التخرج والنجاح والمناسبات السعيدة',
       image: '/images/cake_preview_1tier_tall.jpg'
     },
     {
@@ -741,7 +741,7 @@ export const CakeCustomizer: React.FC<CakeCustomizerProps> = ({
                   type="text"
                   value={messageOnCake}
                   onChange={(e) => setMessageOnCake(e.target.value)}
-                  placeholder="مثال: عيد ميلاد سعيد أمينة / ألف مبروك النجاح"
+                  placeholder="مثال: ألف مبروك النجاح أمينة / بالبركة والسرور"
                   className="w-full p-3 bg-beige-50 border border-beige-300 rounded-xl text-xs font-bold text-stone-800 focus:outline-none focus:ring-2 focus:ring-rose-400 font-serif"
                 />
               </div>

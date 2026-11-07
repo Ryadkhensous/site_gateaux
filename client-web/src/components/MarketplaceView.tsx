@@ -70,7 +70,6 @@ export const MarketplaceView: React.FC<MarketplaceViewProps> = ({
     { id: 'ALL', label: 'كافة الإبداعات', icon: '🍰' },
     { id: 'TRADITIONNEL', label: 'حلويات تقليدية جزائرية ✨', isSpecial: true, icon: '🍯' },
     { id: 'MARIAGE', label: 'أعراس ومناسبات كبرى', icon: '💍' },
-    { id: 'ANNIVERSAIRE', label: 'أعياد ميلاد وذكرى', icon: '🎂' },
     { id: 'B2B_ENTREPRISE', label: 'بوفيهات وشركات B2B', icon: '🏢' }
   ];
 
