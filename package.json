@@ -8,8 +8,7 @@
     "dev:client": "cd client-web && npm run dev",
     "dev:admin": "cd artisan-admin && npm run dev",
     "dev": "concurrently \"npm:dev:backend\" \"npm:dev:client\" \"npm:dev:admin\"",
-    "build": "npm --prefix backend run build",
-    "start": "npm --prefix backend run start"
+    "build": "node scripts/build-client.js"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"
