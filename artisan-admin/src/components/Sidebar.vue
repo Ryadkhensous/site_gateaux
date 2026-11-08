@@ -1,35 +1,35 @@
 <template>
-  <aside class="w-64 bg-zinc-950 text-zinc-300 flex flex-col justify-between border-l border-zinc-800 p-4 text-right h-screen shrink-0" dir="rtl">
+  <aside class="w-64 bg-white text-slate-700 flex flex-col justify-between border-l border-slate-200 p-4 text-right h-screen shrink-0 shadow-xs" dir="rtl">
     <div class="space-y-5 overflow-y-auto pr-1">
       <!-- Logo & Brand Header -->
       <div class="flex items-center gap-3 px-2 pt-1">
-        <div class="w-10 h-10 rounded-xl bg-pink-600 flex items-center justify-center text-white shadow-lg shadow-pink-600/30">
+        <div class="w-10 h-10 rounded-xl bg-pink-600 flex items-center justify-center text-white shadow-md shadow-pink-500/25">
           <ChefHat class="w-6 h-6 text-white" />
         </div>
         <div>
-          <h2 class="text-base font-black text-white tracking-tight">SweetBox DZ</h2>
-          <span class="text-[10px] uppercase tracking-wider text-pink-400 font-bold block">
+          <h2 class="text-base font-black text-slate-900 tracking-tight">SweetBox DZ</h2>
+          <span class="text-[10px] uppercase tracking-wider text-pink-600 font-bold block">
             بوابة الحرفيين والإدارة
           </span>
         </div>
       </div>
 
       <!-- Workshop Selector -->
-      <div class="bg-zinc-900/90 p-3 rounded-2xl border border-zinc-800/80">
-        <label class="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-1.5">
+      <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200">
+        <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1.5">
           الورشة النشطة حالياً
         </label>
         <select
           :value="store.selectedArtisanId"
           @change="onArtisanChange"
-          class="w-full bg-zinc-950 border border-zinc-700/60 rounded-xl p-2 text-xs font-semibold text-white focus:outline-none focus:border-pink-500"
+          class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs font-semibold text-slate-800 focus:outline-none focus:border-pink-500 shadow-2xs"
         >
           <option v-for="art in artisansList" :key="art.id" :value="art.id">
             {{ art.name }}
           </option>
         </select>
-        <div v-if="store.currentArtisan" class="mt-2 flex items-center gap-1.5 text-[11px] text-pink-400 font-medium">
-          <ShieldCheck class="w-3.5 h-3.5 text-pink-500 shrink-0" />
+        <div v-if="store.currentArtisan" class="mt-2 flex items-center gap-1.5 text-[11px] text-pink-700 font-medium">
+          <ShieldCheck class="w-3.5 h-3.5 text-pink-600 shrink-0" />
           <span class="truncate">حرفي معتمد ومرخص رسمياً</span>
         </div>
       </div>
@@ -42,8 +42,8 @@
           :class="[
             'w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all',
             currentView === 'orders'
-              ? 'bg-pink-600 text-white font-bold shadow-lg shadow-pink-600/25'
-              : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
+              ? 'bg-pink-600 text-white font-bold shadow-md shadow-pink-500/20'
+              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
           ]"
         >
           <div class="flex items-center gap-2.5">
@@ -54,7 +54,7 @@
             v-if="store.orders.length > 0"
             :class="[
               'px-2 py-0.5 rounded-full text-[10px] font-mono',
-              currentView === 'orders' ? 'bg-pink-700 text-white' : 'bg-zinc-800 text-zinc-300'
+              currentView === 'orders' ? 'bg-pink-700 text-white' : 'bg-slate-100 text-slate-600 border border-slate-200'
             ]"
           >
             {{ store.orders.length }}
@@ -67,8 +67,8 @@
           :class="[
             'w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all',
             currentView === 'calendar'
-              ? 'bg-pink-600 text-white font-bold shadow-lg shadow-pink-600/25'
-              : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
+              ? 'bg-pink-600 text-white font-bold shadow-md shadow-pink-500/20'
+              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
           ]"
         >
           <div class="flex items-center gap-2.5">
@@ -83,8 +83,8 @@
           :class="[
             'w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all',
             currentView === 'showcase'
-              ? 'bg-pink-600 text-white font-bold shadow-lg shadow-pink-600/25'
-              : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
+              ? 'bg-pink-600 text-white font-bold shadow-md shadow-pink-500/20'
+              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
           ]"
         >
           <div class="flex items-center gap-2.5">
@@ -95,7 +95,7 @@
             v-if="store.products.length > 0"
             :class="[
               'px-2 py-0.5 rounded-full text-[10px] font-mono',
-              currentView === 'showcase' ? 'bg-pink-700 text-white' : 'bg-zinc-800 text-zinc-300'
+              currentView === 'showcase' ? 'bg-pink-700 text-white' : 'bg-slate-100 text-slate-600 border border-slate-200'
             ]"
           >
             {{ store.products.length }}
@@ -108,8 +108,8 @@
           :class="[
             'w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all',
             currentView === 'customers'
-              ? 'bg-pink-600 text-white font-bold shadow-lg shadow-pink-600/25'
-              : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
+              ? 'bg-pink-600 text-white font-bold shadow-md shadow-pink-500/20'
+              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
           ]"
         >
           <div class="flex items-center gap-2.5">
@@ -120,7 +120,7 @@
             v-if="store.customers.length > 0"
             :class="[
               'px-2 py-0.5 rounded-full text-[10px] font-mono',
-              currentView === 'customers' ? 'bg-pink-700 text-white' : 'bg-zinc-800 text-zinc-300'
+              currentView === 'customers' ? 'bg-pink-700 text-white' : 'bg-slate-100 text-slate-600 border border-slate-200'
             ]"
           >
             {{ store.customers.length }}
@@ -133,8 +133,8 @@
           :class="[
             'w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all',
             currentView === 'inventory'
-              ? 'bg-pink-600 text-white font-bold shadow-lg shadow-pink-600/25'
-              : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
+              ? 'bg-pink-600 text-white font-bold shadow-md shadow-pink-500/20'
+              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
           ]"
         >
           <div class="flex items-center gap-2.5">
@@ -143,7 +143,7 @@
           </div>
           <span
             v-if="store.lowStockItemsCount > 0"
-            class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30"
+            class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300"
           >
             {{ store.lowStockItemsCount }} تنبيه
           </span>
@@ -155,8 +155,8 @@
           :class="[
             'w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl transition-all',
             currentView === 'analytics'
-              ? 'bg-pink-600 text-white font-bold shadow-lg shadow-pink-600/25'
-              : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
+              ? 'bg-pink-600 text-white font-bold shadow-md shadow-pink-500/20'
+              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
           ]"
         >
           <BarChart3 class="w-4 h-4" />
@@ -169,8 +169,8 @@
           :class="[
             'w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl transition-all',
             currentView === 'settings'
-              ? 'bg-pink-600 text-white font-bold shadow-lg shadow-pink-600/25'
-              : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
+              ? 'bg-pink-600 text-white font-bold shadow-md shadow-pink-500/20'
+              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
           ]"
         >
           <Settings class="w-4 h-4" />
@@ -180,19 +180,19 @@
     </div>
 
     <!-- Bottom Footer: Link to Client Store -->
-    <div class="pt-4 border-t border-zinc-800 space-y-2 shrink-0">
+    <div class="pt-4 border-t border-slate-200 space-y-2 shrink-0">
       <a
         :href="clientWebUrl"
         target="_blank"
         rel="noopener noreferrer"
-        class="flex items-center justify-between px-3 py-2.5 bg-zinc-900 hover:bg-zinc-850 text-zinc-200 text-xs font-semibold rounded-xl border border-zinc-800 hover:border-pink-500/40 transition-all group"
+        class="flex items-center justify-between px-3 py-2.5 bg-slate-50 hover:bg-pink-50 text-slate-700 hover:text-pink-700 text-xs font-semibold rounded-xl border border-slate-200 hover:border-pink-300 transition-all group"
       >
         <span class="flex items-center gap-2">
           <span>متجر الزبائن SweetBox DZ</span>
         </span>
-        <ExternalLink class="w-3.5 h-3.5 text-zinc-400 group-hover:text-pink-400" />
+        <ExternalLink class="w-3.5 h-3.5 text-slate-400 group-hover:text-pink-600" />
       </a>
-      <p class="text-[10px] text-zinc-500 text-center font-light">
+      <p class="text-[10px] text-slate-400 text-center font-light">
         منصة الحلويات الفاخرة بالجزائر 2026
       </p>
     </div>

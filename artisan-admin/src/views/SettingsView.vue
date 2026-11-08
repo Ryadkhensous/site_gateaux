@@ -1,13 +1,13 @@
 <template>
   <div class="space-y-6 text-right max-w-5xl mx-auto" dir="rtl">
     <!-- Header -->
-    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div class="bg-white border border-slate-200/80 rounded-2xl p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shadow-xs">
       <div>
-        <h1 class="text-2xl font-bold text-white flex items-center gap-3">
-          <Settings class="w-7 h-7 text-pink-500" />
+        <h1 class="text-2xl font-bold text-slate-900 flex items-center gap-3">
+          <Settings class="w-7 h-7 text-pink-600" />
           إعدادات الورشة والحساب
         </h1>
-        <p class="text-zinc-400 text-sm mt-1">
+        <p class="text-slate-500 text-sm mt-1">
           تخصيص هوية ورشة الحلويات، معلومات التواصل، الطاقة الاستيعابية اليومية وطرق الدفع
         </p>
       </div>
@@ -15,7 +15,7 @@
       <button
         @click="saveAllSettings"
         :disabled="isSaving"
-        class="flex items-center gap-2 px-6 py-2.5 bg-pink-600 hover:bg-pink-700 text-white rounded-xl text-sm font-bold shadow-lg shadow-pink-600/25 transition-all disabled:opacity-50"
+        class="flex items-center gap-2 px-6 py-2.5 bg-pink-600 hover:bg-pink-700 text-white rounded-xl text-sm font-bold shadow-md shadow-pink-500/20 transition-all disabled:opacity-50"
       >
         <Check v-if="!isSaving" class="w-4 h-4" />
         <Loader2 v-else class="w-4 h-4 animate-spin" />
@@ -26,76 +26,76 @@
     <!-- Notification Toast -->
     <div
       v-if="toastMessage"
-      class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 px-4 py-3 rounded-xl text-sm font-semibold flex items-center justify-between"
+      class="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-xl text-sm font-semibold flex items-center justify-between"
     >
       <div class="flex items-center gap-2">
-        <CheckCircle2 class="w-5 h-5 text-emerald-400 shrink-0" />
+        <CheckCircle2 class="w-5 h-5 text-emerald-600 shrink-0" />
         <span>{{ toastMessage }}</span>
       </div>
-      <button @click="toastMessage = ''" class="text-emerald-400 hover:text-white">
+      <button @click="toastMessage = ''" class="text-emerald-700 hover:text-emerald-900">
         <X class="w-4 h-4" />
       </button>
     </div>
 
     <form @submit.prevent="saveAllSettings" class="space-y-6">
       <!-- Section 1: Workshop Profile -->
-      <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 space-y-5">
-        <h2 class="text-lg font-bold text-white flex items-center gap-2 border-b border-zinc-800 pb-3">
-          <Store class="w-5 h-5 text-pink-500" />
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 space-y-5 shadow-xs">
+        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+          <Store class="w-5 h-5 text-pink-600" />
           بيانات الورشة والهوية التجارية
         </h2>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label class="block text-xs font-semibold text-zinc-300 mb-2">اسم المتجر / الورشة</label>
+            <label class="block text-xs font-semibold text-slate-700 mb-2">اسم المتجر / الورشة</label>
             <input
               v-model="form.storeName"
               type="text"
               required
-              class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-zinc-200 focus:outline-none focus:border-pink-500 transition-colors"
+              class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-pink-500 focus:bg-white transition-colors"
               placeholder="مثال: حلويات العاصمة الفاخرة"
             />
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-zinc-300 mb-2">اسم الحرفي(ة) أو الشيف المسؤول</label>
+            <label class="block text-xs font-semibold text-slate-700 mb-2">اسم الحرفي(ة) أو الشيف المسؤول</label>
             <input
               v-model="form.chefName"
               type="text"
               required
-              class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-zinc-200 focus:outline-none focus:border-pink-500 transition-colors"
+              class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-pink-500 focus:bg-white transition-colors"
               placeholder="مثال: ياسمين بن علي"
             />
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-zinc-300 mb-2">رقم الهاتف للاتصال المباشر</label>
+            <label class="block text-xs font-semibold text-slate-700 mb-2">رقم الهاتف للاتصال المباشر</label>
             <input
               v-model="form.phone"
               type="text"
               required
               dir="ltr"
-              class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-zinc-200 text-right focus:outline-none focus:border-pink-500 transition-colors"
+              class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-800 text-right focus:outline-none focus:border-pink-500 focus:bg-white transition-colors"
               placeholder="0550 12 34 56"
             />
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-zinc-300 mb-2">رقم واتساب المعتمد (مع الرمز الدولي 213)</label>
+            <label class="block text-xs font-semibold text-slate-700 mb-2">رقم واتساب المعتمد (مع الرمز الدولي 213)</label>
             <input
               v-model="form.whatsappNumber"
               type="text"
               dir="ltr"
-              class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-zinc-200 text-right focus:outline-none focus:border-pink-500 transition-colors"
+              class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-800 text-right focus:outline-none focus:border-pink-500 focus:bg-white transition-colors"
               placeholder="213550123456"
             />
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-zinc-300 mb-2">الولاية</label>
+            <label class="block text-xs font-semibold text-slate-700 mb-2">الولاية</label>
             <select
               v-model.number="form.wilayaCode"
-              class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-zinc-200 focus:outline-none focus:border-pink-500 transition-colors"
+              class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-pink-500 focus:bg-white transition-colors font-medium"
             >
               <option :value="16">16 - الجزائر العاصمة</option>
               <option :value="31">31 - وهران</option>
@@ -112,40 +112,40 @@
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-zinc-300 mb-2">العنوان الدقيق للورشة / نقطة الاستلام</label>
+            <label class="block text-xs font-semibold text-slate-700 mb-2">العنوان الدقيق للورشة / نقطة الاستلام</label>
             <input
               v-model="form.address"
               type="text"
-              class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-zinc-200 focus:outline-none focus:border-pink-500 transition-colors"
+              class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-pink-500 focus:bg-white transition-colors"
               placeholder="مثال: حيدرة، الجزائر العاصمة"
             />
           </div>
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-zinc-300 mb-2">نبذة تعريفية وتخصصات الورشة</label>
+          <label class="block text-xs font-semibold text-slate-700 mb-2">نبذة تعريفية وتخصصات الورشة</label>
           <textarea
             v-model="form.bio"
             rows="3"
-            class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-zinc-200 focus:outline-none focus:border-pink-500 transition-colors"
+            class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-pink-500 focus:bg-white transition-colors"
             placeholder="اكتب نبذة موجزة تظهر للزبائن عن خبرتكم في صناعة الحلويات..."
           ></textarea>
         </div>
       </div>
 
       <!-- Section 2: Production & Capacity -->
-      <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 space-y-5">
-        <h2 class="text-lg font-bold text-white flex items-center gap-2 border-b border-zinc-800 pb-3">
-          <Calendar class="w-5 h-5 text-pink-500" />
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 space-y-5 shadow-xs">
+        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+          <Calendar class="w-5 h-5 text-pink-600" />
           الطاقة التشغيلية والإنتاج اليومي
         </h2>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
           <div>
-            <label class="block text-xs font-semibold text-zinc-300 mb-1">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">
               الحد الأقصى للكعكات / اليوم
             </label>
-            <p class="text-xs text-zinc-500 mb-3">
+            <p class="text-xs text-slate-500 mb-3">
               الحد الأقصى من الطلبيات المعقدة التي يمكن للورشة تصنيعها في اليوم الواحد لتجنب الضغط
             </p>
             <div class="flex items-center gap-3">
@@ -154,72 +154,72 @@
                 type="number"
                 min="1"
                 max="30"
-                class="w-32 bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2 text-base font-bold text-white text-center focus:outline-none focus:border-pink-500"
+                class="w-32 bg-slate-50 border border-slate-300 rounded-xl px-4 py-2 text-base font-bold text-slate-900 text-center focus:outline-none focus:border-pink-500 focus:bg-white"
               />
-              <span class="text-sm text-zinc-400">طلبيات / كعكات كحد أقصى يومياً</span>
+              <span class="text-sm text-slate-600">طلبيات / كعكات كحد أقصى يومياً</span>
             </div>
           </div>
 
-          <div class="bg-zinc-950/70 border border-zinc-800 p-4 rounded-xl flex items-center justify-between">
+          <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl flex items-center justify-between">
             <div>
-              <div class="font-bold text-white text-sm">وضع العطلة (إيقاف الطلبات)</div>
-              <div class="text-xs text-zinc-400 mt-0.5">
+              <div class="font-bold text-slate-900 text-sm">وضع العطلة (إيقاف الطلبات)</div>
+              <div class="text-xs text-slate-500 mt-0.5">
                 تفعيل هذا الخيار يمنع الزبائن مؤقتاً من حجز مواعيد تسليم جديدة
               </div>
             </div>
             <label class="relative inline-flex items-center cursor-pointer">
               <input type="checkbox" v-model="form.isVacationMode" class="sr-only peer" />
-              <div class="w-11 h-6 bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-600"></div>
+              <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-600"></div>
             </label>
           </div>
         </div>
       </div>
 
       <!-- Section 3: Payment Methods -->
-      <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 space-y-5">
-        <h2 class="text-lg font-bold text-white flex items-center gap-2 border-b border-zinc-800 pb-3">
-          <CreditCard class="w-5 h-5 text-pink-500" />
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 space-y-5 shadow-xs">
+        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+          <CreditCard class="w-5 h-5 text-pink-600" />
           خيارات الدفع المقبولة في الورشة
         </h2>
 
         <div class="space-y-4">
           <!-- Cash on delivery -->
-          <div class="bg-zinc-950/70 border border-zinc-800 p-4 rounded-xl flex items-center justify-between">
+          <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl flex items-center justify-between">
             <div class="flex items-center gap-3">
-              <div class="p-2.5 bg-emerald-500/10 text-emerald-400 rounded-xl">
+              <div class="p-2.5 bg-emerald-100 text-emerald-700 rounded-xl">
                 <Banknote class="w-5 h-5" />
               </div>
               <div>
-                <div class="font-bold text-white text-sm">الدفع نقدًا عند الاستلام والتوصيل</div>
-                <div class="text-xs text-zinc-400 mt-0.5">تسليم المبلغ نقداً بالدينار الجزائري لعمال التوصيل أو بالورشة</div>
+                <div class="font-bold text-slate-900 text-sm">الدفع نقدًا عند الاستلام والتوصيل</div>
+                <div class="text-xs text-slate-500 mt-0.5">تسليم المبلغ نقداً بالدينار الجزائري لعمال التوصيل أو بالورشة</div>
               </div>
             </div>
             <label class="relative inline-flex items-center cursor-pointer">
               <input type="checkbox" v-model="form.acceptCash" class="sr-only peer" />
-              <div class="w-11 h-6 bg-zinc-800 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+              <div class="w-11 h-6 bg-slate-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
             </label>
           </div>
 
           <!-- BaridiMob -->
-          <div class="bg-zinc-950/70 border border-zinc-800 p-4 rounded-xl space-y-3">
+          <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl space-y-3">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-3">
-                <div class="p-2.5 bg-amber-500/10 text-amber-400 rounded-xl">
+                <div class="p-2.5 bg-amber-100 text-amber-700 rounded-xl">
                   <Smartphone class="w-5 h-5" />
                 </div>
                 <div>
-                  <div class="font-bold text-white text-sm">بريدي موب (BaridiMob RIP)</div>
-                  <div class="text-xs text-zinc-400 mt-0.5">السماح للزبائن بالتحويل الفوري عبر تطبيق بريدي موب بريد الجزائر</div>
+                  <div class="font-bold text-slate-900 text-sm">بريدي موب (BaridiMob RIP)</div>
+                  <div class="text-xs text-slate-500 mt-0.5">السماح للزبائن بالتحويل الفوري عبر تطبيق بريدي موب بريد الجزائر</div>
                 </div>
               </div>
               <label class="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" v-model="form.acceptBaridiMob" class="sr-only peer" />
-                <div class="w-11 h-6 bg-zinc-800 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-600"></div>
+                <div class="w-11 h-6 bg-slate-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-600"></div>
               </label>
             </div>
 
-            <div v-if="form.acceptBaridiMob" class="pt-2 border-t border-zinc-800/80">
-              <label class="block text-xs font-semibold text-zinc-300 mb-1.5">
+            <div v-if="form.acceptBaridiMob" class="pt-2 border-t border-slate-200">
+              <label class="block text-xs font-semibold text-slate-700 mb-1.5">
                 رقم الحساب البريدي الجاري RIP (20 رقماً)
               </label>
               <input
@@ -227,26 +227,26 @@
                 type="text"
                 dir="ltr"
                 maxlength="20"
-                class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2 font-mono text-sm text-amber-400 text-left focus:outline-none focus:border-amber-500"
+                class="w-full bg-white border border-slate-300 rounded-xl px-4 py-2 font-mono text-sm text-amber-700 text-left focus:outline-none focus:border-amber-500"
                 placeholder="00799999000123456789"
               />
             </div>
           </div>
 
           <!-- CIB / Edahabia -->
-          <div class="bg-zinc-950/70 border border-zinc-800 p-4 rounded-xl flex items-center justify-between">
+          <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl flex items-center justify-between">
             <div class="flex items-center gap-3">
-              <div class="p-2.5 bg-blue-500/10 text-blue-400 rounded-xl">
+              <div class="p-2.5 bg-blue-100 text-blue-700 rounded-xl">
                 <CreditCard class="w-5 h-5" />
               </div>
               <div>
-                <div class="font-bold text-white text-sm">البطاقة الذهبية / بطاقة CIB البنكية</div>
-                <div class="text-xs text-zinc-400 mt-0.5">الدفع الإلكتروني عبر بوابة SATIM الآمنة</div>
+                <div class="font-bold text-slate-900 text-sm">البطاقة الذهبية / بطاقة CIB البنكية</div>
+                <div class="text-xs text-slate-500 mt-0.5">الدفع الإلكتروني عبر بوابة SATIM الآمنة</div>
               </div>
             </div>
             <label class="relative inline-flex items-center cursor-pointer">
               <input type="checkbox" v-model="form.acceptCIB" class="sr-only peer" />
-              <div class="w-11 h-6 bg-zinc-800 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+              <div class="w-11 h-6 bg-slate-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
             </label>
           </div>
         </div>
@@ -257,7 +257,7 @@
         <button
           type="submit"
           :disabled="isSaving"
-          class="flex items-center gap-2 px-8 py-3 bg-pink-600 hover:bg-pink-700 text-white rounded-xl text-base font-bold shadow-lg shadow-pink-600/30 transition-all disabled:opacity-50"
+          class="flex items-center gap-2 px-8 py-3 bg-pink-600 hover:bg-pink-700 text-white rounded-xl text-base font-bold shadow-md shadow-pink-500/20 transition-all disabled:opacity-50"
         >
           <Check v-if="!isSaving" class="w-5 h-5" />
           <Loader2 v-else class="w-5 h-5 animate-spin" />
@@ -322,4 +322,3 @@ async function saveAllSettings() {
   }
 }
 </script>
-

@@ -1,20 +1,20 @@
 <template>
   <div class="space-y-6 text-right" dir="rtl">
     <!-- Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs">
       <div>
-        <h1 class="text-2xl font-bold text-white flex items-center gap-3">
-          <BarChart3 class="w-7 h-7 text-pink-500" />
+        <h1 class="text-2xl font-bold text-slate-900 flex items-center gap-3">
+          <BarChart3 class="w-7 h-7 text-pink-600" />
           الأداء المالي والإحصائيات التحليلية
         </h1>
-        <p class="text-xs text-zinc-400 mt-1">
+        <p class="text-xs text-slate-500 mt-1">
           متابعة رقم الأعمال بالدينار الجزائري (دج)، وتوزيع الطلبيات حسب الولايات وحجم معاملات الأفراد والشركات B2C / B2B
         </p>
       </div>
 
       <div class="flex items-center gap-2">
-        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-          <TrendingUp class="w-4 h-4" />
+        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+          <TrendingUp class="w-4 h-4 text-emerald-600" />
           <span>تحديث الحسابات الفوري بالدينار (DZD)</span>
         </span>
       </div>
@@ -23,66 +23,66 @@
     <!-- Key Metrics Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <!-- Total Revenue -->
-      <div class="p-5 bg-zinc-900 rounded-2xl border border-zinc-800 space-y-2">
+      <div class="p-5 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-2">
         <div class="flex items-center justify-between">
-          <span class="text-xs font-bold text-zinc-400">إجمالي المداخيل</span>
-          <div class="w-9 h-9 rounded-xl bg-pink-500/10 text-pink-400 border border-pink-500/20 flex items-center justify-center font-bold text-xs font-mono">
+          <span class="text-xs font-bold text-slate-500">إجمالي المداخيل</span>
+          <div class="w-9 h-9 rounded-xl bg-pink-50 text-pink-700 border border-pink-200 flex items-center justify-center font-bold text-xs font-mono">
             دج
           </div>
         </div>
-        <div class="font-mono font-black text-2xl text-white">
-          {{ formatPrice(totalRevenue) }} <span class="text-sm font-sans font-bold text-pink-400">دج</span>
+        <div class="font-mono font-black text-2xl text-slate-900">
+          {{ formatPrice(totalRevenue) }} <span class="text-sm font-sans font-bold text-pink-600">دج</span>
         </div>
-        <span class="text-xs text-emerald-400 font-semibold flex items-center gap-1">
+        <span class="text-xs text-emerald-700 font-semibold flex items-center gap-1">
           <TrendingUp class="w-3.5 h-3.5" />
           طلبيات مؤكدة وقيد التصنيع بالورشة
         </span>
       </div>
 
       <!-- Orders Count -->
-      <div class="p-5 bg-zinc-900 rounded-2xl border border-zinc-800 space-y-2">
+      <div class="p-5 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-2">
         <div class="flex items-center justify-between">
-          <span class="text-xs font-bold text-zinc-400">إجمالي الطلبيات</span>
-          <div class="w-9 h-9 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center">
+          <span class="text-xs font-bold text-slate-500">إجمالي الطلبيات</span>
+          <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-700 border border-blue-200 flex items-center justify-center">
             <ShoppingBag class="w-4 h-4" />
           </div>
         </div>
-        <div class="font-mono font-black text-2xl text-white">
+        <div class="font-mono font-black text-2xl text-slate-900">
           {{ ordersCount }}
         </div>
-        <span class="text-xs text-zinc-400 block">
+        <span class="text-xs text-slate-500 block">
           {{ b2bOrdersCount }} طلبية مؤسسات وشركات B2B
         </span>
       </div>
 
       <!-- Average Basket -->
-      <div class="p-5 bg-zinc-900 rounded-2xl border border-zinc-800 space-y-2">
+      <div class="p-5 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-2">
         <div class="flex items-center justify-between">
-          <span class="text-xs font-bold text-zinc-400">متوسط سلة الشراء</span>
-          <div class="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center">
+          <span class="text-xs font-bold text-slate-500">متوسط سلة الشراء</span>
+          <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center">
             <CreditCard class="w-4 h-4" />
           </div>
         </div>
-        <div class="font-mono font-black text-2xl text-amber-400">
-          {{ formatPrice(avgBasket) }} <span class="text-sm font-sans font-bold text-zinc-400">دج</span>
+        <div class="font-mono font-black text-2xl text-amber-700">
+          {{ formatPrice(avgBasket) }} <span class="text-sm font-sans font-bold text-slate-500">دج</span>
         </div>
-        <span class="text-xs text-zinc-400 block">
+        <span class="text-xs text-slate-400 block">
           معدل قيمة الكعكة أو الطلب
         </span>
       </div>
 
       <!-- Inventory Value -->
-      <div class="p-5 bg-zinc-900 rounded-2xl border border-zinc-800 space-y-2">
+      <div class="p-5 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-2">
         <div class="flex items-center justify-between">
-          <span class="text-xs font-bold text-zinc-400">قيمة المواد الأولية بالمخزن</span>
-          <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center">
+          <span class="text-xs font-bold text-slate-500">قيمة المواد الأولية بالمخزن</span>
+          <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center">
             <Layers class="w-4 h-4" />
           </div>
         </div>
-        <div class="font-mono font-black text-2xl text-emerald-400">
-          {{ formatPrice(store.totalInventoryValueDZD) }} <span class="text-sm font-sans font-bold text-zinc-400">دج</span>
+        <div class="font-mono font-black text-2xl text-emerald-700">
+          {{ formatPrice(store.totalInventoryValueDZD) }} <span class="text-sm font-sans font-bold text-slate-500">دج</span>
         </div>
-        <span class="text-xs text-zinc-400 block">
+        <span class="text-xs text-slate-400 block">
           مخزون اللوز، العسل والشوكولاتة
         </span>
       </div>
@@ -91,9 +91,9 @@
     <!-- Analytics Insights: Wilayas Distribution & Customer Retention -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <!-- Wilayas Breakdown -->
-      <div class="bg-zinc-900 p-6 rounded-2xl border border-zinc-800 shadow-sm space-y-4">
-        <h3 class="text-base font-bold text-white flex items-center gap-2 border-b border-zinc-800 pb-3">
-          <MapPin class="w-5 h-5 text-pink-500" />
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
+        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+          <MapPin class="w-5 h-5 text-pink-600" />
           <span>توزيع الطلبيات وقيمتها حسب الولايات</span>
         </h3>
 
@@ -101,18 +101,18 @@
           <div
             v-for="wilaya in wilayasBreakdown"
             :key="wilaya.code"
-            class="p-3 bg-zinc-950 rounded-xl border border-zinc-800 flex items-center justify-between text-xs"
+            class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between text-xs"
           >
             <div>
-              <div class="font-bold text-white flex items-center gap-2">
+              <div class="font-bold text-slate-900 flex items-center gap-2">
                 <span>{{ wilaya.name }} (ولاية {{ wilaya.code.toString().padStart(2, '0') }})</span>
-                <span class="text-[10px] px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300">
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-200 text-slate-700 font-semibold">
                   {{ wilaya.count }} طلبيات
                 </span>
               </div>
             </div>
 
-            <div class="font-mono font-bold text-pink-400">
+            <div class="font-mono font-bold text-pink-600">
               {{ formatPrice(wilaya.totalDZD) }} دج
             </div>
           </div>
@@ -120,41 +120,41 @@
       </div>
 
       <!-- Workshop Operational Tips & Customer Loyalty -->
-      <div class="bg-zinc-900 p-6 rounded-2xl border border-zinc-800 shadow-sm space-y-4">
-        <h3 class="text-base font-bold text-white flex items-center gap-2 border-b border-zinc-800 pb-3">
-          <Award class="w-5 h-5 text-amber-400" />
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
+        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+          <Award class="w-5 h-5 text-amber-600" />
           <span>مؤشرات ولاء الزبائن وتوصيات الورشة</span>
         </h3>
 
         <div class="space-y-4 text-xs">
-          <div class="grid grid-cols-2 gap-3 bg-zinc-950 p-4 rounded-xl border border-zinc-800">
+          <div class="grid grid-cols-2 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
             <div>
-              <span class="text-zinc-500 block">نسبة الزبائن المتكررين</span>
-              <span class="text-xl font-bold text-white mt-1 block">{{ repeatRate }}%</span>
-              <span class="text-[10px] text-zinc-400">أكثر من طلبية واحدة</span>
+              <span class="text-slate-500 block">نسبة الزبائن المتكررين</span>
+              <span class="text-xl font-bold text-slate-900 mt-1 block">{{ repeatRate }}%</span>
+              <span class="text-[10px] text-slate-400">أكثر من طلبية واحدة</span>
             </div>
             <div>
-              <span class="text-zinc-500 block">كبار العملاء المعتمدين VIP</span>
-              <span class="text-xl font-bold text-amber-400 mt-1 block">{{ vipCount }}</span>
-              <span class="text-[10px] text-zinc-400">أكثر من 20,000 دج</span>
+              <span class="text-slate-500 block">كبار العملاء المعتمدين VIP</span>
+              <span class="text-xl font-bold text-amber-700 mt-1 block">{{ vipCount }}</span>
+              <span class="text-[10px] text-slate-400">أكثر من 20,000 دج</span>
             </div>
           </div>
 
-          <div class="p-4 bg-pink-500/10 border border-pink-500/20 rounded-xl text-zinc-200 leading-relaxed space-y-1">
-            <span class="font-bold text-pink-400 block text-xs">نصيحة المنصة لتطوير الورشة:</span>
-            <p class="text-xs text-zinc-300 font-light">
+          <div class="p-4 bg-pink-50 border border-pink-200 rounded-xl text-slate-800 leading-relaxed space-y-1">
+            <span class="font-bold text-pink-700 block text-xs">نصيحة المنصة لتطوير الورشة:</span>
+            <p class="text-xs text-slate-600 font-light">
               احرص على توثيق مرحلة التزيين النهائي وإرفاق صورة الإثبات الحقيقية من داخل الورشة لكل طلبية؛ هذا يرفع رضا وثقة الزبائن في الجزائر بنسبة تفوق 45% ويشجعهم على معاودة الطلب في مناسباتهم القادمة.
             </p>
           </div>
 
-          <div class="p-4 bg-zinc-950 rounded-xl border border-zinc-800 space-y-2">
-            <span class="font-bold text-zinc-300 block">أداء التوصيل والشحن:</span>
-            <div class="flex items-center justify-between text-zinc-400">
+          <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+            <span class="font-bold text-slate-800 block">أداء التوصيل والشحن:</span>
+            <div class="flex items-center justify-between text-slate-600">
               <span>نسبة التسليم الناجح</span>
-              <span class="font-bold text-emerald-400">98.5%</span>
+              <span class="font-bold text-emerald-700">98.5%</span>
             </div>
-            <div class="w-full bg-zinc-800 rounded-full h-2">
-              <div class="bg-emerald-500 h-2 rounded-full w-[98.5%]"></div>
+            <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+              <div class="bg-emerald-600 h-2 rounded-full w-[98.5%]"></div>
             </div>
           </div>
         </div>

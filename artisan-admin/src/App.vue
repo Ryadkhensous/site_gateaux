@@ -1,55 +1,55 @@
 <template>
-  <div class="flex h-screen bg-zinc-950 text-zinc-100 overflow-hidden font-sans" dir="rtl">
+  <div class="flex h-screen bg-slate-50 text-slate-800 overflow-hidden font-sans" dir="rtl">
     <!-- Sidebar Navigation -->
     <Sidebar :currentView="currentView" @change-view="currentView = $event" />
 
     <!-- Main Content Area -->
-    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-50">
       <!-- Top Bar -->
-      <header class="h-16 border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md px-6 flex items-center justify-between shrink-0">
+      <header class="h-16 border-b border-slate-200/80 bg-white/90 backdrop-blur-md px-6 flex items-center justify-between shrink-0 shadow-xs z-10">
         <div class="flex items-center gap-3">
           <div class="flex items-center gap-2">
-            <span class="text-sm font-bold text-white">{{ currentViewTitle }}</span>
-            <span class="text-xs text-zinc-500 font-normal">|</span>
-            <span class="text-xs text-zinc-400 font-medium">{{ store.settings.storeName || 'ورشة الحلويات' }}</span>
+            <span class="text-sm font-bold text-slate-900">{{ currentViewTitle }}</span>
+            <span class="text-xs text-slate-300 font-normal">|</span>
+            <span class="text-xs text-slate-500 font-medium">{{ store.settings.storeName || 'ورشة الحلويات' }}</span>
           </div>
 
           <!-- Vacation Mode Badge if active -->
           <span
             v-if="store.settings.isVacationMode"
-            class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30 flex items-center gap-1"
+            class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-50 text-amber-800 border border-amber-200 flex items-center gap-1"
           >
-            <Clock class="w-3 h-3" />
+            <Clock class="w-3 h-3 text-amber-600" />
             وضع العطلة مفعّل
           </span>
         </div>
 
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-3">
           <!-- Low Stock Warning Pill -->
           <button
             v-if="store.lowStockItemsCount > 0"
             @click="currentView = 'inventory'"
-            class="flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-full text-xs font-semibold transition-colors"
+            class="flex items-center gap-1.5 px-3 py-1 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 rounded-full text-xs font-semibold transition-colors"
           >
-            <AlertTriangle class="w-3.5 h-3.5" />
+            <AlertTriangle class="w-3.5 h-3.5 text-amber-600" />
             <span>{{ store.lowStockItemsCount }} مواد شارفت على النفاد</span>
           </button>
 
           <!-- Chef Profile Chip -->
-          <div class="flex items-center gap-2.5 bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-xl">
-            <div class="w-7 h-7 rounded-lg bg-pink-600/20 text-pink-400 flex items-center justify-center font-bold text-xs border border-pink-500/30">
+          <div class="flex items-center gap-2.5 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl">
+            <div class="w-7 h-7 rounded-lg bg-pink-100 text-pink-700 flex items-center justify-center font-bold text-xs border border-pink-200">
               {{ (store.settings.chefName || 'ش').charAt(0) }}
             </div>
             <div class="text-right">
-              <span class="text-xs font-bold text-white block leading-tight">{{ store.settings.chefName }}</span>
-              <span class="text-[10px] text-zinc-400 block leading-none">شيف الحلويات</span>
+              <span class="text-xs font-bold text-slate-900 block leading-tight">{{ store.settings.chefName }}</span>
+              <span class="text-[10px] text-slate-500 block leading-none">شيف الحلويات</span>
             </div>
           </div>
         </div>
       </header>
 
       <!-- Scrollable Main View Container -->
-      <main class="flex-1 overflow-y-auto p-6 lg:p-8 bg-zinc-950">
+      <main class="flex-1 overflow-y-auto p-6 lg:p-8 bg-slate-50/60">
         <div class="max-w-7xl mx-auto pb-10">
           <OrdersView v-if="currentView === 'orders'" />
           <CalendarView v-else-if="currentView === 'calendar'" />
