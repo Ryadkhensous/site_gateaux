@@ -8,7 +8,9 @@
     "dev:client": "cd client-web && npm run dev",
     "dev:admin": "cd artisan-admin && npm run dev",
     "dev": "concurrently \"npm:dev:backend\" \"npm:dev:client\" \"npm:dev:admin\"",
-    "build": "node scripts/build-client.js"
+    "build": "node scripts/build-client.js",
+    "deploy:admin": "cd artisan-admin && npx vercel --prod --yes",
+    "deploy:all": "git push origin master && cd artisan-admin && npx vercel --prod --yes"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"
