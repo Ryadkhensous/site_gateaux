@@ -38,6 +38,7 @@
 .gold-metallic-text {
   background: linear-gradient(135deg, #A88319 0%, #D8B842 40%, #E5CD6E 70%, #876515 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
