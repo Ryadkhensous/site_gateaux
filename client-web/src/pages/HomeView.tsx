@@ -33,7 +33,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
   artisans = [],
   onSelectProductToOrder
 }) => {
-  // بيانات شرائح العرض الرئيسية المطابقة لتصميم Mockup
+  // شرائح العرض الرئيسية للمنصة
   const heroSlides = [
     {
       id: 'slide-traditional-tray',

@@ -75,7 +75,7 @@ export const MarketplaceView: React.FC<MarketplaceViewProps> = ({
     { id: 'B2B_ENTREPRISE', label: 'بوفيهات وشركات B2B', icon: Building2 }
   ];
 
-  // تصفية المنتجات بذكاء مع دعم الحلويات التقليدية والمرشحات الفرعية
+  // تصفية المنتجات حسب الفئات المحددة والحلويات التقليدية
   const filteredProducts = products
     .filter((prod) => {
       // 1. فلتر التصنيف الرئيسي

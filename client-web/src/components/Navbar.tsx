@@ -157,7 +157,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 الرئيسية
               </button>
 
-              {/* المتجر والحلويات الموحد مع القائمة المنسدلة الذكية (Shop & Sweets Dropdown) */}
+              {/* المتجر والحلويات الموحد مع القائمة المنسدلة (Shop & Sweets Dropdown) */}
               <div
                 className="relative"
                 ref={shopDropdownRef}

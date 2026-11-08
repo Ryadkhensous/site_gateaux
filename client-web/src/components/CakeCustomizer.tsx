@@ -244,7 +244,7 @@ export const CakeCustomizer: React.FC<CakeCustomizerProps> = ({
       <div className="text-center max-w-3xl mx-auto mb-10">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-50 text-rose-700 text-xs font-bold mb-3 border border-rose-200 shadow-xs">
           <Sparkles className="w-3.5 h-3.5 text-dore-600 animate-spin-slow" />
-          <span>الورشة الافتراضية ثلاثية الأبعاد • محاكاة تصويرية فائقة الواقعية</span>
+          <span>الورشة التفاعلية ثلاثية الأبعاد • تجربة تصويرية حقيقية</span>
         </div>
         <h1 className="text-3xl sm:text-5xl font-serif font-bold text-stone-900 mb-3 tracking-tight">
           صمّم كعكتك الاستثنائية بلمستك الخاصة
@@ -543,7 +543,7 @@ export const CakeCustomizer: React.FC<CakeCustomizerProps> = ({
             ))}
           </div>
 
-          {/* تبويب 1 : الحجم والطبقات مع حاسبة عدد المدعوين الذكية */}
+          {/* تبويب 1 : الحجم والطبقات وحاسبة عدد المدعوين */}
           {activeTab === 'tiers' && (
             <TierSelector
               options={TIER_OPTIONS}

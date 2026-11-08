@@ -169,7 +169,7 @@ export default function TierSelector({
         اختر عدد الطبقات وحجم الكعكة
       </h3>
 
-      {/* ---- عدد المدعوين والحساب الذكي ---- */}
+      {/* ---- عدد المدعوين والتوصية بالحجم ---- */}
       <div className="guests">
         <div className="guests__label">
           <span className="guests__q">كم عدد المدعوين؟</span>
