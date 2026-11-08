@@ -1,9 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { Search, CheckCircle2, AlertCircle, Camera, MapPin, Store, ChefHat, Sparkles, Clock } from 'lucide-react';
+import { 
+  Search, 
+  CheckCircle2, 
+  AlertCircle, 
+  Camera, 
+  MapPin, 
+  Store, 
+  ChefHat, 
+  Sparkles, 
+  Receipt,
+  Printer,
+  Banknote,
+  Coins
+} from 'lucide-react';
 import { Order } from '../types';
 import { api } from '../services/api';
 import { formatDZD } from '../utils/format';
+import { ReceiptModal } from './ReceiptModal';
 
 interface TrackingViewProps {
   initialOrderNumber?: string;
@@ -15,6 +29,7 @@ export const TrackingView: React.FC<TrackingViewProps> = ({ initialOrderNumber =
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
+  const [showReceiptModal, setShowReceiptModal] = useState(false);
 
   const fetchOrder = async (orderNum: string) => {
     if (!orderNum.trim()) return;
@@ -66,6 +81,14 @@ export const TrackingView: React.FC<TrackingViewProps> = ({ initialOrderNumber =
     fetchOrder(searchQuery);
   };
 
+  const totalAmount = order?.totalPriceDZD || 0;
+  const depositPaid = (order as any)?.depositAmountDZD !== undefined
+    ? Number((order as any)?.depositAmountDZD)
+    : Math.round(totalAmount * 0.3);
+  const remainingAmount = (order as any)?.remainingAmountDZD !== undefined
+    ? Number((order as any)?.remainingAmountDZD)
+    : Math.max(0, totalAmount - depositPaid);
+
   return (
     <div className="py-8 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-right">
       {/* رأس الصفحة والمقدمة */}
@@ -87,7 +110,7 @@ export const TrackingView: React.FC<TrackingViewProps> = ({ initialOrderNumber =
         <button
           type="submit"
           disabled={loading}
-          className="px-6 py-3 bg-gradient-to-l from-dore-500 to-rose-500 hover:from-dore-600 hover:to-rose-600 text-white font-bold rounded-2xl shadow-md transition-all text-xs flex items-center gap-2 flex-shrink-0"
+          className="px-6 py-3 bg-gradient-to-l from-dore-500 to-rose-500 hover:from-dore-600 hover:to-rose-600 text-white font-bold rounded-2xl shadow-md transition-all text-xs flex items-center gap-2 flex-shrink-0 cursor-pointer"
         >
           {loading ? 'جاري البحث...' : 'بحث عن الطلب'}
         </button>
@@ -122,21 +145,42 @@ export const TrackingView: React.FC<TrackingViewProps> = ({ initialOrderNumber =
                   تاريخ الحجز: {new Date(order.createdAt).toLocaleDateString('ar-DZ', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </span>
               </div>
-              <div className="text-left">
-                <span className="text-xs text-stone-400 font-bold block mb-0.5">إجمالي السعر المدفوع</span>
-                <div className="inline-flex items-baseline gap-1" dir="rtl">
-                  <span dir="ltr" className="text-2xl font-mono font-extrabold text-stone-900 tracking-tight">
-                    {formatDZD(order.totalPriceDZD)}
-                  </span>
-                  <span className="text-xs text-dore-700 font-sans font-bold">دج</span>
+
+              {/* الملخص المالي: الإجمالي، العربون، المتبقي */}
+              <div className="flex flex-col sm:flex-row items-end sm:items-center gap-4">
+                <div className="bg-stone-50 border border-stone-200 rounded-2xl p-3 flex items-center gap-4 text-xs">
+                  <div className="text-center">
+                    <span className="text-[10px] text-stone-400 font-bold block">إجمالي الطلب</span>
+                    <span className="font-mono font-bold text-stone-900" dir="ltr">{formatDZD(totalAmount)}</span>
+                    <span className="text-[10px] text-stone-600 mr-1">دج</span>
+                  </div>
+
+                  <div className="h-7 w-px bg-stone-200"></div>
+
+                  <div className="text-center">
+                    <span className="text-[10px] text-[#E84375] font-bold block">العربون المسدد</span>
+                    <span className="font-mono font-bold text-[#E84375]" dir="ltr">{formatDZD(depositPaid)}</span>
+                    <span className="text-[10px] text-pink-600 mr-1">دج</span>
+                  </div>
+
+                  <div className="h-7 w-px bg-stone-200"></div>
+
+                  <div className="text-center">
+                    <span className="text-[10px] text-emerald-700 font-bold block">المتبقي عند التسليم</span>
+                    <span className="font-mono font-bold text-emerald-800" dir="ltr">{formatDZD(remainingAmount)}</span>
+                    <span className="text-[10px] text-emerald-700 mr-1">دج</span>
+                  </div>
                 </div>
-                <span className="text-[11px] text-rose-600 font-semibold block mt-1">
-                  {order.paymentMethod === 'CASH_ON_DELIVERY' 
-                    ? 'الدفع نقداً عند الاستلام' 
-                    : order.paymentMethod === 'BARIDIMOB'
-                    ? 'بريدي موب (BaridiMob)'
-                    : 'البطاقة الذهبية / CIB'}
-                </span>
+
+                {/* زر استعراض الوصل الرسمي */}
+                <button
+                  type="button"
+                  onClick={() => setShowReceiptModal(true)}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-[#E84375] hover:bg-[#d83768] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                >
+                  <Receipt className="w-4 h-4" />
+                  <span>وصل الدفع والعربون</span>
+                </button>
               </div>
             </div>
 
@@ -267,6 +311,15 @@ export const TrackingView: React.FC<TrackingViewProps> = ({ initialOrderNumber =
             </div>
           </div>
         </div>
+      )}
+
+      {/* نافذة عرض وصل التسديد والطباعة / الحفظ PDF */}
+      {order && (
+        <ReceiptModal
+          isOpen={showReceiptModal}
+          onClose={() => setShowReceiptModal(false)}
+          order={order}
+        />
       )}
     </div>
   );

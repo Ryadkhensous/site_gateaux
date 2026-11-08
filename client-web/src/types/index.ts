@@ -93,6 +93,11 @@ export interface Order {
     | "DELIVERED"
     | "CANCELLED";
   paymentMethod: "CASH_ON_DELIVERY" | "CIB_EDAHABIA" | "BANK_TRANSFER" | "BARIDIMOB";
+  paymentType?: "FULL" | "DEPOSIT_30" | "DEPOSIT_50" | "DEPOSIT_CUSTOM";
+  depositAmountDZD?: number;
+  remainingAmountDZD?: number;
+  isDepositPaid?: boolean;
+  receiptNumber?: string;
   totalPriceDZD: number;
   notes?: string;
   createdAt: string;

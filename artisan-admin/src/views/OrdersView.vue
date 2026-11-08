@@ -151,14 +151,15 @@
             </div>
 
             <div>
-              <span class="text-[10px] text-slate-400 font-bold block mb-0.5">موعد التسليم</span>
+              <span class="text-[10px] text-slate-400 font-bold block mb-0.5">موعد التسليم والدفع</span>
               <span class="font-bold text-slate-800 flex items-center gap-1">
                 <Calendar class="w-3 h-3 text-pink-600" />
                 {{ formatDate(order.eventDate) }}
               </span>
-              <span class="text-[10px] text-slate-500 block">
-                {{ getPaymentLabel(order.paymentMethod) }}
-              </span>
+              <div class="mt-1 flex items-center justify-between text-[11px] bg-slate-50 p-1.5 rounded-lg border border-slate-200">
+                <span class="text-pink-700 font-bold">عربون: {{ formatPrice(getDepositAmount(order)) }} دج</span>
+                <span class="text-emerald-700 font-bold">باقي: {{ formatPrice(getRemainingAmount(order)) }} دج</span>
+              </div>
             </div>
           </div>
 
@@ -257,6 +258,33 @@
             </div>
             <div v-if="selectedOrder.notes" class="text-amber-800 text-xs mt-1 bg-amber-50 p-2.5 rounded-lg border border-amber-200">
               <span class="font-bold">ملاحظات الزبون:</span> {{ selectedOrder.notes }}
+            </div>
+          </div>
+
+          <!-- Financial Settlement & Deposit Card -->
+          <div class="p-4 bg-gradient-to-br from-pink-50/50 to-white rounded-xl border border-pink-200/80 space-y-2.5 text-xs">
+            <div class="flex items-center justify-between border-b border-pink-100 pb-2">
+              <span class="font-bold text-slate-700">التسوية المالية والوصل</span>
+              <span v-if="selectedOrder.receiptNumber" class="font-mono text-[11px] bg-white px-2 py-0.5 rounded border border-pink-200 text-pink-700 font-bold">
+                {{ selectedOrder.receiptNumber }}
+              </span>
+            </div>
+            <div class="grid grid-cols-3 gap-2 text-center">
+              <div class="p-2 bg-white rounded-lg border border-slate-200">
+                <span class="text-[10px] text-slate-400 font-bold block">إجمالي الطلبية</span>
+                <span class="font-mono font-bold text-slate-900 block">{{ formatPrice(selectedOrder.totalPriceDZD) }}</span>
+                <span class="text-[9px] text-slate-500">دج</span>
+              </div>
+              <div class="p-2 bg-pink-50 rounded-lg border border-pink-200">
+                <span class="text-[10px] text-pink-700 font-bold block">العربون المسدد</span>
+                <span class="font-mono font-bold text-pink-700 block">{{ formatPrice(getDepositAmount(selectedOrder)) }}</span>
+                <span class="text-[9px] text-pink-600">دج</span>
+              </div>
+              <div class="p-2 bg-emerald-50 rounded-lg border border-emerald-200">
+                <span class="text-[10px] text-emerald-800 font-bold block">المتبقي للتحصيل</span>
+                <span class="font-mono font-bold text-emerald-800 block">{{ formatPrice(getRemainingAmount(selectedOrder)) }}</span>
+                <span class="text-[9px] text-emerald-700">دج نقداً</span>
+              </div>
             </div>
           </div>
 
@@ -424,14 +452,31 @@
           </div>
         </div>
 
-        <div class="flex items-center justify-between pt-2 border-t text-xs">
-          <div>
-            <span class="text-slate-500">المبلغ الإجمالي:</span>
-            <span class="font-bold text-base text-slate-900 mr-2">{{ formatPrice(printingOrder.totalPriceDZD) }} دج</span>
+        <!-- Financial Breakdown in Slip -->
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2 text-xs">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-200">
+            <span class="font-bold text-slate-800">بيان الحساب المالي والعربون :</span>
+            <span v-if="printingOrder.receiptNumber" class="font-mono font-bold text-pink-700">
+              وصل رقم: {{ printingOrder.receiptNumber }}
+            </span>
           </div>
-          <div>
-            <span class="text-slate-500">طريقة الدفع:</span>
-            <span class="font-bold mr-2">{{ getPaymentLabel(printingOrder.paymentMethod) }}</span>
+          <div class="grid grid-cols-3 gap-3 text-center pt-1">
+            <div class="p-2 bg-white rounded-lg border border-slate-200">
+              <span class="text-slate-500 block text-[10px]">المبلغ الإجمالي:</span>
+              <span class="font-bold text-sm text-slate-900 font-mono">{{ formatPrice(printingOrder.totalPriceDZD) }} دج</span>
+            </div>
+            <div class="p-2 bg-white rounded-lg border border-pink-200">
+              <span class="text-pink-600 block text-[10px] font-bold">العربون المسدد مسبقاً:</span>
+              <span class="font-bold text-sm text-pink-700 font-mono">{{ formatPrice(getDepositAmount(printingOrder)) }} دج</span>
+            </div>
+            <div class="p-2 bg-white rounded-lg border border-emerald-300">
+              <span class="text-emerald-700 block text-[10px] font-bold">المتبقي للتحصيل عند التسليم:</span>
+              <span class="font-bold text-sm text-emerald-800 font-mono">{{ formatPrice(getRemainingAmount(printingOrder)) }} دج</span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between pt-2 border-t text-[11px] text-slate-600">
+            <span>طريقة الدفع المختارة: <strong>{{ getPaymentLabel(printingOrder.paymentMethod) }}</strong></span>
+            <span>حالة العربون: <strong class="text-emerald-700">مسدد ومؤكد رسمياً</strong></span>
           </div>
         </div>
 
@@ -676,5 +721,18 @@ function getPaymentLabel(method: string): string {
     BANK_TRANSFER: 'تحويل بنكي'
   };
   return map[method] || method;
+}
+
+function getDepositAmount(order: OrderItem): number {
+  if (order.depositAmountDZD !== undefined) return order.depositAmountDZD;
+  if (order.paymentType === 'FULL') return order.totalPriceDZD;
+  if (order.paymentType === 'DEPOSIT_50') return Math.round(order.totalPriceDZD * 0.5);
+  return Math.round(order.totalPriceDZD * 0.3);
+}
+
+function getRemainingAmount(order: OrderItem): number {
+  if (order.remainingAmountDZD !== undefined) return order.remainingAmountDZD;
+  const dep = getDepositAmount(order);
+  return Math.max(0, order.totalPriceDZD - dep);
 }
 </script>

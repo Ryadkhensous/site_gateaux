@@ -53,9 +53,28 @@ export const createOrder = async (req: Request, res: Response) => {
     const randomDigits = Math.floor(1000 + Math.random() * 9000);
     const orderNumber = `CMD-2026-DZ${randomDigits}`;
 
+    const total = Math.max(100, Math.round(Number(totalPriceDZD) || 8500));
+    let paymentMode: "FULL" | "DEPOSIT_30" | "DEPOSIT_50" | "DEPOSIT_CUSTOM" = req.body.paymentType || "FULL";
+    let deposit = total;
+
+    if (paymentMode === "DEPOSIT_30") {
+      deposit = Math.round(total * 0.3);
+    } else if (paymentMode === "DEPOSIT_50") {
+      deposit = Math.round(total * 0.5);
+    } else if (paymentMode === "DEPOSIT_CUSTOM" && req.body.depositAmountDZD) {
+      deposit = Math.min(total, Math.max(500, Math.round(Number(req.body.depositAmountDZD))));
+    } else {
+      paymentMode = "FULL";
+      deposit = total;
+    }
+
+    const remaining = Math.max(0, total - deposit);
+    const receiptNumber = `REC-2026-DZ${randomDigits}`;
+
     const newOrder: OrderItem = {
       id: `ord-dz-${Date.now()}`,
       orderNumber,
+      receiptNumber,
       clientId: authenticatedUserId || undefined,
       artisanId: artisan.id,
       artisanName: artisan.storeName,
@@ -73,7 +92,11 @@ export const createOrder = async (req: Request, res: Response) => {
       companyNIF,
       status: "CONFIRMED",
       paymentMethod: paymentMethod || "CASH_ON_DELIVERY",
-      totalPriceDZD: Math.max(100, Math.round(Number(totalPriceDZD) || 8500)),
+      paymentType: paymentMode,
+      depositAmountDZD: deposit,
+      remainingAmountDZD: remaining,
+      isDepositPaid: true,
+      totalPriceDZD: total,
       notes,
       createdAt: new Date().toISOString(),
       customization: customization ? {
