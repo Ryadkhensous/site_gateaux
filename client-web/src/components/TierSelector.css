@@ -1,0 +1,371 @@
+/* TierSelector.css - تصميم فاخر واحترافي لاختيار حجم وطبقات الكعكة */
+
+.tiers {
+  direction: rtl;
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  font-family: inherit;
+}
+
+.tiers__title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1c1917;
+  margin: 0;
+}
+
+/* ---- قسم عدد المدعوين (Guests Stepper) ---- */
+.guests {
+  background: linear-gradient(135deg, #fffafc 0%, #fdf8f5 100%);
+  border: 1px solid #fce7f3;
+  border-radius: 1.25rem;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.guests__label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.guests__q {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #292524;
+}
+
+.guests__hint {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #e84375;
+  transition: all 0.3s ease;
+}
+
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #e7e5e4;
+  border-radius: 0.875rem;
+  padding: 0.25rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.stepper button {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.625rem;
+  border: none;
+  background: #f5f5f4;
+  color: #292524;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.stepper button:hover {
+  background: #e84375;
+  color: #ffffff;
+}
+
+.stepper button:active {
+  transform: scale(0.95);
+}
+
+.stepper input {
+  width: 3.5rem;
+  border: none;
+  background: transparent;
+  text-align: center;
+  font-size: 0.95rem;
+  font-weight: 800;
+  font-family: monospace;
+  color: #1c1917;
+  outline: none;
+  -moz-appearance: textfield;
+}
+
+.stepper input::-webkit-outer-spin-button,
+.stepper input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* ---- شبكة البطاقات (Cards Grid) ---- */
+.tiers__grid {
+  border: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 0.875rem;
+}
+
+@media (min-width: 640px) {
+  .tiers__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* بطاقة الطابق */
+.tier {
+  position: relative;
+  display: block;
+  cursor: pointer;
+}
+
+.tier input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.tier__body {
+  position: relative;
+  background: #ffffff;
+  border: 2px solid #e7e5e4;
+  border-radius: 1.25rem;
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.875rem;
+  min-height: 100%;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.tier:hover .tier__body {
+  border-color: #fbcfe8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(232, 67, 117, 0.08);
+}
+
+.tier input[type="radio"]:checked + .tier__body {
+  border-color: #e84375;
+  background: linear-gradient(180deg, #fff7fa 0%, #ffffff 100%);
+  box-shadow: 0 6px 20px rgba(232, 67, 117, 0.14);
+}
+
+/* الشارات */
+.tier__badges {
+  position: absolute;
+  top: -0.65rem;
+  left: 1rem;
+  display: flex;
+  gap: 0.35rem;
+  z-index: 10;
+}
+
+.badge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+.badge--popular {
+  background: linear-gradient(135deg, #e84375 0%, #be185d 100%);
+  color: #ffffff;
+}
+
+.badge--rec {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  animation: pulseBadge 2s infinite ease-in-out;
+}
+
+@keyframes pulseBadge {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* رأس البطاقة والأيقونة */
+.tier__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+}
+
+.tier__icon {
+  flex-shrink: 0;
+  border-radius: 0.875rem;
+  background: #fafaf9;
+  border: 1px solid #f5f5f4;
+  padding: 0.25rem;
+}
+
+.tier input[type="radio"]:checked + .tier__body .tier__icon {
+  background: #fdf2f8;
+  border-color: #fce7f3;
+}
+
+.tier__icon-plate {
+  fill: #d6d3d1;
+}
+
+.tier input[type="radio"]:checked + .tier__body .tier__icon-plate {
+  fill: #f472b6;
+}
+
+.tier__icon-layer {
+  fill: #e7e5e4;
+  stroke: #d6d3d1;
+  stroke-width: 1;
+}
+
+.tier input[type="radio"]:checked + .tier__body .tier__icon-layer {
+  fill: #fbcfe8;
+  stroke: #e84375;
+}
+
+.tier__text {
+  flex: 1;
+  min-width: 0;
+}
+
+.tier__name {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1c1917;
+  line-height: 1.35;
+}
+
+.tier__pieces {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #e84375;
+  white-space: nowrap;
+}
+
+.tier__desc {
+  font-size: 0.72rem;
+  color: #78716c;
+  line-height: 1.4;
+  margin: 0.3rem 0 0 0;
+}
+
+/* أسفل البطاقة والسعر */
+.tier__foot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding-top: 0.75rem;
+  border-top: 1px solid #f5f5f4;
+}
+
+.tier__price strong {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 800;
+  font-family: monospace;
+  color: #1c1917;
+}
+
+.tier input[type="radio"]:checked + .tier__body .tier__price strong {
+  color: #e84375;
+}
+
+.tier__price small {
+  display: block;
+  font-size: 0.68rem;
+  color: #a8a29e;
+  margin-top: 0.15rem;
+}
+
+.pill {
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: #f5f5f4;
+  color: #57534e;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  border: 1px solid #e7e5e4;
+}
+
+.tier input[type="radio"]:checked + .tier__body .pill {
+  background: #fdf2f8;
+  color: #be185d;
+  border-color: #fbcfe8;
+}
+
+/* علامة التأكيد (Checkmark) */
+.tier__check {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 0.75rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 9999px;
+  background: #e84375;
+  color: #ffffff;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.tier input[type="radio"]:checked + .tier__body .tier__check {
+  display: flex;
+}
+
+/* ---- ملخص السعر المبدئي المتحرك (Recap Total) ---- */
+.tiers__total {
+  background: linear-gradient(135deg, #1c1917 0%, #292524 100%);
+  color: #ffffff;
+  padding: 1rem 1.25rem;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+
+.tiers__total span {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #d6d3d1;
+}
+
+.tiers__total strong {
+  font-size: 1.25rem;
+  font-weight: 800;
+  font-family: monospace;
+  color: #fdf2f8;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}

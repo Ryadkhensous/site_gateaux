@@ -21,6 +21,21 @@ import {
 } from 'lucide-react';
 import { CustomizationOption, Artisan } from '../types';
 import { formatDZD } from '../utils/format';
+import TierSelector, { TIER_OPTIONS, TierOption } from './TierSelector';
+
+const idToTiersMap: Record<string, number> = {
+  'single-smooth': 1,
+  'single-tall': 1.5,
+  'double': 2,
+  'triple': 3,
+};
+
+const tiersToIdMap: Record<number, string> = {
+  1: 'single-smooth',
+  1.5: 'single-tall',
+  2: 'double',
+  3: 'triple',
+};
 
 interface CakeCustomizerProps {
   artisans: Artisan[];
@@ -528,46 +543,17 @@ export const CakeCustomizer: React.FC<CakeCustomizerProps> = ({
             ))}
           </div>
 
-          {/* تبويب 1 : الحجم والطبقات */}
+          {/* تبويب 1 : الحجم والطبقات مع حاسبة عدد المدعوين الذكية */}
           {activeTab === 'tiers' && (
-            <div className="space-y-4">
-              <h4 className="text-sm font-bold text-stone-900 mb-1">اختر عدد الطبقات وحجم الكعكة :</h4>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {tiersOptions.map((option) => (
-                  <div
-                    key={option.tiers}
-                    onClick={() => {
-                      setSelectedTier(option.tiers);
-                      setViewMode('realistic');
-                    }}
-                    className={`p-4 rounded-2xl border-2 cursor-pointer transition-all flex flex-col justify-between ${
-                      selectedTier === option.tiers
-                        ? 'border-rose-400 bg-rose-50/40 shadow-sm'
-                        : 'border-beige-200 hover:border-beige-300 bg-white'
-                    }`}
-                  >
-                    <div>
-                      <div className="flex justify-between items-start mb-2">
-                        <span className="font-serif font-bold text-stone-900 text-sm">{option.name}</span>
-                        {selectedTier === option.tiers && (
-                          <div className="w-5 h-5 rounded-full bg-rose-500 text-white flex items-center justify-center">
-                            <Check className="w-3 h-3" />
-                          </div>
-                        )}
-                      </div>
-                      <p className="text-[11px] text-stone-500 mb-3 font-light">{option.desc}</p>
-                    </div>
-
-                    <div className="flex items-center justify-between pt-2 border-t border-beige-100">
-                      {renderPrice(option.basePrice)}
-                      <span className="text-[10px] text-rose-600 font-semibold bg-rose-50 px-2 py-0.5 rounded-full">
-                        {option.servings} شخص
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <TierSelector
+              options={TIER_OPTIONS}
+              value={tiersToIdMap[selectedTier] || 'single-smooth'}
+              onChange={(opt) => {
+                const numericTier = idToTiersMap[opt.id] || 1;
+                setSelectedTier(numericTier);
+                setViewMode('realistic');
+              }}
+            />
           )}
 
           {/* تبويب 2 : نكهة الجينواز */}
