@@ -1,4 +1,4 @@
-import { ArtisanProfile, OrderItem, ProductItem, TrackingStep } from '../types';
+import { ArtisanProfile, OrderItem, ProductItem, TrackingStep, InventoryItem } from '../types';
 
 export const DEFAULT_TRACKING_STEPS: TrackingStep[] = [
   {
@@ -564,6 +564,117 @@ export const INITIAL_PRODUCTS: ProductItem[] = [
     imageUrl: "/images/cake_preview_1tier_tall.jpg",
     isCustomizable: true,
     tags: ["لاير كيك", "كراميل", "بيكان", "مرتفع"]
+  }
+];
+
+export const INITIAL_INVENTORY: InventoryItem[] = [
+  {
+    id: "inv-1",
+    artisanId: "art-1",
+    name: "لوز بلدي مطحون إكسترا (بودرة ناعمة)",
+    category: "مكسرات ولوز",
+    currentStock: 18.5,
+    unit: "كغ",
+    minThreshold: 5,
+    costPerUnitDZD: 2200,
+    supplierName: "مطاحن الأطلس - البليدة",
+    lastUpdated: "2026-11-06"
+  },
+  {
+    id: "inv-2",
+    artisanId: "art-1",
+    name: "شوكولاتة التغطية البلجيكية الداكنة 70%",
+    category: "شوكولاتة وكاكاو",
+    currentStock: 12.0,
+    unit: "كغ",
+    minThreshold: 4,
+    costPerUnitDZD: 3400,
+    supplierName: "استيراد كاليبوت الجزائر",
+    lastUpdated: "2026-11-05"
+  },
+  {
+    id: "inv-3",
+    artisanId: "art-1",
+    name: "عسل السدر والليمون الصافي الحر",
+    category: "عسل وسكريات",
+    currentStock: 8.0,
+    unit: "لتر",
+    minThreshold: 3,
+    costPerUnitDZD: 4500,
+    supplierName: "مناحل جبال جرجرة",
+    lastUpdated: "2026-11-04"
+  },
+  {
+    id: "inv-4",
+    artisanId: "art-1",
+    name: "ورق الذهب الغذائي الخالص عيار 24 قيراط",
+    category: "مواد التزيين",
+    currentStock: 25,
+    unit: "ورقة",
+    minThreshold: 10,
+    costPerUnitDZD: 350,
+    supplierName: "مستلزمات الحلويات الفاخرة - العاصمة",
+    lastUpdated: "2026-11-07"
+  },
+  {
+    id: "inv-5",
+    artisanId: "art-1",
+    name: "زبدة طبيعية فرنسية للتوريق والغاناش",
+    category: "ألبان ودهون",
+    currentStock: 3.5,
+    unit: "كغ",
+    minThreshold: 5,
+    costPerUnitDZD: 1600,
+    supplierName: "ألبان متيجة",
+    lastUpdated: "2026-11-07"
+  },
+  {
+    id: "inv-6",
+    artisanId: "art-1",
+    name: "علب وتغليف حراري مبرد للكعكات الكبيرة",
+    category: "تغليف وتبريد",
+    currentStock: 14,
+    unit: "علبة",
+    minThreshold: 8,
+    costPerUnitDZD: 650,
+    supplierName: "كرتون وإيمبالاج الجزائر",
+    lastUpdated: "2026-11-03"
+  },
+  {
+    id: "inv-7",
+    artisanId: "art-2",
+    name: "جوز قسنطيني منتقى ومحمص للحلويات",
+    category: "مكسرات ولوز",
+    currentStock: 15.0,
+    unit: "كغ",
+    minThreshold: 6,
+    costPerUnitDZD: 2800,
+    supplierName: "تعاونية الشرق للمكسرات",
+    lastUpdated: "2026-11-06"
+  },
+  {
+    id: "inv-8",
+    artisanId: "art-2",
+    name: "سمن طبيعي نباتي أصيل للبقلاوة المورقة",
+    category: "ألبان ودهون",
+    currentStock: 9.5,
+    unit: "كغ",
+    minThreshold: 4,
+    costPerUnitDZD: 1200,
+    supplierName: "موزع قسنطينة المركزي",
+    lastUpdated: "2026-11-05"
+  },
+  {
+    id: "inv-9",
+    artisanId: "art-3",
+    name: "عجينة السكر السويسرية الممتازة للنحت 3D",
+    category: "مواد التزيين",
+    currentStock: 4.0,
+    unit: "كغ",
+    minThreshold: 5,
+    costPerUnitDZD: 1800,
+    supplierName: "بوتيك الكيك ديزاين - وهران",
+    lastUpdated: "2026-11-06"
   }
 ];
 

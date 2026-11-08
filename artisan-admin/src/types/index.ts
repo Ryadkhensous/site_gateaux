@@ -97,3 +97,45 @@ export interface ArtisanProfile {
   banner: string;
   specialties: string[];
 }
+
+export interface InventoryItem {
+  id: string;
+  artisanId: string;
+  name: string;
+  category: string;
+  currentStock: number;
+  unit: string;
+  minThreshold: number;
+  costPerUnitDZD: number;
+  supplierName?: string;
+  lastUpdated: string;
+}
+
+export interface CustomerItem {
+  id: string;
+  name: string;
+  phone: string;
+  wilayaCode: number;
+  wilayaName: string;
+  address: string;
+  totalOrders: number;
+  totalSpentDZD: number;
+  lastOrderDate: string;
+  isVIP: boolean;
+}
+
+export interface ArtisanSettings {
+  storeName: string;
+  chefName: string;
+  phone: string;
+  whatsappNumber: string;
+  wilayaCode: number;
+  address: string;
+  bio: string;
+  dailyCapacity: number;
+  acceptCash: boolean;
+  acceptBaridiMob: boolean;
+  baridiMobRip: string;
+  acceptCIB: boolean;
+  isVacationMode: boolean;
+}
