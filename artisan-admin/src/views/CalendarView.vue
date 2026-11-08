@@ -314,3 +314,4 @@ const printSlip = (order: OrderItem) => {
     </div>
   </div>
 </template>
+
