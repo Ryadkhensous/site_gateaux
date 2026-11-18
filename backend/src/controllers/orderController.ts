@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { store, OrderItem, DEFAULT_TRACKING_STEPS } from "../services/store.js";
 import { prisma, getDbStatus } from "../services/db.js";
-import { sanitizeString, sanitizeOrderInput } from "../utils/security.js";
+import { sanitizeString, sanitizeOrderInput, maskOrderForPublic } from "../utils/security.js";
 import { Server } from "socket.io";
 
 export let ioInstance: Server | null = null;
@@ -188,6 +188,15 @@ export const createOrder = async (req: Request, res: Response) => {
 
 export const getOrders = async (req: Request, res: Response) => {
   const { artisanId, status, isB2B } = req.query;
+  const authUser = (req as any).user;
+
+  // Protection contre le scraping global non-autorisé
+  if (!artisanId && (!authUser || (authUser.role !== "ARTISAN" && authUser.role !== "ADMIN"))) {
+    return res.status(403).json({
+      success: false,
+      message: "Accès restreint. Veuillez spécifier l'identifiant de la boutique (artisanId) ou vous connecter."
+    });
+  }
 
   // Tentative de lecture depuis PostgreSQL
   try {
@@ -290,6 +299,7 @@ export const getOrders = async (req: Request, res: Response) => {
 
 export const getOrderByNumberOrId = async (req: Request, res: Response) => {
   const { idOrNumber } = req.params;
+  const authUser = (req as any).user;
 
   // 1. Recherche dans PostgreSQL
   try {
@@ -308,6 +318,14 @@ export const getOrderByNumberOrId = async (req: Request, res: Response) => {
       });
 
       if (o) {
+        const isAuthorized = Boolean(
+          authUser && (
+            authUser.role === "ARTISAN" ||
+            authUser.role === "ADMIN" ||
+            authUser.id === o.clientId
+          )
+        );
+
         const formatted = {
           id: o.id,
           orderNumber: o.orderNumber,
@@ -352,10 +370,13 @@ export const getOrderByNumberOrId = async (req: Request, res: Response) => {
           }))
         };
 
+        const resultData = isAuthorized ? formatted : maskOrderForPublic(formatted);
+
         return res.json({
           success: true,
           source: "postgresql",
-          data: formatted
+          isProtected: !isAuthorized,
+          data: resultData
         });
       }
     }
@@ -372,10 +393,86 @@ export const getOrderByNumberOrId = async (req: Request, res: Response) => {
     return res.status(404).json({ success: false, message: "Commande introuvable" });
   }
 
+  const isAuthorized = Boolean(
+    authUser && (
+      authUser.role === "ARTISAN" ||
+      authUser.role === "ADMIN" ||
+      authUser.id === order.clientId
+    )
+  );
+
+  const resultData = isAuthorized ? order : maskOrderForPublic(order);
+
   return res.json({
     success: true,
     source: "memory",
-    data: order
+    isProtected: !isAuthorized,
+    data: resultData
+  });
+};
+
+/**
+ * Récupère les commandes de l'utilisateur connecté (sécurisé, données non masquées)
+ */
+export const getMyOrders = async (req: Request, res: Response) => {
+  const userId = (req as any).user?.id;
+  if (!userId) {
+    return res.status(401).json({ success: false, message: "Authentification requise pour voir vos commandes." });
+  }
+
+  try {
+    if (getDbStatus()) {
+      const orders = await prisma.order.findMany({
+        where: { clientId: userId },
+        include: {
+          customization: true,
+          trackingSteps: { orderBy: { stepOrder: "asc" } }
+        },
+        orderBy: { createdAt: "desc" }
+      });
+
+      const formatted = orders.map((o) => ({
+        id: o.id,
+        orderNumber: o.orderNumber,
+        receiptNumber: `REC-2026-DZ${o.orderNumber.replace(/[^0-9]/g, "").slice(-4)}`,
+        artisanId: o.artisanId,
+        artisanName: store.artisans.find((a) => a.id === o.artisanId)?.storeName || "Atelier Pâtisserie",
+        customerName: o.customerName,
+        customerPhone: o.customerPhone,
+        deliveryWilayaCode: o.deliveryWilayaCode,
+        deliveryWilayaName: o.deliveryWilayaName,
+        deliveryAddress: o.deliveryAddress,
+        eventDate: o.eventDate.toISOString(),
+        status: o.status,
+        paymentMethod: o.paymentMethod,
+        totalPriceDZD: o.totalPriceDZD,
+        createdAt: o.createdAt.toISOString(),
+        trackingSteps: o.trackingSteps.map((s) => ({
+          stepId: s.stepOrder,
+          title: s.title,
+          description: s.description,
+          status: s.status,
+          completed: s.completed,
+          completedAt: s.completedAt ? s.completedAt.toISOString() : undefined,
+          photoProofUrl: s.photoProofUrl || undefined
+        }))
+      }));
+
+      return res.json({
+        success: true,
+        count: formatted.length,
+        data: formatted
+      });
+    }
+  } catch (err) {
+    console.warn("[PostgreSQL] Erreur getMyOrders:", err);
+  }
+
+  const userOrders = store.orders.filter((o) => o.clientId === userId);
+  return res.json({
+    success: true,
+    count: userOrders.length,
+    data: userOrders
   });
 };
 

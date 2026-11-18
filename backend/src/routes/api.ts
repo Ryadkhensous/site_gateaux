@@ -14,6 +14,7 @@ import {
   createOrder,
   getOrders,
   getOrderByNumberOrId,
+  getMyOrders,
   updateOrderStatusAndStep
 } from "../controllers/orderController.js";
 import {
@@ -67,6 +68,16 @@ const uploadLimiter = rateLimit({
   }
 });
 
+// Rate limiter spécifique pour la consultation de commandes (Anti-Scraping & Anti-Énumération)
+const trackingLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 50,
+  message: {
+    success: false,
+    message: "Nombre limite de recherches de commandes atteint temporairement. Veuillez patienter."
+  }
+});
+
 // ==========================================
 // Routes Authentification & Profil Client
 // ==========================================
@@ -90,12 +101,13 @@ apiRouter.post("/upload", uploadLimiter, uploadImage);
 apiRouter.get("/customization-options", cacheResponse(300), getCustomizationOptions);
 
 // ==========================================
-// Routes Commandes & Réservations
+// Routes Commandes & Réservations (Sécurisées Loi 18-07)
 // ==========================================
 apiRouter.post("/orders", optionalAuth, createOrderLimiter, createOrder);
-apiRouter.get("/orders", getOrders);
-apiRouter.get("/orders/:idOrNumber", getOrderByNumberOrId);
-apiRouter.patch("/orders/:orderId/step", updateOrderStatusAndStep);
+apiRouter.get("/orders", optionalAuth, getOrders);
+apiRouter.get("/orders/my-orders", requireAuth, getMyOrders);
+apiRouter.get("/orders/:idOrNumber", optionalAuth, trackingLimiter, getOrderByNumberOrId);
+apiRouter.patch("/orders/:orderId/step", optionalAuth, updateOrderStatusAndStep);
 
 // ==========================================
 // Route Statut & Santé de la Plateforme

@@ -1,5 +1,6 @@
 /**
  * Utilitaires de sécurité et d'assainissement pour l'API Pâtisserie DZ
+ * Conformité : Loi 18-07 relative à la protection des données à caractère personnel
  */
 
 // Regex pour vérifier un numéro de téléphone algérien valide (Mobilis, Djezzy, Ooredoo)
@@ -16,6 +17,58 @@ export function sanitizeString(input?: string | null): string {
     .replace(/javascript:/gi, "")
     .replace(/on\w+=/gi, "")
     .trim();
+}
+
+/**
+ * Masque un numéro de téléphone pour préserver la vie privée (ex: 0550112233 -> 0550 •••• 33)
+ */
+export function maskPhoneNumber(phone?: string | null): string {
+  if (!phone || typeof phone !== "string") return "";
+  const cleaned = phone.trim().replace(/\s+/g, "");
+  if (cleaned.length < 8) return "••••••••";
+  const start = cleaned.substring(0, 4);
+  const end = cleaned.substring(cleaned.length - 2);
+  return `${start} •••• ${end}`;
+}
+
+/**
+ * Masque le numéro de document d'identité CNI / Passeport (ex: 109876543210 -> 1098 •••• 10)
+ */
+export function maskIdDocNumber(doc?: string | null): string {
+  if (!doc || typeof doc !== "string") return "";
+  const trimmed = doc.trim();
+  if (trimmed.length <= 4) return "••••";
+  const start = trimmed.substring(0, Math.min(4, trimmed.length - 2));
+  const end = trimmed.substring(trimmed.length - 2);
+  return `${start} •••• ${end}`;
+}
+
+/**
+ * Masque une adresse de livraison pour n'afficher que la commune/wilaya (masquage rue/étage/numéro)
+ */
+export function maskAddress(address?: string | null, wilayaName?: string | null): string {
+  if (!address || typeof address !== "string") return wilayaName ? `ولاية ${wilayaName}` : "";
+  const parts = address.split(/[,\-–]/).map((p) => p.trim()).filter(Boolean);
+  if (parts.length > 1) {
+    const broadArea = parts[parts.length - 1];
+    return `${broadArea} (العنوان التفصيلي محمي للخصوصية)`;
+  }
+  return wilayaName ? `${wilayaName} (تفاصيل التوصيل محمية)` : "العنوان محمي وفق قانون حماية البيانات 18-07";
+}
+
+/**
+ * Masque les données PII sensibles d'une commande pour le suivi public non-authentifié
+ */
+export function maskOrderForPublic(order: any): any {
+  if (!order) return order;
+  return {
+    ...order,
+    customerPhone: maskPhoneNumber(order.customerPhone),
+    customerIdDocNumber: maskIdDocNumber(order.customerIdDocNumber),
+    deliveryAddress: maskAddress(order.deliveryAddress, order.deliveryWilayaName),
+    companyNIF: order.companyNIF ? maskIdDocNumber(order.companyNIF) : undefined,
+    isDataProtected: true
+  };
 }
 
 /**

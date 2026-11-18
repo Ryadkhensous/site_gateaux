@@ -402,6 +402,9 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 <img
                   src={slide.image}
                   alt={slide.titlePart1}
+                  loading={idx === 0 ? "eager" : "lazy"}
+                  decoding="async"
+                  fetchPriority={idx === 0 ? "high" : "auto"}
                   className={`w-full h-full object-cover object-[25%_center] sm:object-[28%_center] lg:object-[32%_center] transition-transform duration-[3500ms] ease-out will-change-transform transform-gpu ${
                     isActive ? 'scale-100 animate-heroImage' : 'scale-105'
                   }`}
@@ -595,6 +598,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 <img
                   src={cat.image}
                   alt={cat.nameAr}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out will-change-transform transform-gpu"
                 />
               </div>
@@ -633,6 +638,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 <img
                   src={item.image}
                   alt={item.nameAr}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out will-change-transform transform-gpu"
                 />
 
@@ -737,6 +744,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
                   <img
                     src={item.image}
                     alt={item.nameAr}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500 ease-out"
                   />
                   <span className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#E84375] text-white shadow-xs">
@@ -822,6 +831,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 <img
                   src="/images/chocolate_praline_layer_cake.jpg"
                   alt="كعكة شوكولاتة مخصصة"
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out will-change-transform transform-gpu"
                 />
               </div>

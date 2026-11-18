@@ -204,6 +204,9 @@ export const MarketplaceView: React.FC<MarketplaceViewProps> = ({
                 <img
                   src="/images/traditional_algerian_sweets.jpg"
                   alt="تشكيلة حلويات تقليدية جزائرية"
+                  loading="eager"
+                  decoding="async"
+                  fetchPriority="high"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-stone-950/75 via-transparent to-transparent flex flex-col justify-end p-5 text-white">
@@ -447,6 +450,8 @@ export const MarketplaceView: React.FC<MarketplaceViewProps> = ({
                       <img
                         src={prod.imageUrl}
                         alt={prod.nameAr || prod.name}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500 ease-out"
                       />
 
@@ -572,6 +577,8 @@ export const MarketplaceView: React.FC<MarketplaceViewProps> = ({
                     <img
                       src={art.avatar}
                       alt={art.nameAr || art.name}
+                      loading="lazy"
+                      decoding="async"
                       className="w-16 h-16 rounded-2xl object-cover border-2 border-pink-200 shadow-xs"
                     />
                     <div>
