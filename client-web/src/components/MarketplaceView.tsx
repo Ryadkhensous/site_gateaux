@@ -98,12 +98,23 @@ export const MarketplaceView: React.FC<MarketplaceViewProps> = ({
           return (
             prod.name.includes('لوز') ||
             prod.name.includes('تشاراك') ||
+            prod.name.includes('عرايش') ||
             prod.name.includes('دزيريات') ||
-            prod.name.includes('قنيدلات')
+            prod.name.includes('قنيدلات') ||
+            prod.name.includes('سكندرانيات')
+          );
+        }
+        if (traditionalSubFilter === 'MAASLAT') {
+          return (
+            prod.name.includes('مشوك') ||
+            prod.name.includes('قريوش') ||
+            prod.name.includes('صامصة') ||
+            prod.name.includes('رفيس') ||
+            prod.name.includes('معسل')
           );
         }
         if (traditionalSubFilter === 'TRAYS_WEDDING') {
-          return prod.name.includes('صينية') || prod.name.includes('عروس') || prod.servings >= 25;
+          return prod.name.includes('صينية') || prod.name.includes('عروس') || prod.name.includes('مهيبة') || prod.servings >= 25;
         }
       } else if (selectedCategory !== 'ALL') {
         if (prod.category !== selectedCategory) return false;
@@ -312,7 +323,17 @@ export const MarketplaceView: React.FC<MarketplaceViewProps> = ({
                   : 'bg-white text-stone-700 hover:bg-amber-100/80 border border-amber-100'
               }`}
             >
-              حلويات اللوز (تشاراك ودزيريات)
+              حلويات اللوز (عرايش، تشاراك، دزيريات)
+            </button>
+            <button
+              onClick={() => setTraditionalSubFilter('MAASLAT')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                traditionalSubFilter === 'MAASLAT'
+                  ? 'bg-[#E84375] text-white shadow-xs'
+                  : 'bg-white text-stone-700 hover:bg-amber-100/80 border border-amber-100'
+              }`}
+            >
+              معسلات ومقرمشات (مشوك، قريوش، صامصة)
             </button>
             <button
               onClick={() => setTraditionalSubFilter('TRAYS_WEDDING')}

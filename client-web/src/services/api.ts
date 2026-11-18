@@ -1,5 +1,6 @@
 import { Artisan, CustomizationOption, Order, Product, Wilaya, UserProfile, AuthResponse } from "../types";
 import { WILAYAS_DZ } from "../data/wilayas";
+import { INITIAL_ARTISANS, INITIAL_PRODUCTS } from "../data/initialData";
 
 const BACKEND_URL = ((import.meta as any).env?.VITE_API_URL as string) || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://patisserie-dz-db.onrender.com');
 const API_BASE_URL = `${BACKEND_URL.replace(/\/$/, '')}/api`;
@@ -55,12 +56,12 @@ export const api = {
         const res = await fetch(url);
         if (res.ok) {
           const data = await res.json();
-          if (data.success && data.data) return data.data;
+          if (data.success && data.data && data.data.length > 0) return data.data;
         }
       } catch {
         // Fallback
       }
-      return [];
+      return wilayaCode ? INITIAL_ARTISANS.filter((a) => a.wilayaCode === wilayaCode) : INITIAL_ARTISANS;
     });
   },
 
@@ -76,7 +77,7 @@ export const api = {
       } catch {
         // Fallback
       }
-      return null;
+      return INITIAL_ARTISANS.find((a) => a.id === id) || null;
     });
   },
 
@@ -88,12 +89,14 @@ export const api = {
         const res = await fetch(url);
         if (res.ok) {
           const data = await res.json();
-          if (data.success && data.data && Array.isArray(data.data)) return data.data;
+          if (data.success && data.data && Array.isArray(data.data) && data.data.length > 0) return data.data;
         }
       } catch {
         // Fallback
       }
-      return [];
+      return category && category !== 'ALL'
+        ? INITIAL_PRODUCTS.filter((p) => p.category === category)
+        : INITIAL_PRODUCTS;
     });
   },
 

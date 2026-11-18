@@ -33,31 +33,19 @@ export const HomeView: React.FC<HomeViewProps> = ({
   artisans = [],
   onSelectProductToOrder
 }) => {
-  // شرائح العرض الرئيسية للمنصة
+  // شرائح العرض الرئيسية للمنصة مع إبراز الحلويات التقليدية الجزائرية
   const heroSlides = [
     {
-      id: 'slide-traditional-tray',
-      tag: 'أصالة وتراث الأجداد الجزائري',
-      titlePart1: 'حلويات جزائرية تقليدية',
-      titlePart2: 'صواني الضيافة والأعراس الفاخرة',
+      id: 'slide-siniyet-aroussa',
+      tag: 'صواني الأفراح والمهيبة الجزائرية',
+      titlePart1: 'صواني الأعراس الملكية',
+      titlePart2: 'تحفة الضيافة والتراث الجزائري الأصيل',
       subtitle:
-        'تشكيلة ملوكية أصيلة على صواني نحاسية مطروقة تضم البقلاوة المورقة، مقروط اللوز المذاب، التشاراك والدزيريات، تُخبز بأجود أنواع اللوز البلدي والعسل الحر الصافي.',
-      image: '/images/traditional_algerian_sweets.jpg',
-      badge: 'تراث وأصالة جزائرية',
+        'صينية نحاسية فاخرة مطروقة يدوياً تضم أرقى تشكيلة من بقلاوة قسنطينة المورقة، مقروط اللوز العاصمي، تشاراك المسكر، العرايش المذهبة والدزيريات، تُخبز بأجود أنواع اللوز البلدي وعسل النحل الحر.',
+      image: '/images/traditional_siniyet_aroussa.jpg',
+      badge: 'أفراح ومهيبة ملوكية',
       linkTab: 'traditional',
-      linkText: 'اكتشف الحلويات التقليدية'
-    },
-    {
-      id: 'slide-1',
-      tag: 'إبداع يدوي بالورود الطبيعية',
-      titlePart1: 'كعكات شهية ومميزة',
-      titlePart2: 'لكل مناسباتكم السعيدة',
-      subtitle:
-        'تُصنع يدوياً بكل شغف وحب باستخدام أرقى المكونات الطبيعية الفاخرة. اطلب كعكتك المفضلة أونلاين واستلمها طازجة ومبردة إلى باب منزلك عبر الـ 69 ولاية.',
-      image: '/images/pink_flower_hero_cake.jpg',
-      badge: 'الأكثر طلباً للمناسبات',
-      linkTab: 'marketplace',
-      linkText: 'تسوق الآن'
+      linkText: 'اكتشف صواني الأعراس'
     },
     {
       id: 'slide-baklawa',
@@ -72,18 +60,6 @@ export const HomeView: React.FC<HomeViewProps> = ({
       linkText: 'طلب البقلاوة الملكية'
     },
     {
-      id: 'slide-2',
-      tag: 'الأعراس والمناسبات الكبرى',
-      titlePart1: 'كعكة الزفاف الملكية 3 طبقات',
-      titlePart2: 'بزهور الباستيل وورق الذهب',
-      subtitle:
-        'تحفة ملكية فاخرة مزينة بزهور الباستيل، ورق الذهب الخالص عيار 24 قيراط ولآلئ السكر المنسدلة على قاعدة شامبانيا ساحرة.',
-      image: '/images/hero_wedding_cake.jpg',
-      badge: 'كعكة ملكية فاخرة',
-      linkTab: 'marketplace',
-      linkText: 'تسوق الآن'
-    },
-    {
       id: 'slide-makroud',
       tag: 'حلوى العاصمة البيضاء',
       titlePart1: 'مقروط اللوز العاصمي',
@@ -96,16 +72,28 @@ export const HomeView: React.FC<HomeViewProps> = ({
       linkText: 'طلب مقروط اللوز'
     },
     {
-      id: 'slide-3',
-      tag: 'عشاق الشوكولاتة الفاخرة',
-      titlePart1: 'كعكة الشوكولاتة والبراليني',
-      titlePart2: 'مع الغاناش الغني والكراميل',
+      id: 'slide-makroud-koucha',
+      tag: 'أصالة معسلات واحات بسكرة',
+      titlePart1: 'مقروط الكوشة بتمر الغرس',
+      titlePart2: 'مرمل ومعسل بالسمسم وعسل النحل',
       subtitle:
-        'طبقات إسفنجية غنية بكاكاو 70%، حشوة البراليني المقرمشة بالبندق المحمص وصوص الشوكولاتة المرآة اللامع المذهب.',
-      image: '/images/chocolate_praline_layer_cake.jpg',
-      badge: 'مذاق استثنائي',
+        'السميد الذهبي المحمص بالفرن مع حشوة تمر الغرس الأصيل المعطر بالقرفة والقرنفل، مسقي بالعسل الحر الصافي ومزين ببذور السمسم المحمص.',
+      image: '/images/traditional_makroud_koucha.jpg',
+      badge: 'تراث أصيل',
+      linkTab: 'traditional',
+      linkText: 'اطلب مقروط الكوشة'
+    },
+    {
+      id: 'slide-wedding-cake',
+      tag: 'الأعراس والمناسبات الكبرى',
+      titlePart1: 'كعكة الزفاف الملكية 3 طبقات',
+      titlePart2: 'بزهور الباستيل وورق الذهب 24k',
+      subtitle:
+        'تحفة سكرية معمارية مخصصة للأعراس الكبرى، 3 طبقات محشوة بالبراليني والمكسرات الفاخرة مع إضاءة خفية وقاعدة نحاسية مذهبة.',
+      image: '/images/hero_wedding_cake.jpg',
+      badge: 'كعكة ملكية فاخرة',
       linkTab: 'marketplace',
-      linkText: 'تسوق الآن'
+      linkText: 'تسوق الكعكات'
     }
   ];
 
@@ -151,48 +139,48 @@ export const HomeView: React.FC<HomeViewProps> = ({
 
   const activeSlide = heroSlides[currentHeroSlide];
 
-  // أصناف التسوق الدائرية المطابقة تماماً لـ (Shop by Category)
+  // أصناف التسوق الدائرية مع التركيز على الحلويات التقليدية الجزائرية
   const categoriesList = [
     {
-      id: 'cat-traditional',
-      nameAr: 'حلويات تقليدية أصيلة',
-      nameEn: 'Traditional Algerian Pastries',
-      image: '/images/traditional_algerian_sweets.jpg',
+      id: 'cat-traditional-almonds',
+      nameAr: 'حلويات اللوز والتعسال',
+      nameEn: 'Traditional Almond Sweets',
+      image: '/images/traditional_baklawa.jpg',
       filter: 'TRADITIONNEL'
     },
     {
-      id: 'cat-layer-cake',
-      nameAr: 'تورتات ولاير كيك فاخرة',
-      nameEn: 'Luxury Layer Cakes',
-      image: '/images/category_birthday_cake.jpg',
-      filter: 'ALL'
+      id: 'cat-siniyet-mehiba',
+      nameAr: 'صواني الأعراس والمهيبة',
+      nameEn: 'Wedding & Mehiba Trays',
+      image: '/images/traditional_siniyet_aroussa.jpg',
+      filter: 'TRADITIONNEL'
+    },
+    {
+      id: 'cat-maaslat',
+      nameAr: 'معسلات ومقروط الكوشة',
+      nameEn: 'Honey Pastries & Makroud',
+      image: '/images/traditional_makroud_koucha.jpg',
+      filter: 'TRADITIONNEL'
+    },
+    {
+      id: 'cat-msekker',
+      nameAr: 'تشاراك ومخبوزات الأعياد',
+      nameEn: 'Tcharek & Feast Treats',
+      image: '/images/traditional_tcharek_msekker.jpg',
+      filter: 'TRADITIONNEL'
     },
     {
       id: 'cat-wedding',
-      nameAr: 'كعكات الزفاف الملكية',
+      nameAr: 'كعكات الزفاف والخطوبة',
       nameEn: 'Wedding Cakes',
       image: '/images/hero_wedding_cake.jpg',
       filter: 'MARIAGE'
     },
     {
-      id: 'cat-engagement',
-      nameAr: 'كعكات الخطوبة والمناسبات',
-      nameEn: 'Engagement & Celebrations',
-      image: '/images/category_anniversary_cake.jpg',
-      filter: 'MARIAGE'
-    },
-    {
-      id: 'cat-photo',
-      nameAr: 'كعكات بالصور المطبوعة',
-      nameEn: 'Photo Cakes',
-      image: '/images/category_photo_cake.jpg',
-      filter: 'MODERNE'
-    },
-    {
-      id: 'cat-cupcakes',
-      nameAr: 'كب كيك وماكارون',
-      nameEn: 'Cupcakes & Macarons',
-      image: '/images/category_cupcakes.jpg',
+      id: 'cat-moderne',
+      nameAr: 'كعكات المناسبات الحديثة',
+      nameEn: 'Celebration Cakes',
+      image: '/images/cake_preview_number.jpg',
       filter: 'MODERNE'
     }
   ];
@@ -207,7 +195,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
       servings: 24,
       prepTimeDays: 2,
       rating: 5.0,
-      reviewsCount: 94,
+      reviewsCount: 168,
       image: '/images/traditional_baklawa.jpg',
       city: 'قسنطينة',
       categoryAr: 'مورقة بالعسل الحر'
@@ -220,7 +208,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
       servings: 20,
       prepTimeDays: 2,
       rating: 4.9,
-      reviewsCount: 88,
+      reviewsCount: 194,
       image: '/images/traditional_makroud_el_louz.jpg',
       city: 'الجزائر العاصمة',
       categoryAr: 'يذوب في الفم'
@@ -233,67 +221,119 @@ export const HomeView: React.FC<HomeViewProps> = ({
       servings: 20,
       prepTimeDays: 2,
       rating: 4.9,
-      reviewsCount: 76,
+      reviewsCount: 145,
       image: '/images/traditional_tcharek_msekker.jpg',
       city: 'الجزائر العاصمة',
       categoryAr: 'لوز وسكر ناعم'
     },
     {
-      id: 'prod-3',
-      nameAr: 'صينية الضيافة الملكية للأفراح والمهيبة',
-      nameEn: 'Royal Algerian Heritage Tray',
-      priceDZD: 16500,
-      servings: 30,
-      prepTimeDays: 4,
-      rating: 5.0,
-      reviewsCount: 142,
-      image: '/images/traditional_algerian_sweets.jpg',
-      city: 'تشكيلة وطنية',
-      categoryAr: 'صواني الأفراح'
+      id: 'prod-arayech',
+      nameAr: 'عرايش جزائرية مذهبة بطعم الليمون وقلاصاج ملوكي',
+      nameEn: 'Royal Glazed Arayech',
+      priceDZD: 4600,
+      servings: 18,
+      prepTimeDays: 2,
+      rating: 4.9,
+      reviewsCount: 118,
+      image: '/images/traditional_arayech.jpg',
+      city: 'الجزائر العاصمة',
+      categoryAr: 'قلاصاج ملكي وتذهيب'
+    },
+    {
+      id: 'prod-makroud-koucha',
+      nameAr: 'مقروط الكوشة التقليدي بتمر الغرس والسمسم',
+      nameEn: 'Oven-Baked Date Makroud',
+      priceDZD: 3900,
+      servings: 24,
+      prepTimeDays: 2,
+      rating: 4.95,
+      reviewsCount: 136,
+      image: '/images/traditional_makroud_koucha.jpg',
+      city: 'بسكرة والشرق',
+      categoryAr: 'تمر الغرس وعسل حر'
+    },
+    {
+      id: 'prod-21',
+      nameAr: 'دزيريات وقنيدلات بريستيج مع لمسات ذهبية',
+      nameEn: 'Prestige Dziriat & Knidlet',
+      priceDZD: 5200,
+      servings: 18,
+      prepTimeDays: 3,
+      rating: 4.9,
+      reviewsCount: 92,
+      image: '/images/traditional_dziriat.jpg',
+      city: 'الجزائر العاصمة',
+      categoryAr: 'لوز وتذهيب 24k'
+    },
+    {
+      id: 'prod-mchewek',
+      nameAr: 'مشوك معسل بلوز إكسترا وكرز أحمر فاخر',
+      nameEn: 'Almond Mchewek with Candied Cherry',
+      priceDZD: 4400,
+      servings: 20,
+      prepTimeDays: 2,
+      rating: 4.88,
+      reviewsCount: 84,
+      image: '/images/traditional_mchewek.jpg',
+      city: 'وهران',
+      categoryAr: 'لوز معسل وكرز'
+    },
+    {
+      id: 'prod-griwech',
+      nameAr: 'قريوش السنبلة المقرمش بماء الزهر والجلجلان',
+      nameEn: 'Traditional Crispy Griwech',
+      priceDZD: 2900,
+      servings: 25,
+      prepTimeDays: 1,
+      rating: 4.85,
+      reviewsCount: 104,
+      image: '/images/traditional_griwech.jpg',
+      city: 'الجزائر العاصمة',
+      categoryAr: 'مورق ومقرمش بالعسل'
     }
   ];
 
-  // منتجات الأكثر طلباً ومبيعاً (Best Sellers) المطابقة للبطاقات الأربعة في الصورة
+  // منتجات الأكثر طلباً ومبيعاً (Best Sellers) - الأطباق والحلويات الأكثر طلباً للمناسبات الجزائرية
   const bestSellersList = [
     {
-      id: 'best-1',
-      nameAr: 'شوكولاتة ديلايت الفاخرة',
-      nameEn: 'Chocolate Delight',
-      priceDZD: 2499,
+      id: 'prod-18',
+      nameAr: 'بقلاوة قسنطينية ملكية بالجوز واللوز والعسل الصافي',
+      nameEn: 'Royal Constantinoise Baklawa',
+      priceDZD: 7500,
       rating: 5.0,
-      reviewsCount: 120,
-      image: '/images/cake_preview_chocolate.jpg',
-      categoryAr: 'شوكولاتة غنية'
+      reviewsCount: 168,
+      image: '/images/traditional_baklawa.jpg',
+      categoryAr: 'عسل حر وجوز'
     },
     {
-      id: 'best-2',
-      nameAr: 'كعكة ريد فيلفيت المخملية',
-      nameEn: 'Red Velvet Cake',
-      priceDZD: 2699,
+      id: 'prod-19',
+      nameAr: 'مقروط اللوز العاصمي بماء الزهر والليمون',
+      nameEn: 'Algiers Makroud El Louz',
+      priceDZD: 4800,
       rating: 4.9,
-      reviewsCount: 98,
-      image: '/images/bestseller_red_velvet.jpg',
-      categoryAr: 'ريد فيلفيت'
+      reviewsCount: 194,
+      image: '/images/traditional_makroud_el_louz.jpg',
+      categoryAr: 'يذوب في الفم'
     },
     {
-      id: 'best-3',
-      nameAr: 'كعكة الغابة السوداء بلاك فوريست',
-      nameEn: 'Black Forest Cake',
-      priceDZD: 2399,
+      id: 'prod-siniyet-mehiba',
+      nameAr: 'صينية المهيبة والأفراح الملوكية النحاسية (60 قطعة)',
+      nameEn: 'Royal Algerian Wedding Tray',
+      priceDZD: 24000,
+      rating: 5.0,
+      reviewsCount: 112,
+      image: '/images/traditional_siniyet_aroussa.jpg',
+      categoryAr: 'صينية نحاسية للأفراح'
+    },
+    {
+      id: 'prod-20',
+      nameAr: 'تشاراك المسكر الملكي محشو باللوز البلدي',
+      nameEn: 'Royal Tcharek Msekker',
+      priceDZD: 4500,
       rating: 4.9,
-      reviewsCount: 110,
-      image: '/images/bestseller_black_forest.jpg',
-      categoryAr: 'بلاك فوريست'
-    },
-    {
-      id: 'best-4',
-      nameAr: 'كعكة المانجو والفواكه الاستوائية',
-      nameEn: 'Mango Cake',
-      priceDZD: 2299,
-      rating: 4.8,
-      reviewsCount: 85,
-      image: '/images/bestseller_mango.jpg',
-      categoryAr: 'فواكه طازجة'
+      reviewsCount: 145,
+      image: '/images/traditional_tcharek_msekker.jpg',
+      categoryAr: 'لوز بلدي وسكر ناعم'
     }
   ];
 
@@ -301,20 +341,20 @@ export const HomeView: React.FC<HomeViewProps> = ({
     if (onSelectProductToOrder) {
       onSelectProductToOrder({
         id: item.id,
-        artisanId: 'art-1',
+        artisanId: 'art-2',
         name: item.nameAr,
         nameAr: item.nameAr,
-        category: 'MODERNE',
+        category: 'TRADITIONNEL',
         description: item.nameAr,
         priceDZD: item.priceDZD,
-        servings: 10,
+        servings: 20,
         prepTimeDays: 2,
         imageUrl: item.image,
-        isCustomizable: true,
-        tags: ['أفضل المبيعات', 'طازج']
+        isCustomizable: false,
+        tags: ['أفضل المبيعات', 'حلويات تقليدية', 'أصالة']
       });
     } else {
-      onNavigate('marketplace');
+      onNavigate('marketplace', 'TRADITIONNEL');
     }
   };
 
