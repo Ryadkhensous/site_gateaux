@@ -240,7 +240,7 @@ export const App: React.FC = () => {
               </li>
               <li>
                 <button onClick={() => setCurrentTab('customizer')} className="hover:text-[#E84375] transition-colors cursor-pointer">
-                  ورشة التصميم ثلاثية الأبعاد (3D)
+                  أطلب رغبتك حسب ذوقك
                 </button>
               </li>
               <li>

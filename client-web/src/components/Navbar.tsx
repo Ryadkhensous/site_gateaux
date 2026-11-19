@@ -280,7 +280,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 )}
               </div>
 
-              {/* ورشة التصميم 3D (Custom Cake) */}
+              {/* أطلب رغبتك حسب ذوقك (Custom Cake) */}
               <button
                 onClick={() => handleNavClick('customizer')}
                 className={`px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300 shadow-xs ${
@@ -290,7 +290,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 }`}
               >
                 <Sparkles className="w-3.5 h-3.5 text-pink-500 animate-spin-slow" />
-                <span>صمّم كعكتك (3D)</span>
+                <span>أطلب رغبتك حسب ذوقك</span>
               </button>
 
               {/* عروض الشركات (Corporate B2B) */}
@@ -565,7 +565,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <span className="flex items-center gap-2">
                 <Sparkles className="w-3.5 h-3.5 text-pink-400" />
-                <span>صمّم كعكتك (3D)</span>
+                <span>أطلب رغبتك حسب ذوقك</span>
               </span>
             </button>
 

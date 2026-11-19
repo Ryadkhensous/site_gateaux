@@ -374,7 +374,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                   <div>
                     <h4 className="text-base font-bold text-stone-800">لا توجد لديك طلبات سابقة حتى الآن</h4>
                     <p className="text-xs text-stone-500 max-w-sm mx-auto mt-1">
-                      اكتشف تشكيلة الحلويات الفاخرة المخبوزة طازجة خصيصاً لمناسباتكم، أو صمم كعكتك الفريدة الآن!
+                      اكتشف تشكيلة الحلويات الفاخرة المخبوزة طازجة خصيصاً لمناسباتكم، أو أطلب رغبتك حسب ذوقك الآن!
                     </p>
                   </div>
                   {onGoToShop && (

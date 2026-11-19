@@ -247,7 +247,7 @@ export const CakeCustomizer: React.FC<CakeCustomizerProps> = ({
           <span>الورشة التفاعلية ثلاثية الأبعاد • تجربة تصويرية حقيقية</span>
         </div>
         <h1 className="text-3xl sm:text-5xl font-serif font-bold text-stone-900 mb-3 tracking-tight">
-          صمّم كعكتك الاستثنائية بلمستك الخاصة
+          أطلب رغبتك حسب ذوقك
         </h1>
         <p className="text-stone-600 text-sm sm:text-base font-light">
           اختر الحجم، الطبقات، نكهات الجينواز، ألوان التغليف والزينة المذهبة. المعاينة تعرض صوراً فوتوغرافية حقيقية مع حساب فوري للسعر بالدينار الجزائري.

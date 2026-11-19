@@ -639,7 +639,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                         {item.isCustomizable && (
                           <button
                             onClick={() => onNavigate('customizer')}
-                            title="تخصيص الكعكة في الورشة ثلاثية الأبعاد 3D"
+                            title="أطلب رغبتك حسب ذوقك"
                             className="p-3 rounded-2xl bg-pink-50 hover:bg-pink-100 text-[#E84375] border border-pink-200 transition-all cursor-pointer shadow-2xs hover:scale-105"
                           >
                             <Sparkles className="w-4 h-4" />
