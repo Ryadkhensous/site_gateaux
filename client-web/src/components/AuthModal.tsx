@@ -8,7 +8,7 @@ interface AuthModalProps {
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({ wilayas }) => {
-  const { isAuthModalOpen, closeAuthModal, authModalMode, openAuthModal, login, register } = useAuth();
+  const { isAuthModalOpen, closeAuthModal, authModalMode, authPromptNotice, login, register } = useAuth();
 
   const [mode, setMode] = useState<'LOGIN' | 'REGISTER'>(authModalMode);
   const [showPassword, setShowPassword] = useState(false);
@@ -164,6 +164,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({ wilayas }) => {
 
         {/* Corps de la modale */}
         <div className="p-6">
+          {/* تنبيه ضرورة تسجيل الدخول لتأكيد الطلب */}
+          {authPromptNotice && (
+            <div className="mb-4 p-3.5 bg-gradient-to-r from-pink-50 via-amber-50 to-pink-50 border border-pink-200 text-stone-800 text-xs rounded-2xl flex items-start gap-2.5 shadow-2xs">
+              <Lock className="w-4 h-4 shrink-0 text-[#E84375] mt-0.5" />
+              <div className="flex-1">
+                <span className="font-bold text-[#E84375] block mb-0.5">تسجيل الدخول إلزامي لإتمام الطلب</span>
+                <span className="text-stone-600 font-medium leading-relaxed">{authPromptNotice}</span>
+              </div>
+            </div>
+          )}
+
           {/* Notification d'erreur */}
           {error && (
             <div className="mb-4 p-3.5 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl flex items-start gap-2.5">

@@ -43,7 +43,7 @@ export const OrderModal: React.FC<OrderModalProps> = ({
 }) => {
   if (!isOpen) return null;
 
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, openAuthModal } = useAuth();
 
   // حالة استمارة الحجز
   const [customerName, setCustomerName] = useState('');
@@ -97,6 +97,13 @@ export const OrderModal: React.FC<OrderModalProps> = ({
     e.preventDefault();
     if (loading) return;
     setError(null);
+
+    // اشتراط تسجيل الدخول الإلزامي للزبون قبل إتمام الحجز
+    if (!isAuthenticated) {
+      setError('يجب تسجيل الدخول أو إنشاء حساب جديد لإتمام الطلب واستخراج وصل الدفع.');
+      openAuthModal('LOGIN', 'يرجى تسجيل الدخول أو إنشاء حسابك أولاً لتأكيد هذه الطلبية.');
+      return;
+    }
 
     const cleanPhone = customerPhone.replace(/[\s\.-]/g, '');
     const cleanName = customerName.trim();
@@ -327,6 +334,23 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                     </div>
                   </div>
                 </div>
+
+                {/* تنبيه اشتراط تسجيل الدخول إذا كان الزائر غير مسجل */}
+                {!isAuthenticated && (
+                  <div className="p-3.5 rounded-2xl bg-gradient-to-r from-amber-50 to-pink-50 border border-amber-300 text-stone-800 text-xs flex items-center justify-between gap-3 shadow-2xs">
+                    <div className="flex items-center gap-2">
+                      <ShieldCheck className="w-5 h-5 text-amber-600 shrink-0" />
+                      <span className="font-medium">يجب تسجيل الدخول أو إنشاء حسابك أولاً لتثبيت هذه الطلبية واستلام وصل الحجز.</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => openAuthModal('LOGIN', 'يرجى تسجيل الدخول أو إنشاء حساب جديد لإتمام الطلب.')}
+                      className="px-3.5 py-1.5 bg-[#E84375] hover:bg-[#d83768] text-white font-bold rounded-xl text-xs shadow-xs cursor-pointer shrink-0"
+                    >
+                      دخول / تسجيل
+                    </button>
+                  </div>
+                )}
 
                 {error && (
                   <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs text-center font-medium">
@@ -763,21 +787,33 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                   >
                     إلغاء
                   </button>
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="px-6 py-2.5 bg-[#E84375] hover:bg-[#d83768] text-white font-bold rounded-xl shadow-md hover:shadow-lg shadow-pink-200 text-xs sm:text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-50 cursor-pointer"
-                  >
-                    {loading ? (
-                      <span>جاري التأكيد...</span>
-                    ) : (
-                      <>
-                        <ShieldCheck className="w-4 h-4 text-pink-100" />
-                        <span>تأكيد وحجز الطلبية</span>
-                        <ArrowLeft className="w-4 h-4 text-white/80" />
-                      </>
-                    )}
-                  </button>
+
+                  {!isAuthenticated ? (
+                    <button
+                      type="button"
+                      onClick={() => openAuthModal('LOGIN', 'يرجى تسجيل الدخول أو إنشاء حسابك أولاً لإتمام طلبك.')}
+                      className="px-6 py-2.5 bg-gradient-to-r from-[#E84375] to-amber-600 hover:from-[#d83768] hover:to-amber-700 text-white font-bold rounded-xl shadow-md text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-102"
+                    >
+                      <ShieldCheck className="w-4 h-4 text-white" />
+                      <span>تسجيل الدخول لتأكيد الطلب</span>
+                    </button>
+                  ) : (
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="px-6 py-2.5 bg-[#E84375] hover:bg-[#d83768] text-white font-bold rounded-xl shadow-md hover:shadow-lg shadow-pink-200 text-xs sm:text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-50 cursor-pointer"
+                    >
+                      {loading ? (
+                        <span>جاري التأكيد...</span>
+                      ) : (
+                        <>
+                          <ShieldCheck className="w-4 h-4 text-pink-100" />
+                          <span>تأكيد وحجز الطلبية</span>
+                          <ArrowLeft className="w-4 h-4 text-white/80" />
+                        </>
+                      )}
+                    </button>
+                  )}
                 </div>
               </div>
 

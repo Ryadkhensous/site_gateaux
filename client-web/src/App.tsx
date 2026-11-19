@@ -12,9 +12,11 @@ import { ProfileModal } from './components/ProfileModal';
 import { api } from './services/api';
 import { Artisan, Product, Wilaya } from './types';
 import { WILAYAS_DZ } from './data/wilayas';
+import { useAuth } from './context/AuthContext';
 import { Cake, Heart, Send, Store, ShieldCheck, Truck, CreditCard } from 'lucide-react';
 
 export const App: React.FC = () => {
+  const { isAuthenticated, openAuthModal } = useAuth();
   const [currentTab, setCurrentTab] = useState<string>('home');
   const [marketplaceCategory, setMarketplaceCategory] = useState<string>('ALL');
   const [wilayas, setWilayas] = useState<Wilaya[]>(WILAYAS_DZ);
@@ -23,6 +25,7 @@ export const App: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [orderNumberSearch, setOrderNumberSearch] = useState<string>('');
   const [activeTrackingNumber, setActiveTrackingNumber] = useState<string>('CMD-2026-DZ001');
+  const [pendingOrderConfig, setPendingOrderConfig] = useState<any>(null);
 
   // Newsletter state
   const [newsletterEmail, setNewsletterEmail] = useState('');
@@ -60,10 +63,25 @@ export const App: React.FC = () => {
     loadData();
   }, []);
 
+  // فتح نافذة الطلب مع اشتراط تسجيل الدخول مسبقاً
   const handleOpenOrderModal = (config: any) => {
+    if (!isAuthenticated) {
+      setPendingOrderConfig(config);
+      openAuthModal('LOGIN', 'لإتمام طلبك وتسجيل وصل الدفع المعتمد، يرجى تسجيل الدخول أو إنشاء حسابك أولاً.');
+      return;
+    }
     setModalConfig(config);
     setIsOrderModalOpen(true);
   };
+
+  // عند تسجيل الدخول بنجاح بعد محاولة طلب، يتم فتح استمارة الحجز تلقائياً
+  useEffect(() => {
+    if (isAuthenticated && pendingOrderConfig) {
+      setModalConfig(pendingOrderConfig);
+      setIsOrderModalOpen(true);
+      setPendingOrderConfig(null);
+    }
+  }, [isAuthenticated, pendingOrderConfig]);
 
   const handleSelectProductToOrder = (product: Product) => {
     handleOpenOrderModal({

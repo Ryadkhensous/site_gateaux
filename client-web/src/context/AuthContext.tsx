@@ -29,7 +29,8 @@ interface AuthContextType {
   // Modales d'authentification et de profil
   isAuthModalOpen: boolean;
   authModalMode: 'LOGIN' | 'REGISTER';
-  openAuthModal: (mode?: 'LOGIN' | 'REGISTER') => void;
+  authPromptNotice: string | null;
+  openAuthModal: (mode?: 'LOGIN' | 'REGISTER', notice?: string) => void;
   closeAuthModal: () => void;
   isProfileModalOpen: boolean;
   openProfileModal: () => void;
@@ -46,6 +47,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // Gestion des modales
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<'LOGIN' | 'REGISTER'>('LOGIN');
+  const [authPromptNotice, setAuthPromptNotice] = useState<string | null>(null);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
   const refreshProfile = async () => {
@@ -127,12 +129,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return { success: false, message: res.message || "Échec de mise à jour" };
   };
 
-  const openAuthModal = (mode: 'LOGIN' | 'REGISTER' = 'LOGIN') => {
+  const openAuthModal = (mode: 'LOGIN' | 'REGISTER' = 'LOGIN', notice?: string) => {
     setAuthModalMode(mode);
+    setAuthPromptNotice(notice || null);
     setIsAuthModalOpen(true);
   };
 
-  const closeAuthModal = () => setIsAuthModalOpen(false);
+  const closeAuthModal = () => {
+    setIsAuthModalOpen(false);
+    setAuthPromptNotice(null);
+  };
   const openProfileModal = () => setIsProfileModalOpen(true);
   const closeProfileModal = () => setIsProfileModalOpen(false);
 
@@ -150,6 +156,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         refreshProfile,
         isAuthModalOpen,
         authModalMode,
+        authPromptNotice,
         openAuthModal,
         closeAuthModal,
         isProfileModalOpen,
