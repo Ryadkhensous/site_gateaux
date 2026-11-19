@@ -106,24 +106,24 @@ export const HomeView: React.FC<HomeViewProps> = ({
   };
 
   return (
-    <div className="space-y-24 pb-20 text-right font-sans" dir="rtl">
+    <div className="space-y-14 sm:space-y-24 pb-20 text-right font-sans overflow-x-hidden" dir="rtl">
       
       {/* ========================================================================= */}
       {/* 1. الواجهة الأولى: اللوغو الملكي الفاخر فقط (Hero View - لوڨو برك)           */}
       {/* ========================================================================= */}
       <section
         id="hero-logo"
-        className="relative min-h-[85vh] sm:min-h-[90vh] flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 overflow-hidden bg-radial from-[#FFFDF9] via-[#FFF9F2] to-[#FFF0F5] border-b border-pink-100/70"
+        className="relative min-h-[80vh] sm:min-h-[90vh] flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 overflow-hidden bg-radial from-[#FFFDF9] via-[#FFF9F2] to-[#FFF0F5] border-b border-pink-100/70"
       >
         {/* خلفية زخرفية ناعمة مع إضاءة ذهبية خافتة */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] sm:w-[520px] lg:w-[680px] h-[340px] sm:h-[520px] lg:h-[680px] bg-gradient-to-tr from-amber-200/25 via-pink-200/20 to-amber-100/30 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] sm:w-[520px] lg:w-[680px] h-[300px] sm:h-[520px] lg:h-[680px] bg-gradient-to-tr from-amber-200/25 via-pink-200/20 to-amber-100/30 rounded-full blur-3xl animate-pulse" />
           <div className="absolute top-10 right-10 w-48 h-48 bg-pink-100/40 rounded-full blur-2xl" />
           <div className="absolute bottom-10 left-10 w-56 h-56 bg-amber-100/40 rounded-full blur-2xl" />
         </div>
 
         {/* الحاوية المركزية: اللوغو برك مع الأناقة الملكية */}
-        <div className="relative z-10 flex flex-col items-center text-center max-w-3xl mx-auto space-y-6 pt-6 pb-12">
+        <div className="relative z-10 flex flex-col items-center text-center max-w-3xl mx-auto space-y-5 sm:space-y-6 pt-4 sm:pt-6 pb-10 sm:pb-12 px-2">
           
           {/* الشعار الرسمي الدائري الفاخر (SweetBox DZ Logo) */}
           <div className="relative group cursor-pointer transition-transform duration-500 hover:scale-[1.02]">
@@ -131,7 +131,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
             <div className="absolute -inset-3 sm:-inset-4 bg-gradient-to-tr from-[#C5A028]/40 via-[#E84375]/30 to-[#8A1538]/30 rounded-full blur-xl opacity-75 group-hover:opacity-100 transition duration-700" />
             
             {/* إطار الشعار الدائري الملكي */}
-            <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 rounded-full p-2 bg-gradient-to-b from-amber-300 via-amber-100 to-amber-400 shadow-2xl shadow-amber-950/20">
+            <div className="relative w-56 h-56 sm:w-80 sm:h-80 md:w-96 md:h-96 max-w-[85vw] max-h-[85vw] rounded-full p-2 bg-gradient-to-b from-amber-300 via-amber-100 to-amber-400 shadow-2xl shadow-amber-950/20">
               <div className="w-full h-full rounded-full overflow-hidden bg-white p-1 border-2 border-amber-400/60 shadow-inner">
                 <img
                   src="/images/sweetbox_logo.jpg"

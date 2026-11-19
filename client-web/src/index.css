@@ -3,16 +3,29 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    overflow-x: hidden;
+  }
+
   body {
     background-color: #FAF7F2;
     color: #2D231B;
     font-family: 'Cairo', system-ui, -apple-system, sans-serif;
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
   }
 
   h1, h2, h3, .font-serif {
     font-family: 'Amiri', 'Playfair Display', Georgia, serif;
     letter-spacing: normal;
+  }
+
+  button, a {
+    touch-action: manipulation;
   }
 }
 
