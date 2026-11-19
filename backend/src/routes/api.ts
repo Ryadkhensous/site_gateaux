@@ -82,9 +82,13 @@ const trackingLimiter = rateLimit({
 // Routes Authentification & Profil Client
 // ==========================================
 apiRouter.post("/auth/register", authLimiter, register);
+apiRouter.post("/register", authLimiter, register);
 apiRouter.post("/auth/login", authLimiter, login);
+apiRouter.post("/login", authLimiter, login);
 apiRouter.get("/auth/me", requireAuth, getProfile);
+apiRouter.get("/me", requireAuth, getProfile);
 apiRouter.put("/auth/profile", requireAuth, updateProfile);
+apiRouter.put("/profile", requireAuth, updateProfile);
 
 // ==========================================
 // Routes Wilayas & Catalogue
