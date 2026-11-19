@@ -76,6 +76,20 @@ export const Navbar: React.FC<NavbarProps> = ({
     setShopDropdownOpen(false);
   };
 
+  const handleGoToSection = (sectionId: string) => {
+    if (currentTab !== 'home') {
+      setCurrentTab('home');
+      setTimeout(() => {
+        const el = document.getElementById(sectionId);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    } else {
+      const el = document.getElementById(sectionId);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+    setMobileMenuOpen(false);
+  };
+
   return (
     <header className="sticky top-0 z-50 transition-all duration-300 shadow-xs">
       {/* 1. الشريط العلوي للإعلانات باللون الوردي المطابق للتصميم (Top Announcement Bar) */}
@@ -119,42 +133,63 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20 gap-4">
             
-            {/* الشعار والهوية البصرية الوردية (Logo SweetBox DZ) */}
+            {/* الشعار والهوية البصرية الرسمية حلويات بوكس SweetBox DZ */}
             <button 
-              onClick={() => handleNavClick('home')}
+              onClick={() => handleGoToSection('hero-logo')}
               className="flex items-center gap-3 text-right focus:outline-none group flex-shrink-0 cursor-pointer"
             >
-              <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-[#E84375] to-[#F472B6] flex items-center justify-center text-white shadow-md shadow-pink-200 group-hover:scale-105 transition-all duration-300">
-                <Cake className="w-6 h-6 text-white" />
+              <div className="relative w-12 h-12 rounded-full p-0.5 bg-gradient-to-tr from-amber-400 via-amber-200 to-[#E84375] shadow-md group-hover:scale-105 transition-all duration-300">
+                <img 
+                  src="/images/sweetbox_logo.jpg" 
+                  alt="حلويات بوكس Sweet Box" 
+                  className="w-full h-full object-cover rounded-full"
+                />
               </div>
 
               <div className="flex flex-col justify-center">
                 <div className="flex items-baseline gap-1.5">
-                  <span className="text-2xl font-serif font-bold tracking-tight text-stone-900 leading-none group-hover:text-[#E84375] transition-colors">
-                    SweetBox
+                  <span className="text-xl font-serif font-black tracking-tight text-stone-900 leading-none group-hover:text-[#E84375] transition-colors">
+                    حلويات بوكس
                   </span>
-                  <span className="text-sm font-bold text-[#E84375] font-mono leading-none">
-                    .DZ
+                  <span className="text-xs font-bold text-[#E84375] font-serif leading-none">
+                    Sweet Box
                   </span>
                 </div>
-                <span className="text-[10px] font-medium tracking-wide text-stone-400 mt-1 font-sans">
-                  — مخبوز بكل حب وإتقان —
+                <span className="text-[10px] font-bold text-amber-800 mt-1 font-sans">
+                  صناعة • بيع • تدريب
                 </span>
               </div>
             </button>
 
             {/* روابط التنقل الرئيسية (Navigation Links) */}
             <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
-              {/* الرئيسية (Home) */}
+              {/* 1. الواجهة / الرئيسية */}
               <button
-                onClick={() => handleNavClick('home')}
-                className={`px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-200 ${
+                onClick={() => handleGoToSection('hero-logo')}
+                className={`px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-200 cursor-pointer ${
                   currentTab === 'home'
                     ? 'text-[#E84375] bg-pink-50/80 font-extrabold'
                     : 'text-stone-700 hover:text-[#E84375] hover:bg-pink-50/40'
                 }`}
               >
                 الرئيسية
+              </button>
+
+              {/* 2. التعريف بالمنصة */}
+              <button
+                onClick={() => handleGoToSection('about-platform')}
+                className="px-3.5 py-2 rounded-xl text-sm font-bold text-stone-700 hover:text-[#E84375] hover:bg-pink-50/40 transition-all duration-200 cursor-pointer"
+              >
+                التعريف بالمنصة
+              </button>
+
+              {/* 3. تسوق الآن */}
+              <button
+                onClick={() => handleGoToSection('shop-now')}
+                className="px-3.5 py-2 rounded-xl text-sm font-bold text-stone-700 hover:text-[#E84375] hover:bg-pink-50/40 transition-all duration-200 cursor-pointer flex items-center gap-1.5"
+              >
+                <Store className="w-4 h-4 text-[#E84375]" />
+                <span>تسوق الآن</span>
               </button>
 
               {/* المتجر والحلويات الموحد مع القائمة المنسدلة (Shop & Sweets Dropdown) */}
@@ -173,7 +208,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   }`}
                   aria-expanded={shopDropdownOpen}
                 >
-                  <span>المتجر والحلويات</span>
+                  <span>الأصناف والكتالوج</span>
                   <ChevronDown
                     className={`w-3.5 h-3.5 transition-transform duration-200 ${
                       shopDropdownOpen ? 'rotate-180 text-[#E84375]' : 'text-stone-400'
@@ -450,12 +485,32 @@ export const Navbar: React.FC<NavbarProps> = ({
         {mobileMenuOpen && (
           <div className="lg:hidden px-4 py-5 bg-white border-t border-pink-100 space-y-2.5 shadow-xl animate-fadeIn text-right">
             <button
-              onClick={() => handleNavClick('home')}
+              onClick={() => handleGoToSection('hero-logo')}
               className={`w-full text-right px-4 py-2.5 rounded-xl text-xs font-bold transition-colors ${
                 currentTab === 'home' ? 'bg-pink-50 text-[#E84375]' : 'text-stone-700 hover:bg-stone-50'
               }`}
             >
-              الرئيسية
+              الرئيسية (الواجهة)
+            </button>
+
+            <button
+              onClick={() => handleGoToSection('about-platform')}
+              className="w-full text-right px-4 py-2.5 rounded-xl text-xs font-bold text-stone-700 hover:bg-stone-50 transition-colors"
+            >
+              التعريف بالمنصة
+            </button>
+
+            <button
+              onClick={() => handleGoToSection('shop-now')}
+              className="w-full text-right px-4 py-2.5 rounded-xl text-xs font-bold text-[#E84375] bg-pink-50/60 hover:bg-pink-50 transition-colors flex items-center justify-between"
+            >
+              <span className="flex items-center gap-2">
+                <Store className="w-3.5 h-3.5" />
+                <span>تسوق الآن</span>
+              </span>
+              <span className="text-[10px] bg-[#E84375] text-white px-2 py-0.5 rounded-full font-bold">
+                المتجر
+              </span>
             </button>
 
             {/* المتجر والحلويات (كتالوج موحد مع خيارات سريعة للشاشات الصغيرة) */}

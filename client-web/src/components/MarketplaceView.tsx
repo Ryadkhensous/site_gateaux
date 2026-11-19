@@ -550,10 +550,10 @@ export const MarketplaceView: React.FC<MarketplaceViewProps> = ({
                             )}
                             <button
                               onClick={() => onSelectProductToOrder(prod)}
-                              className="px-4 py-2.5 bg-[#E84375] hover:bg-[#D83264] text-white rounded-xl text-xs font-bold shadow-xs hover:shadow-md transition-all flex items-center gap-1.5 cursor-pointer hover:scale-[1.02]"
+                              className="px-5 py-2.5 bg-[#E84375] hover:bg-[#D83264] text-white rounded-xl text-xs font-bold shadow-xs hover:shadow-md transition-all flex items-center gap-1.5 cursor-pointer hover:scale-[1.02]"
                             >
                               <ShoppingBag className="w-3.5 h-3.5" />
-                              <span>طلب</span>
+                              <span>اضغط للطلب</span>
                             </button>
                           </div>
                         </div>

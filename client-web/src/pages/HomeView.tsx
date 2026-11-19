@@ -1,23 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Sparkles,
-  Store,
+  ShoppingBag,
   Clock,
-  ArrowLeft,
-  ChevronLeft,
-  ChevronRight,
-  Heart,
-  CheckCircle2,
-  Star,
   MapPin,
   ShieldCheck,
   Award,
   Truck,
   Cake,
-  ShoppingBag,
-  Layers
+  Heart,
+  ChevronDown,
+  Search,
+  BookOpen,
+  Store,
+  Layers,
+  ArrowDown,
+  Phone,
+  CheckCircle2
 } from 'lucide-react';
 import { Artisan, Product } from '../types';
+import { INITIAL_PRODUCTS } from '../data/initialData';
 import { formatDZD } from '../utils/format';
 
 interface HomeViewProps {
@@ -33,94 +35,18 @@ export const HomeView: React.FC<HomeViewProps> = ({
   artisans = [],
   onSelectProductToOrder
 }) => {
-  // شرائح العرض الرئيسية للمنصة مع إبراز الحلويات التقليدية الجزائرية
-  const heroSlides = [
-    {
-      id: 'slide-siniyet-aroussa',
-      tag: 'صواني الأفراح والمهيبة الجزائرية',
-      titlePart1: 'صواني الأعراس الملكية',
-      titlePart2: 'تحفة الضيافة والتراث الجزائري الأصيل',
-      subtitle:
-        'صينية نحاسية فاخرة مطروقة يدوياً تضم أرقى تشكيلة من بقلاوة قسنطينة المورقة، مقروط اللوز العاصمي، تشاراك المسكر، العرايش المذهبة والدزيريات، تُخبز بأجود أنواع اللوز البلدي وعسل النحل الحر.',
-      image: '/images/traditional_siniyet_aroussa.jpg',
-      badge: 'أفراح ومهيبة ملوكية',
-      linkTab: 'traditional',
-      linkText: 'اكتشف صواني الأعراس'
-    },
-    {
-      id: 'slide-baklawa',
-      tag: 'مذاق قسنطينة الأسطوري',
-      titlePart1: 'بقلاوة قسنطينية ملكية',
-      titlePart2: 'مورقة باللوز والجوز والعسل الحر',
-      subtitle:
-        'طبقات رقيقة ومقرمشة بالسمن الطبيعي، محشوة بقلب اللوز والجوز المحمص ومسقية بالعسل الصافي، مقطعة هندسياً ومزينة بحبات لوز ذهبية تليق بأبهى مناسباتكم.',
-      image: '/images/traditional_baklawa.jpg',
-      badge: 'عسل حر 100%',
-      linkTab: 'traditional',
-      linkText: 'طلب البقلاوة الملكية'
-    },
-    {
-      id: 'slide-makroud',
-      tag: 'حلوى العاصمة البيضاء',
-      titlePart1: 'مقروط اللوز العاصمي',
-      titlePart2: 'يذوب في الفم بماء الزهر والليمون',
-      subtitle:
-        'حلوى ملوكية جزائرية لا تغيب عن بهجة الأعراس والمناسبات السعيدة، غنية بنكهة قشور الليمون الطازجة وماء زهر البرتقال ومغلفة بنعومة السكر الأبيض.',
-      image: '/images/traditional_makroud_el_louz.jpg',
-      badge: 'طراوة ومذاق ساحر',
-      linkTab: 'traditional',
-      linkText: 'طلب مقروط اللوز'
-    },
-    {
-      id: 'slide-makroud-koucha',
-      tag: 'أصالة معسلات واحات بسكرة',
-      titlePart1: 'مقروط الكوشة بتمر الغرس',
-      titlePart2: 'مرمل ومعسل بالسمسم وعسل النحل',
-      subtitle:
-        'السميد الذهبي المحمص بالفرن مع حشوة تمر الغرس الأصيل المعطر بالقرفة والقرنفل، مسقي بالعسل الحر الصافي ومزين ببذور السمسم المحمص.',
-      image: '/images/traditional_makroud_koucha.jpg',
-      badge: 'تراث أصيل',
-      linkTab: 'traditional',
-      linkText: 'اطلب مقروط الكوشة'
-    },
-    {
-      id: 'slide-wedding-cake',
-      tag: 'الأعراس والمناسبات الكبرى',
-      titlePart1: 'كعكة الزفاف الملكية 3 طبقات',
-      titlePart2: 'بزهور الباستيل وورق الذهب 24k',
-      subtitle:
-        'تحفة سكرية معمارية مخصصة للأعراس الكبرى، 3 طبقات محشوة بالبراليني والمكسرات الفاخرة مع إضاءة خفية وقاعدة نحاسية مذهبة.',
-      image: '/images/hero_wedding_cake.jpg',
-      badge: 'كعكة ملكية فاخرة',
-      linkTab: 'marketplace',
-      linkText: 'تسوق الكعكات'
+  // دمج المنتجات المتوفرة مع قائمة البيانات الأولية لضمان عرض الـ 22 حلوى بالكامل
+  const allProducts: Product[] = useMemo(() => {
+    if (featuredProducts && featuredProducts.length > 0) {
+      return featuredProducts;
     }
-  ];
+    return INITIAL_PRODUCTS;
+  }, [featuredProducts]);
 
-  // حالة السلايدر في الواجهة الرئيسية (Hero Carousel)
-  const [currentHeroSlide, setCurrentHeroSlide] = useState(0);
-  const [isHeroHovered, setIsHeroHovered] = useState(false);
-
-  // دوران عشوائي تلقائي للكاروسيل كل 3 ثوانٍ
-  useEffect(() => {
-    if (isHeroHovered) return;
-
-    const interval = setInterval(() => {
-      setCurrentHeroSlide((prev) => {
-        // اختيار شريحة عشوائية مختلفة تماماً عن الشريحة المعروضة حالياً
-        const availableIndexes = heroSlides
-          .map((_, idx) => idx)
-          .filter((idx) => idx !== prev);
-        const randomIndex = Math.floor(Math.random() * availableIndexes.length);
-        return availableIndexes[randomIndex];
-      });
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, [isHeroHovered, heroSlides.length]);
-
-  // قائمة المفضلة التفاعلية للزبون
-  const [wishlist, setWishlist] = useState<string[]>(['prod-2']);
+  // حالة التصفية والبحث في الصفحة الثالثة (تسوق الآن)
+  const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [wishlist, setWishlist] = useState<string[]>([]);
 
   const toggleWishlist = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -129,732 +55,566 @@ export const HomeView: React.FC<HomeViewProps> = ({
     );
   };
 
-  const nextHeroSlide = () => {
-    setCurrentHeroSlide((prev) => (prev + 1) % heroSlides.length);
-  };
+  // تصفية المنتجات حسب الفئة والبحث
+  const filteredProducts = useMemo(() => {
+    return allProducts.filter((product) => {
+      const matchCategory =
+        selectedCategory === 'ALL' ||
+        (selectedCategory === 'TRADITIONNEL' && product.category === 'TRADITIONNEL') ||
+        (selectedCategory === 'MODERNE' && product.category !== 'TRADITIONNEL') ||
+        (selectedCategory === 'MARIAGE' && (product.category === 'MARIAGE' || product.tags.includes('أفراح') || product.tags.includes('صواني')));
 
-  const prevHeroSlide = () => {
-    setCurrentHeroSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
-  };
+      const q = searchQuery.trim().toLowerCase();
+      const matchSearch =
+        !q ||
+        product.name.toLowerCase().includes(q) ||
+        (product.nameAr && product.nameAr.toLowerCase().includes(q)) ||
+        (product.descriptionAr && product.descriptionAr.toLowerCase().includes(q)) ||
+        product.tags.some((t) => t.toLowerCase().includes(q));
 
-  const activeSlide = heroSlides[currentHeroSlide];
+      return matchCategory && matchSearch;
+    });
+  }, [allProducts, selectedCategory, searchQuery]);
 
-  // أصناف التسوق الدائرية مع التركيز على الحلويات التقليدية الجزائرية
-  const categoriesList = [
-    {
-      id: 'cat-traditional-almonds',
-      nameAr: 'حلويات اللوز والتعسال',
-      nameEn: 'Traditional Almond Sweets',
-      image: '/images/traditional_baklawa.jpg',
-      filter: 'TRADITIONNEL'
-    },
-    {
-      id: 'cat-siniyet-mehiba',
-      nameAr: 'صواني الأعراس والمهيبة',
-      nameEn: 'Wedding & Mehiba Trays',
-      image: '/images/traditional_siniyet_aroussa.jpg',
-      filter: 'TRADITIONNEL'
-    },
-    {
-      id: 'cat-maaslat',
-      nameAr: 'معسلات ومقروط الكوشة',
-      nameEn: 'Honey Pastries & Makroud',
-      image: '/images/traditional_makroud_koucha.jpg',
-      filter: 'TRADITIONNEL'
-    },
-    {
-      id: 'cat-msekker',
-      nameAr: 'تشاراك ومخبوزات الأعياد',
-      nameEn: 'Tcharek & Feast Treats',
-      image: '/images/traditional_tcharek_msekker.jpg',
-      filter: 'TRADITIONNEL'
-    },
-    {
-      id: 'cat-wedding',
-      nameAr: 'كعكات الزفاف والخطوبة',
-      nameEn: 'Wedding Cakes',
-      image: '/images/hero_wedding_cake.jpg',
-      filter: 'MARIAGE'
-    },
-    {
-      id: 'cat-moderne',
-      nameAr: 'كعكات المناسبات الحديثة',
-      nameEn: 'Celebration Cakes',
-      image: '/images/cake_preview_number.jpg',
-      filter: 'MODERNE'
-    }
-  ];
-
-  // تشكيلة الحلويات التقليدية الجزائرية المعروضة في الصفحة الرئيسية
-  const traditionalHighlights = [
-    {
-      id: 'prod-18',
-      nameAr: 'بقلاوة قسنطينية ملكية بالجوز واللوز',
-      nameEn: 'Royal Constantinoise Baklawa',
-      priceDZD: 7500,
-      servings: 24,
-      prepTimeDays: 2,
-      rating: 5.0,
-      reviewsCount: 168,
-      image: '/images/traditional_baklawa.jpg',
-      city: 'قسنطينة',
-      categoryAr: 'مورقة بالعسل الحر'
-    },
-    {
-      id: 'prod-19',
-      nameAr: 'مقروط اللوز العاصمي بماء الزهر والليمون',
-      nameEn: 'Algiers Makroud El Louz',
-      priceDZD: 4800,
-      servings: 20,
-      prepTimeDays: 2,
-      rating: 4.9,
-      reviewsCount: 194,
-      image: '/images/traditional_makroud_el_louz.jpg',
-      city: 'الجزائر العاصمة',
-      categoryAr: 'يذوب في الفم'
-    },
-    {
-      id: 'prod-20',
-      nameAr: 'تشاراك المسكر الملكي محشو باللوز',
-      nameEn: 'Royal Tcharek Msekker',
-      priceDZD: 4500,
-      servings: 20,
-      prepTimeDays: 2,
-      rating: 4.9,
-      reviewsCount: 145,
-      image: '/images/traditional_tcharek_msekker.jpg',
-      city: 'الجزائر العاصمة',
-      categoryAr: 'لوز وسكر ناعم'
-    },
-    {
-      id: 'prod-arayech',
-      nameAr: 'عرايش جزائرية مذهبة بطعم الليمون وقلاصاج ملوكي',
-      nameEn: 'Royal Glazed Arayech',
-      priceDZD: 4600,
-      servings: 18,
-      prepTimeDays: 2,
-      rating: 4.9,
-      reviewsCount: 118,
-      image: '/images/traditional_arayech.jpg',
-      city: 'الجزائر العاصمة',
-      categoryAr: 'قلاصاج ملكي وتذهيب'
-    },
-    {
-      id: 'prod-makroud-koucha',
-      nameAr: 'مقروط الكوشة التقليدي بتمر الغرس والسمسم',
-      nameEn: 'Oven-Baked Date Makroud',
-      priceDZD: 3900,
-      servings: 24,
-      prepTimeDays: 2,
-      rating: 4.95,
-      reviewsCount: 136,
-      image: '/images/traditional_makroud_koucha.jpg',
-      city: 'بسكرة والشرق',
-      categoryAr: 'تمر الغرس وعسل حر'
-    },
-    {
-      id: 'prod-21',
-      nameAr: 'دزيريات وقنيدلات بريستيج مع لمسات ذهبية',
-      nameEn: 'Prestige Dziriat & Knidlet',
-      priceDZD: 5200,
-      servings: 18,
-      prepTimeDays: 3,
-      rating: 4.9,
-      reviewsCount: 92,
-      image: '/images/traditional_dziriat.jpg',
-      city: 'الجزائر العاصمة',
-      categoryAr: 'لوز وتذهيب 24k'
-    },
-    {
-      id: 'prod-mchewek',
-      nameAr: 'مشوك معسل بلوز إكسترا وكرز أحمر فاخر',
-      nameEn: 'Almond Mchewek with Candied Cherry',
-      priceDZD: 4400,
-      servings: 20,
-      prepTimeDays: 2,
-      rating: 4.88,
-      reviewsCount: 84,
-      image: '/images/traditional_mchewek.jpg',
-      city: 'وهران',
-      categoryAr: 'لوز معسل وكرز'
-    },
-    {
-      id: 'prod-griwech',
-      nameAr: 'قريوش السنبلة المقرمش بماء الزهر والجلجلان',
-      nameEn: 'Traditional Crispy Griwech',
-      priceDZD: 2900,
-      servings: 25,
-      prepTimeDays: 1,
-      rating: 4.85,
-      reviewsCount: 104,
-      image: '/images/traditional_griwech.jpg',
-      city: 'الجزائر العاصمة',
-      categoryAr: 'مورق ومقرمش بالعسل'
-    }
-  ];
-
-  // منتجات الأكثر طلباً ومبيعاً (Best Sellers) - الأطباق والحلويات الأكثر طلباً للمناسبات الجزائرية
-  const bestSellersList = [
-    {
-      id: 'prod-18',
-      nameAr: 'بقلاوة قسنطينية ملكية بالجوز واللوز والعسل الصافي',
-      nameEn: 'Royal Constantinoise Baklawa',
-      priceDZD: 7500,
-      rating: 5.0,
-      reviewsCount: 168,
-      image: '/images/traditional_baklawa.jpg',
-      categoryAr: 'عسل حر وجوز'
-    },
-    {
-      id: 'prod-19',
-      nameAr: 'مقروط اللوز العاصمي بماء الزهر والليمون',
-      nameEn: 'Algiers Makroud El Louz',
-      priceDZD: 4800,
-      rating: 4.9,
-      reviewsCount: 194,
-      image: '/images/traditional_makroud_el_louz.jpg',
-      categoryAr: 'يذوب في الفم'
-    },
-    {
-      id: 'prod-siniyet-mehiba',
-      nameAr: 'صينية المهيبة والأفراح الملوكية النحاسية (60 قطعة)',
-      nameEn: 'Royal Algerian Wedding Tray',
-      priceDZD: 24000,
-      rating: 5.0,
-      reviewsCount: 112,
-      image: '/images/traditional_siniyet_aroussa.jpg',
-      categoryAr: 'صينية نحاسية للأفراح'
-    },
-    {
-      id: 'prod-20',
-      nameAr: 'تشاراك المسكر الملكي محشو باللوز البلدي',
-      nameEn: 'Royal Tcharek Msekker',
-      priceDZD: 4500,
-      rating: 4.9,
-      reviewsCount: 145,
-      image: '/images/traditional_tcharek_msekker.jpg',
-      categoryAr: 'لوز بلدي وسكر ناعم'
-    }
-  ];
-
-  const handleOrderBestSeller = (item: typeof bestSellersList[0]) => {
+  // إجراء الطلب السريع عند الضغط على "اضغط للطلب"
+  const handleSelectProduct = (product: Product) => {
     if (onSelectProductToOrder) {
-      onSelectProductToOrder({
-        id: item.id,
-        artisanId: 'art-2',
-        name: item.nameAr,
-        nameAr: item.nameAr,
-        category: 'TRADITIONNEL',
-        description: item.nameAr,
-        priceDZD: item.priceDZD,
-        servings: 20,
-        prepTimeDays: 2,
-        imageUrl: item.image,
-        isCustomizable: false,
-        tags: ['أفضل المبيعات', 'حلويات تقليدية', 'أصالة']
-      });
+      onSelectProductToOrder(product);
     } else {
-      onNavigate('marketplace', 'TRADITIONNEL');
+      onNavigate('marketplace');
     }
   };
 
-  const handleOrderTraditional = (item: any) => {
-    if (onSelectProductToOrder) {
-      onSelectProductToOrder({
-        id: item.id,
-        artisanId: 'art-2',
-        name: item.nameAr,
-        nameAr: item.nameAr,
-        category: 'TRADITIONNEL',
-        description: item.nameAr,
-        priceDZD: item.priceDZD,
-        servings: item.servings,
-        prepTimeDays: item.prepTimeDays,
-        imageUrl: item.image,
-        isCustomizable: false,
-        tags: ['حلويات تقليدية', 'أصالة', item.city]
-      });
-    } else {
-      onNavigate('traditional');
+  const scrollToSection = (sectionId: string) => {
+    const el = document.getElementById(sectionId);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
   return (
-    <div className="space-y-16 pb-16">
-      {/* 1. قسم الواجهة الرئيسية الممتد على كامل المساحة (Full-Bleed Hero Banner) - دوران عشوائي كل 3 ثوانٍ */}
-      <section 
-        onMouseEnter={() => setIsHeroHovered(true)}
-        onMouseLeave={() => setIsHeroHovered(false)}
-        className="relative overflow-hidden min-h-[560px] sm:min-h-[620px] lg:min-h-[680px] flex items-center border-b border-pink-100/60 pt-6 pb-16 sm:pb-20"
+    <div className="space-y-24 pb-20 text-right font-sans" dir="rtl">
+      
+      {/* ========================================================================= */}
+      {/* 1. الواجهة الأولى: اللوغو الملكي الفاخر فقط (Hero View - لوڨو برك)           */}
+      {/* ========================================================================= */}
+      <section
+        id="hero-logo"
+        className="relative min-h-[85vh] sm:min-h-[90vh] flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 overflow-hidden bg-radial from-[#FFFDF9] via-[#FFF9F2] to-[#FFF0F5] border-b border-pink-100/70"
       >
-        
-        {/* خلفية الصور المتراكبة بانتقال ذوبان ناعم وزوم سينمائي فخم (Smooth Crossfade & Ken Burns) */}
-        <div className="absolute inset-0 w-full h-full overflow-hidden isolate pointer-events-none">
-          {heroSlides.map((slide, idx) => {
-            const isActive = idx === currentHeroSlide;
-            return (
-              <div
-                key={slide.id}
-                className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${
-                  isActive ? 'opacity-100 z-10' : 'opacity-0 z-0'
-                }`}
-              >
-                <img
-                  src={slide.image}
-                  alt={slide.titlePart1}
-                  loading={idx === 0 ? "eager" : "lazy"}
-                  decoding="async"
-                  fetchPriority={idx === 0 ? "high" : "auto"}
-                  className={`w-full h-full object-cover object-[25%_center] sm:object-[28%_center] lg:object-[32%_center] transition-transform duration-[3500ms] ease-out will-change-transform transform-gpu ${
-                    isActive ? 'scale-100 animate-heroImage' : 'scale-105'
-                  }`}
-                />
-              </div>
-            );
-          })}
-
-          {/* تدرج لوني لطيف ومدروس على اليمين فقط لحماية وضوح النصوص، مع ترك الكعكة والصورة واضحة وناصعة بالكامل */}
-          <div className="absolute inset-0 bg-gradient-to-l from-[#FFF5F7]/95 via-[#FFF5F7]/70 via-35% to-transparent hidden lg:block z-20 pointer-events-none" />
-
-          {/* تدرج مخصص للشاشات المتوسطة والصغيرة */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#FFF5F7]/90 via-[#FFF5F7]/65 to-[#FFF5F7]/30 lg:hidden z-20 pointer-events-none" />
+        {/* خلفية زخرفية ناعمة مع إضاءة ذهبية خافتة */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] sm:w-[520px] lg:w-[680px] h-[340px] sm:h-[520px] lg:h-[680px] bg-gradient-to-tr from-amber-200/25 via-pink-200/20 to-amber-100/30 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute top-10 right-10 w-48 h-48 bg-pink-100/40 rounded-full blur-2xl" />
+          <div className="absolute bottom-10 left-10 w-56 h-56 bg-amber-100/40 rounded-full blur-2xl" />
         </div>
 
-        {/* أزرار التنقل الدائرية على أطراف الواجهة الخارجية (كما في الموكاب تماماً) */}
-        <button
-          onClick={prevHeroSlide}
-          aria-label="السابق"
-          className="absolute right-3 sm:right-6 lg:right-8 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-white/90 hover:bg-white text-stone-700 hover:text-[#E84375] shadow-lg flex items-center justify-center border border-pink-100 transition-all hover:scale-110 backdrop-blur-xs cursor-pointer"
-        >
-          <ChevronRight className="w-5 h-5" />
-        </button>
-
-        <button
-          onClick={nextHeroSlide}
-          aria-label="التالي"
-          className="absolute left-3 sm:left-6 lg:left-8 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-white/90 hover:bg-white text-stone-700 hover:text-[#E84375] shadow-lg flex items-center justify-center border border-pink-100 transition-all hover:scale-110 backdrop-blur-xs cursor-pointer"
-        >
-          <ChevronLeft className="w-5 h-5" />
-        </button>
-
-        {/* المحتوى النصي الأيمن فوق التدرج اللوني */}
-        <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-14 relative z-20 w-full">
-          <div className="max-w-xl lg:max-w-2xl space-y-6 text-right pr-0 lg:pr-4">
-            
-            {/* الحاوية المتحركة للنصوص مع المفتاح key={activeSlide.id} لتشغيل الأنيميشن الفخمة عند كل دوران */}
-            <div key={activeSlide.id} className="space-y-4 animate-heroText">
-              {/* شارة التميز */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-pink-100/90 text-[#E84375] text-xs font-bold border border-pink-200 shadow-2xs backdrop-blur-xs animate-heroTag">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>{activeSlide.tag}</span>
-              </div>
-
-              {/* العنوان الكبير المطابق للصورة: أسود عريض + وردي زاهي */}
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold text-stone-900 leading-[1.18] tracking-tight drop-shadow-2xs">
-                {activeSlide.titlePart1} <br />
-                <span className="text-[#E84375] font-serif font-bold">
-                  {activeSlide.titlePart2}
-                </span>
-              </h1>
-
-              {/* الفقرة الوصفية */}
-              <p className="text-stone-800 text-sm sm:text-base leading-relaxed max-w-xl font-normal drop-shadow-2xs">
-                {activeSlide.subtitle}
-              </p>
-            </div>
-
-            {/* أزرار الإجراء السريع CTA */}
-            <div className="flex flex-wrap items-center gap-4 pt-2">
-              {/* زر الإجراء الأساسي */}
-              <button
-                onClick={() => onNavigate(activeSlide.linkTab || 'marketplace')}
-                className="px-8 py-3.5 bg-[#E84375] hover:bg-[#D83264] text-white font-bold rounded-xl text-sm shadow-md shadow-pink-200/80 transition-all duration-300 hover:scale-[1.02] flex items-center justify-center gap-2 group cursor-pointer"
-              >
-                <span>{activeSlide.linkText || 'تسوق الآن'}</span>
-                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-              </button>
-
-              {/* زر الإجراء الثانوي */}
-              {activeSlide.linkTab === 'traditional' ? (
-                <button
-                  onClick={() => onNavigate('marketplace')}
-                  className="px-7 py-3.5 bg-white/95 hover:bg-white text-stone-800 hover:text-[#E84375] border-2 border-pink-200/80 hover:border-[#E84375] font-bold rounded-xl text-sm shadow-xs transition-all duration-200 flex items-center justify-center gap-2 backdrop-blur-xs cursor-pointer"
-                >
-                  <Store className="w-4 h-4 text-[#E84375]" />
-                  <span>تصفح كل المعرض</span>
-                </button>
-              ) : (
-                <button
-                  onClick={() => onNavigate('customizer')}
-                  className="px-7 py-3.5 bg-white/95 hover:bg-white text-stone-800 hover:text-[#E84375] border-2 border-pink-200/80 hover:border-[#E84375] font-bold rounded-xl text-sm shadow-xs transition-all duration-200 flex items-center justify-center gap-2 backdrop-blur-xs cursor-pointer"
-                >
-                  <Cake className="w-4 h-4 text-[#E84375]" />
-                  <span>صمّم كعكتك ثلاثية الأبعاد (3D)</span>
-                </button>
-              )}
-            </div>
-
-          </div>
-        </div>
-
-        {/* مؤشرات الترقيم (Pagination Dots) في أسفل الواجهة بالوسط */}
-        <div className="absolute bottom-5 sm:bottom-7 left-1/2 -translate-x-1/2 flex items-center gap-2.5 z-30">
-          {heroSlides.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setCurrentHeroSlide(idx)}
-              aria-label={`شريحة ${idx + 1}`}
-              className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
-                currentHeroSlide === idx
-                  ? 'w-8 bg-[#E84375] shadow-xs'
-                  : 'w-2.5 bg-pink-300/80 hover:bg-[#E84375]/60'
-              }`}
-            />
-          ))}
-        </div>
-
-      </section>
-
-      {/* 2. شريط المزايا الأربع المطابق للموكاب (Features Bar / 4 Pillars) */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 sm:-mt-12 relative z-20">
-        <div className="bg-white rounded-2xl shadow-xl shadow-pink-900/5 border border-pink-100 p-6 sm:p-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-right">
+        {/* الحاوية المركزية: اللوغو برك مع الأناقة الملكية */}
+        <div className="relative z-10 flex flex-col items-center text-center max-w-3xl mx-auto space-y-6 pt-6 pb-12">
           
-          {/* الميزة 1: توصيل سريع ومبرد (Fast Delivery) */}
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-pink-50 text-[#E84375] flex items-center justify-center flex-shrink-0 border border-pink-100 shadow-2xs">
-              <Truck className="w-6 h-6" />
-            </div>
-            <div>
-              <h4 className="font-bold text-sm text-stone-900 leading-tight">توصيل سريع ومبرد</h4>
-              <p className="text-xs text-stone-500 mt-1 font-light">في الموعد المحدد لكافة الولايات</p>
-            </div>
-          </div>
-
-          {/* الميزة 2: أفضل جودة فاخرة (Best Quality) */}
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-pink-50 text-[#E84375] flex items-center justify-center flex-shrink-0 border border-pink-100 shadow-2xs">
-              <Award className="w-6 h-6" />
-            </div>
-            <div>
-              <h4 className="font-bold text-sm text-stone-900 leading-tight">أعلى معايير الجودة</h4>
-              <p className="text-xs text-stone-500 mt-1 font-light">نستخدم مكونات طبيعية 100%</p>
-            </div>
-          </div>
-
-          {/* الميزة 3: طازجة ومصنوعة للطلب (100% Fresh) */}
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-pink-50 text-[#E84375] flex items-center justify-center flex-shrink-0 border border-pink-100 shadow-2xs">
-              <Cake className="w-6 h-6" />
-            </div>
-            <div>
-              <h4 className="font-bold text-sm text-stone-900 leading-tight">100% طازجة يومياً</h4>
-              <p className="text-xs text-stone-500 mt-1 font-light">تُخبز خصيصاً يوم مناسبتكم</p>
-            </div>
-          </div>
-
-          {/* الميزة 4: دفع آمن ومضمون (Secure Payments) */}
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-pink-50 text-[#E84375] flex items-center justify-center flex-shrink-0 border border-pink-100 shadow-2xs">
-              <ShieldCheck className="w-6 h-6" />
-            </div>
-            <div>
-              <h4 className="font-bold text-sm text-stone-900 leading-tight">دفع آمن ومحمي</h4>
-              <p className="text-xs text-stone-500 mt-1 font-light">بريدي موب، الذهبية أو عند الاستلام</p>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      {/* 3. تسوق حسب الأصناف (Categories Grid) */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-        <div className="text-center max-w-xl mx-auto mb-10">
-          <h2 className="text-2xl sm:text-3xl font-serif font-bold text-stone-900 tracking-tight">
-            تسوق حسب الأصناف
-          </h2>
-          <div className="w-12 h-0.5 bg-[#E84375] mx-auto mt-2.5 rounded-full"></div>
-          <p className="text-stone-500 text-xs sm:text-sm mt-2 font-normal">
-            تسوق حسب المناسبة والصنف المفضل لديك من تشكيلة الحلويات والكعكات الراقية
-          </p>
-        </div>
-
-        {/* الحاويات الدائرية الست */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 sm:gap-6 justify-center">
-          {categoriesList.map((cat) => (
-            <div
-              key={cat.id}
-              onClick={() => {
-                if (cat.filter === 'TRADITIONNEL') {
-                  onNavigate('marketplace', 'TRADITIONNEL');
-                } else if (cat.filter === 'MARIAGE') {
-                  onNavigate('marketplace', 'MARIAGE');
-                } else {
-                  onNavigate('marketplace', 'ALL');
-                }
-              }}
-              className="flex flex-col items-center group cursor-pointer"
-            >
-              <div className="w-28 h-28 sm:w-36 sm:h-36 rounded-full overflow-hidden border-4 border-white shadow-md group-hover:shadow-xl group-hover:border-[#E84375] transition-all duration-300 relative bg-pink-50">
+          {/* الشعار الرسمي الدائري الفاخر (SweetBox DZ Logo) */}
+          <div className="relative group cursor-pointer transition-transform duration-500 hover:scale-[1.02]">
+            {/* هالة ذهبية ناعمة خلف الشعار */}
+            <div className="absolute -inset-3 sm:-inset-4 bg-gradient-to-tr from-[#C5A028]/40 via-[#E84375]/30 to-[#8A1538]/30 rounded-full blur-xl opacity-75 group-hover:opacity-100 transition duration-700" />
+            
+            {/* إطار الشعار الدائري الملكي */}
+            <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 rounded-full p-2 bg-gradient-to-b from-amber-300 via-amber-100 to-amber-400 shadow-2xl shadow-amber-950/20">
+              <div className="w-full h-full rounded-full overflow-hidden bg-white p-1 border-2 border-amber-400/60 shadow-inner">
                 <img
-                  src={cat.image}
-                  alt={cat.nameAr}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out will-change-transform transform-gpu"
+                  src="/images/sweetbox_logo.jpg"
+                  alt="شعار حلويات بوكس Sweet Box DZ - صناعة بيع تدريب"
+                  loading="eager"
+                  fetchPriority="high"
+                  className="w-full h-full object-cover rounded-full"
                 />
               </div>
-              <h3 className="font-bold text-sm text-stone-800 mt-3.5 group-hover:text-[#E84375] transition-colors text-center">
-                {cat.nameAr}
-              </h3>
-              <span className="text-[11px] text-[#E84375] font-semibold mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                استكشف التشكيلة ←
+            </div>
+          </div>
+
+          {/* الاسم والسلوغان الرسمي المقتبس من الهوية البصرية للشعار */}
+          <div className="space-y-3">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-black text-stone-900 tracking-tight leading-tight">
+              حلويات بوكس <span className="text-[#E84375]">Sweet Box</span>
+            </h1>
+            
+            <p className="text-lg sm:text-2xl text-stone-700 font-serif font-bold italic">
+              ...حلويات بطعم السعادة
+            </p>
+
+            {/* شريط الركائز الثلاث للشعار */}
+            <div className="pt-2 flex flex-col items-center gap-2">
+              <div className="inline-flex items-center gap-3 sm:gap-4 px-6 sm:px-8 py-2 rounded-full bg-gradient-to-r from-amber-800 via-[#8A1538] to-amber-800 text-amber-100 text-xs sm:text-sm font-bold shadow-lg shadow-pink-900/10 border border-amber-300/40">
+                <span className="tracking-wide">صناعة</span>
+                <span className="text-amber-300 text-xs">•</span>
+                <span className="tracking-wide">بيع</span>
+                <span className="text-amber-300 text-xs">•</span>
+                <span className="tracking-wide">تدريب</span>
+              </div>
+              <span className="text-xs sm:text-sm text-amber-800 font-semibold tracking-wider">
+                تجربة مذاق استثنائية
               </span>
             </div>
-          ))}
-        </div>
-      </section>
+          </div>
 
-      {/* 4. الأكثر طلباً ومبيعاً (Best Sellers Grid) */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-        <div className="text-center max-w-xl mx-auto mb-10">
-          <h2 className="text-2xl sm:text-3xl font-serif font-bold text-stone-900 tracking-tight">
-            الأكثر طلباً ومبيعاً
-          </h2>
-          <div className="w-12 h-0.5 bg-[#E84375] mx-auto mt-2.5 rounded-full"></div>
-          <p className="text-stone-500 text-xs sm:text-sm mt-2 font-normal">
-            إبداعات نالت أعلى تقييمات الذواقة في الجزائر ومصنوعة بأيدي أمهر الحرفيين
-          </p>
-        </div>
-
-        {/* بطاقات المنتجات الأربعة في صف متناسق */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {bestSellersList.map((item) => (
-            <div
-              key={item.id}
-              className="bg-white rounded-2xl border border-pink-100 overflow-hidden shadow-sm hover:shadow-xl hover:border-pink-300 transition-all duration-300 flex flex-col justify-between group text-right"
+          {/* أزرار الإجراء السريع للانتقال السلس إلى الصفحتين التاليتين */}
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+            <button
+              onClick={() => scrollToSection('about-platform')}
+              className="px-7 py-3.5 bg-white hover:bg-pink-50/80 text-stone-800 hover:text-[#E84375] font-bold rounded-2xl text-xs sm:text-sm border-2 border-pink-200/90 hover:border-[#E84375] shadow-xs hover:shadow-md transition-all flex items-center gap-2 cursor-pointer"
             >
-              {/* صورة المنتج مع زر المفضلة */}
-              <div className="relative h-56 bg-stone-50 overflow-hidden">
-                <img
-                  src={item.image}
-                  alt={item.nameAr}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out will-change-transform transform-gpu"
-                />
-
-                {/* زر القلب المفضلة */}
-                <button
-                  onClick={(e) => toggleWishlist(item.id, e)}
-                  title="إضافة للمفضلة"
-                  className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/95 backdrop-blur-xs flex items-center justify-center text-stone-400 hover:text-[#E84375] shadow-xs transition-colors cursor-pointer"
-                >
-                  <Heart
-                    className={`w-4 h-4 ${
-                      wishlist.includes(item.id)
-                        ? 'fill-[#E84375] text-[#E84375]'
-                        : 'text-stone-400'
-                    }`}
-                  />
-                </button>
-
-                {/* شارة التصنيف */}
-                <span className="absolute bottom-3 right-3 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white/90 text-stone-700 shadow-2xs">
-                  {item.categoryAr}
-                </span>
-              </div>
-
-              {/* تفاصيل البطاقة: الاسم، التقييم، السعر والزر */}
-              <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-                <div>
-                  <h3 className="font-bold text-stone-900 text-base leading-snug group-hover:text-[#E84375] transition-colors">
-                    {item.nameAr}
-                  </h3>
-
-                  {/* تقييم النجوم: 5 نجوم ذهبية مع عدد التقييمات */}
-                  <div className="flex items-center gap-1.5 mt-2">
-                    <div className="flex text-amber-400 gap-0.5">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                      ))}
-                    </div>
-                    <span className="text-[11px] text-stone-500 font-medium">
-                      ({item.reviewsCount} تقييم ممتاز)
-                    </span>
-                  </div>
-
-                  {/* السعر منسق بالدينار الجزائري */}
-                  <div className="mt-3 inline-flex items-baseline gap-1" dir="rtl">
-                    <span className="text-xs font-bold text-stone-500">السعر:</span>
-                    <span dir="ltr" className="text-xl font-mono font-extrabold text-stone-900">
-                      {formatDZD(item.priceDZD)}
-                    </span>
-                    <span className="text-xs font-bold text-[#E84375]">دج</span>
-                  </div>
-                </div>
-
-                {/* زر أضف إلى السلة الوردي */}
-                <button
-                  onClick={() => handleOrderBestSeller(item)}
-                  className="w-full py-2.5 bg-[#E84375] hover:bg-[#D83264] text-white font-bold rounded-xl text-xs shadow-xs hover:shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <ShoppingBag className="w-3.5 h-3.5" />
-                  <span>طلب وحجز الآن</span>
-                </button>
-              </div>
-
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* قسم الحلويات التقليدية الجزائرية الأصيلة (Traditional Algerian Pastries Showcase) */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-        <div className="bg-gradient-to-b from-[#FFF5F7] via-white to-[#FFFBF8] rounded-3xl border border-pink-200/80 p-6 sm:p-10 shadow-sm text-right space-y-8">
-          
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-pink-100 text-[#E84375] text-xs font-bold mb-2 border border-pink-200">
-                <span>أصالة وتراث الأجداد</span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-stone-900 tracking-tight">
-                الحلويات التقليدية الجزائرية
-              </h2>
-              <p className="text-stone-600 text-xs sm:text-sm mt-1 max-w-xl">
-                أشهى صواني البقلاوة المورقة، مقروط اللوز المعسل، التشاراك والدزيريات المخبوزة بأجود أنواع اللوز الجزائري والعسل الحر.
-              </p>
-            </div>
+              <BookOpen className="w-4 h-4 text-[#E84375]" />
+              <span>التعريف بالمنصة</span>
+              <ArrowDown className="w-3.5 h-3.5 text-stone-400" />
+            </button>
 
             <button
-              onClick={() => onNavigate('marketplace', 'TRADITIONNEL')}
-              className="px-6 py-2.5 bg-white hover:bg-[#E84375] text-[#E84375] hover:text-white border-2 border-[#E84375] rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-2xs self-start md:self-auto cursor-pointer"
+              onClick={() => scrollToSection('shop-now')}
+              className="px-8 py-3.5 bg-[#E84375] hover:bg-[#D83264] text-white font-bold rounded-2xl text-xs sm:text-sm shadow-md shadow-pink-300/60 hover:shadow-lg transition-all hover:scale-[1.02] flex items-center gap-2 cursor-pointer"
             >
-              <span>استكشف كافة الحلويات التقليدية</span>
-              <ArrowLeft className="w-4 h-4" />
+              <ShoppingBag className="w-4 h-4" />
+              <span>تسوق الآن مباشرة</span>
+              <ArrowDown className="w-3.5 h-3.5 text-pink-200" />
             </button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {traditionalHighlights.map((item) => (
-              <div
-                key={item.id}
-                className="bg-white rounded-2xl border border-pink-100 hover:border-pink-300 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between group"
-              >
-                <div className="relative h-52 bg-stone-50 overflow-hidden">
-                  <img
-                    src={item.image}
-                    alt={item.nameAr}
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500 ease-out"
-                  />
-                  <span className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#E84375] text-white shadow-xs">
-                    {item.categoryAr}
-                  </span>
-                  <span className="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded-lg text-[10px] font-medium bg-stone-900/75 text-white backdrop-blur-xs flex items-center gap-1">
-                    <MapPin className="w-3 h-3 text-[#E84375]" />
-                    {item.city}
-                  </span>
-                </div>
-
-                <div className="p-4 space-y-3 flex-1 flex flex-col justify-between">
-                  <div>
-                    <h3 className="font-bold text-stone-900 text-sm leading-snug group-hover:text-[#E84375] transition-colors line-clamp-2">
-                      {item.nameAr}
-                    </h3>
-                    <div className="flex items-center gap-2 text-[11px] text-stone-500 mt-1">
-                      <span>{item.servings} قطعة</span>
-                      <span>•</span>
-                      <span>{item.prepTimeDays} أيام تحضير</span>
-                    </div>
-                  </div>
-
-                  <div className="pt-2 flex items-center justify-between border-t border-pink-50">
-                    <div>
-                      <span className="text-[10px] text-stone-400 block font-medium">السعر :</span>
-                      <span className="text-base font-bold text-[#E84375] font-mono">
-                        {formatDZD(item.priceDZD)}
-                      </span>
-                    </div>
-
-                    <button
-                      onClick={() => handleOrderTraditional(item)}
-                      className="px-3.5 py-1.5 bg-[#E84375] hover:bg-[#D83264] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
-                    >
-                      <ShoppingBag className="w-3.5 h-3.5" />
-                      <span>طلب</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          {/* مؤشر التمرير الناعم */}
+          <button
+            onClick={() => scrollToSection('about-platform')}
+            aria-label="التمرير للأسفل"
+            className="pt-6 text-stone-400 hover:text-[#E84375] transition-colors flex flex-col items-center gap-1 cursor-pointer group"
+          >
+            <span className="text-[11px] font-medium text-stone-400 group-hover:text-[#E84375]">
+              انتقل لصفحة التعريف
+            </span>
+            <ChevronDown className="w-5 h-5 animate-bounce text-pink-400" />
+          </button>
 
         </div>
       </section>
 
-      {/* 5. البانر الترويجي لورشة الكعكات المخصصة ثلاثية الأبعاد */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-        <div className="bg-[#FFF0F4] border border-pink-200/80 rounded-3xl p-8 sm:p-12 overflow-hidden shadow-sm relative">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
-            
-            {/* جهة النصوص والدعوة للإجراء (في RTL اليمين) */}
-            <div className="md:col-span-7 space-y-5 text-right">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#E84375] bg-white px-3.5 py-1 rounded-full border border-pink-200 shadow-2xs inline-block">
-                خدمة التفصيل الحصرية
-              </span>
 
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-stone-900 leading-tight">
-                كعكة مخصصة <br />
-                <span className="text-[#E84375]">للحظاتكم الاستثنائية</span>
-              </h2>
-
-              <p className="text-stone-600 text-sm sm:text-base font-normal max-w-lg leading-relaxed">
-                شاركنا أفكارك، ألوانك المفضلة والمجسمات التي تحبها، وسنقوم بتحويل حلمك إلى حقيقة لذيذة تخطف الأنظار في ورشتنا ثلاثية الأبعاد التفاعلية!
-              </p>
-
-              <div className="pt-2">
-                <button
-                  onClick={() => onNavigate('customizer')}
-                  className="px-7 py-3.5 bg-stone-900 hover:bg-stone-800 text-white font-bold rounded-xl text-sm shadow-md transition-all flex items-center gap-2 group cursor-pointer"
-                >
-                  <Sparkles className="w-4 h-4 text-pink-400 group-hover:rotate-12 transition-transform" />
-                  <span>بدء تصميم كعكتك في الورشة 3D</span>
-                  <ArrowLeft className="w-4 h-4 text-pink-300 group-hover:-translate-x-1 transition-transform" />
-                </button>
-              </div>
-            </div>
-
-            {/* جهة صورة كعكة الشوكولاتة والبراليني على الحامل المرتفع */}
-            <div className="md:col-span-5 flex items-center justify-center">
-              <div className="w-64 h-64 sm:w-80 sm:h-80 rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-pink-100 isolate group">
-                <img
-                  src="/images/chocolate_praline_layer_cake.jpg"
-                  alt="كعكة شوكولاتة مخصصة"
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out will-change-transform transform-gpu"
-                />
-              </div>
-            </div>
-
+      {/* ========================================================================= */}
+      {/* 2. الصفحة الثانية: التعريف بالمنصة (About SweetBox DZ Platform)             */}
+      {/* ========================================================================= */}
+      <section
+        id="about-platform"
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-24 space-y-12"
+      >
+        {/* رأس صفحة التعريف */}
+        <div className="text-center max-w-3xl mx-auto space-y-4">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-pink-100/90 text-[#E84375] text-xs font-bold border border-pink-200 shadow-2xs">
+            <Award className="w-4 h-4" />
+            <span>منصة حلويات بوكس الجزائرية — SweetBox DZ</span>
           </div>
-        </div>
-      </section>
 
-      {/* 6. بطاقة إبراز الـ 69 ولاية والنقل المبرد الوطني */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2">
-        <div className="bg-white p-6 sm:p-8 rounded-3xl border border-pink-100 text-center space-y-3 shadow-xs">
-          <span className="text-xs font-bold uppercase tracking-widest text-pink-700 bg-pink-50 px-3.5 py-1 rounded-full border border-pink-200">
-            تغطية وطنية شاملة وموثوقة
-          </span>
-          <h3 className="font-serif font-bold text-xl sm:text-2xl text-stone-900">
-            من تمنراست إلى الجزائر العاصمة، ومن وهران إلى عنابة
-          </h3>
-          <p className="text-xs sm:text-sm text-stone-600 max-w-2xl mx-auto font-light">
-            كافة الحرفيين وصناع الحلوى معتمدون مع الالتزام الصارم بمعايير النظافة وشروط النقل والتوصيل المبرد لضمان وصول كعكتك بأبهى حلة وطعم طازج عبر 69 ولاية.
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-stone-900 tracking-tight leading-tight">
+            التعريف بالمنصة
+          </h2>
+
+          <div className="w-16 h-1 bg-gradient-to-r from-amber-400 via-[#E84375] to-amber-400 mx-auto rounded-full" />
+
+          <p className="text-stone-600 text-sm sm:text-base leading-relaxed font-normal">
+            منصة وطنية متكاملة ورائدة تجمع بين عراقة الحلويات التقليدية الجزائرية وإبداع الكعكات العصرية الفاخرة، مرتكزة على شعارنا الخالد: <strong className="text-stone-900 font-bold">صناعة • بيع • تدريب</strong> لتقديم أرقى تجربة ذوق لزبائننا في كل المناسبات.
           </p>
         </div>
+
+        {/* بطاقات الركائز الثلاث المستوحاة من الشعار الرسمي */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          
+          {/* الركيزة 1: صناعة */}
+          <div className="bg-white rounded-3xl p-8 border border-pink-100 shadow-sm hover:shadow-xl hover:border-pink-300 transition-all duration-300 space-y-5 text-right flex flex-col justify-between group">
+            <div className="space-y-4">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-300 text-white flex items-center justify-center shadow-md shadow-amber-500/20 group-hover:scale-105 transition-transform">
+                <Cake className="w-7 h-7" />
+              </div>
+
+              <div>
+                <span className="text-[11px] font-bold text-amber-600 uppercase tracking-widest block mb-1">
+                  الركيزة الأولى
+                </span>
+                <h3 className="text-2xl font-serif font-bold text-stone-900 group-hover:text-[#E84375] transition-colors">
+                  صناعة يدوية فاخرة
+                </h3>
+              </div>
+
+              <p className="text-xs sm:text-sm text-stone-600 leading-relaxed font-light">
+                صناعة يومية متقنة بأيدي أمهر الحرفيات والحرفيين المعتمدين رسمياً في الجزائر، مع الالتزام التام بالمكونات الطبيعية 100%:
+              </p>
+
+              <ul className="space-y-2 text-xs text-stone-700 font-medium">
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>لوز جزائري بلدي خالص وعسل النحل الطبيعي</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>حلويات تقليدية أصيلة: مقروط اللوز، بقلاوة، عرايش، وتشاراك</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>كعكات ملكية فاخرة للأعراس والمناسبات الكبرى ثلاثية الأبعاد</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="pt-4 border-t border-pink-50">
+              <span className="text-[11px] font-bold text-[#E84375]">
+                جودة ونظافة مضمونة 100%
+              </span>
+            </div>
+          </div>
+
+          {/* الركيزة 2: بيع وتوصيل */}
+          <div className="bg-white rounded-3xl p-8 border border-pink-100 shadow-sm hover:shadow-xl hover:border-pink-300 transition-all duration-300 space-y-5 text-right flex flex-col justify-between group">
+            <div className="space-y-4">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#E84375] to-pink-400 text-white flex items-center justify-center shadow-md shadow-pink-500/20 group-hover:scale-105 transition-transform">
+                <Truck className="w-7 h-7" />
+              </div>
+
+              <div>
+                <span className="text-[11px] font-bold text-[#E84375] uppercase tracking-widest block mb-1">
+                  الركيزة الثانية
+                </span>
+                <h3 className="text-2xl font-serif font-bold text-stone-900 group-hover:text-[#E84375] transition-colors">
+                  بيع وتوصيل 69 ولاية
+                </h3>
+              </div>
+
+              <p className="text-xs sm:text-sm text-stone-600 leading-relaxed font-light">
+                تجربة تسوق وحجز إلكترونية واضحة وموثوقة بالدينار الجزائري (دج) مع خيارات دفع مرنة وتوصيل مبرد متخصص:
+              </p>
+
+              <ul className="space-y-2 text-xs text-stone-700 font-medium">
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>إمكانية دفع عربون فقط (30% أو 50%) أو الدفع عند الاستلام</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>وصل دفع رسمي موثق قابل للتنزيل والطباعة فورياً</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>أسطول نقل مبرد يضمن وصول الحلويات طازجة إلى باب البيت</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="pt-4 border-t border-pink-50">
+              <span className="text-[11px] font-bold text-[#E84375]">
+                تغطية شاملة لكل ربوع الجزائر
+              </span>
+            </div>
+          </div>
+
+          {/* الركيزة 3: تدريب وتمكين */}
+          <div className="bg-white rounded-3xl p-8 border border-pink-100 shadow-sm hover:shadow-xl hover:border-pink-300 transition-all duration-300 space-y-5 text-right flex flex-col justify-between group">
+            <div className="space-y-4">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-purple-600 to-pink-500 text-white flex items-center justify-center shadow-md shadow-purple-500/20 group-hover:scale-105 transition-transform">
+                <BookOpen className="w-7 h-7" />
+              </div>
+
+              <div>
+                <span className="text-[11px] font-bold text-purple-600 uppercase tracking-widest block mb-1">
+                  الركيزة الثالثة
+                </span>
+                <h3 className="text-2xl font-serif font-bold text-stone-900 group-hover:text-[#E84375] transition-colors">
+                  تدريب وتمكين الحرفيين
+                </h3>
+              </div>
+
+              <p className="text-xs sm:text-sm text-stone-600 leading-relaxed font-light">
+                نقل أسرار المهنة وتطوير مهارات الحرفيات وصناع الحلوى لتمكينهم من تأسيس وتنمية مشاريعهم الخاصة:
+              </p>
+
+              <ul className="space-y-2 text-xs text-stone-700 font-medium">
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>ورشات تطبيقية متخصصة في الحلويات التقليدية وتزيين الكعك</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>مرافقة تقنية وفنية للشباب والمشاريع المنزلية المصغرة</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>شهادات تدريبية وإشراف مباشر من كبار شيفات الحلويات</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="pt-4 border-t border-pink-50">
+              <span className="text-[11px] font-bold text-[#E84375]">
+                دعم ريادة الأعمال وصناعة المستقبل
+              </span>
+            </div>
+          </div>
+
+        </div>
+
+        {/* شريط الضمانات والأرقام البارزة */}
+        <div className="bg-gradient-to-r from-[#FFF5F7] via-white to-[#FFF9F2] rounded-3xl border border-pink-200/80 p-6 sm:p-8 grid grid-cols-2 lg:grid-cols-4 gap-6 text-center shadow-2xs">
+          <div className="space-y-1">
+            <span className="text-3xl sm:text-4xl font-mono font-black text-[#E84375]">69</span>
+            <span className="text-xs sm:text-sm font-bold text-stone-800 block">ولاية مشمولة بالتوصيل</span>
+            <span className="text-[10px] text-stone-500 block">نقل مبرد ومكيف</span>
+          </div>
+          <div className="space-y-1">
+            <span className="text-3xl sm:text-4xl font-mono font-black text-amber-600">100%</span>
+            <span className="text-xs sm:text-sm font-bold text-stone-800 block">مكونات طبيعية</span>
+            <span className="text-[10px] text-stone-500 block">لوز جزائري وعسل حر</span>
+          </div>
+          <div className="space-y-1">
+            <span className="text-3xl sm:text-4xl font-mono font-black text-emerald-600">30%</span>
+            <span className="text-xs sm:text-sm font-bold text-stone-800 block">عربون حجز مرن</span>
+            <span className="text-[10px] text-stone-500 block">مع وصل دفع رسمي</span>
+          </div>
+          <div className="space-y-1">
+            <span className="text-3xl sm:text-4xl font-mono font-black text-purple-600">7/7</span>
+            <span className="text-xs sm:text-sm font-bold text-stone-800 block">متابعة مراحل الصنع</span>
+            <span className="text-[10px] text-stone-500 block">صور حية في الوقت الفعلي</span>
+          </div>
+        </div>
+
+        {/* زر الانتقال المباشر إلى الصفحة الثالثة: تسوق الآن */}
+        <div className="text-center pt-2">
+          <button
+            onClick={() => scrollToSection('shop-now')}
+            className="px-8 py-4 bg-stone-900 hover:bg-stone-800 text-white font-bold rounded-2xl text-sm shadow-md hover:shadow-lg transition-all inline-flex items-center gap-2 cursor-pointer"
+          >
+            <ShoppingBag className="w-4 h-4 text-pink-400" />
+            <span>انتقل إلى المتجر وتسوق الآن</span>
+            <ArrowDown className="w-4 h-4 text-pink-300" />
+          </button>
+        </div>
+      </section>
+
+
+      {/* ========================================================================= */}
+      {/* 3. الصفحة الثالثة: تسوق الآن (Shop Now - تحت كل حلوة اضغط للطلب)            */}
+      {/* ========================================================================= */}
+      <section
+        id="shop-now"
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-24 space-y-10"
+      >
+        {/* رأس صفحة المتجر */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-pink-100 pb-8">
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-pink-100 text-[#E84375] text-xs font-bold border border-pink-200">
+              <Store className="w-3.5 h-3.5" />
+              <span>المتجر الوطني المعتمد</span>
+            </div>
+            
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-stone-900 tracking-tight">
+              تسوق الآن
+            </h2>
+            
+            <p className="text-stone-600 text-xs sm:text-sm max-w-2xl font-light">
+              تصفح التشكيلة الكاملة من أرقى الحلويات الجزائرية التقليدية والعصرية — <strong className="text-[#E84375] font-bold">تحت كل حلوة اضغط للطلب</strong> لحجز طلبيتك فورياً.
+            </p>
+          </div>
+
+          {/* شريط البحث المباشر */}
+          <div className="relative w-full md:w-80">
+            <Search className="w-4 h-4 absolute right-3.5 top-1/2 -translate-y-1/2 text-stone-400" />
+            <input
+              type="text"
+              placeholder="ابحث عن حلوى، كعكة، أو ولاية..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-white border border-stone-200 rounded-2xl pr-10 pl-4 py-2.5 text-xs text-stone-800 placeholder-stone-400 focus:outline-none focus:border-[#E84375] focus:ring-2 focus:ring-pink-100 shadow-2xs"
+            />
+          </div>
+        </div>
+
+        {/* أزرار فلاتر الأصناف */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+          <button
+            onClick={() => setSelectedCategory('ALL')}
+            className={`px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+              selectedCategory === 'ALL'
+                ? 'bg-[#E84375] text-white shadow-md shadow-pink-200'
+                : 'bg-white text-stone-700 hover:bg-pink-50 border border-stone-200'
+            }`}
+          >
+            كافة المعروضات ({allProducts.length})
+          </button>
+
+          <button
+            onClick={() => setSelectedCategory('TRADITIONNEL')}
+            className={`px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+              selectedCategory === 'TRADITIONNEL'
+                ? 'bg-amber-600 text-white shadow-md shadow-amber-200'
+                : 'bg-white text-stone-700 hover:bg-amber-50 border border-stone-200'
+            }`}
+          >
+            حلويات تقليدية أصيلة ({allProducts.filter((p) => p.category === 'TRADITIONNEL').length})
+          </button>
+
+          <button
+            onClick={() => setSelectedCategory('MODERNE')}
+            className={`px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+              selectedCategory === 'MODERNE'
+                ? 'bg-[#E84375] text-white shadow-md shadow-pink-200'
+                : 'bg-white text-stone-700 hover:bg-pink-50 border border-stone-200'
+            }`}
+          >
+            كعكات المناسبات العصرية ({allProducts.filter((p) => p.category !== 'TRADITIONNEL').length})
+          </button>
+
+          <button
+            onClick={() => setSelectedCategory('MARIAGE')}
+            className={`px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+              selectedCategory === 'MARIAGE'
+                ? 'bg-purple-600 text-white shadow-md shadow-purple-200'
+                : 'bg-white text-stone-700 hover:bg-purple-50 border border-stone-200'
+            }`}
+          >
+            صواني الأعراس والمهيبة
+          </button>
+        </div>
+
+        {/* شبكة المنتجات الكاملة (تحت كل حلوة اضغط للطلب) */}
+        {filteredProducts.length === 0 ? (
+          <div className="p-16 bg-white rounded-3xl border border-pink-100 text-center space-y-3 shadow-2xs">
+            <Cake className="w-12 h-12 mx-auto text-stone-300" />
+            <h3 className="font-bold text-stone-800 text-base">لا توجد حلويات مطابقة لمعايير البحث</h3>
+            <p className="text-xs text-stone-500">جرب كتابة اسم مختلف أو اختر فئة أخرى من القائمة</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-7">
+            {filteredProducts.map((item) => {
+              const isTraditional = item.category === 'TRADITIONNEL';
+              const artisan = artisans.find((a) => a.id === item.artisanId);
+
+              return (
+                <div
+                  key={item.id}
+                  className="bg-white rounded-3xl border border-pink-100/90 hover:border-pink-300 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between group text-right"
+                >
+                  {/* حاوية الصورة وشارات التصنيف */}
+                  <div className="relative h-56 bg-stone-50 overflow-hidden">
+                    <img
+                      src={item.imageUrl}
+                      alt={item.nameAr || item.name}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500 ease-out"
+                    />
+
+                    {/* زر القلب في المفضلة */}
+                    <button
+                      onClick={(e) => toggleWishlist(item.id, e)}
+                      title="إضافة للمفضلة"
+                      className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/95 backdrop-blur-xs flex items-center justify-center text-stone-400 hover:text-[#E84375] shadow-xs transition-colors cursor-pointer z-10"
+                    >
+                      <Heart
+                        className={`w-4 h-4 ${
+                          wishlist.includes(item.id)
+                            ? 'fill-[#E84375] text-[#E84375]'
+                            : 'text-stone-400'
+                        }`}
+                      />
+                    </button>
+
+                    {/* شارات الصنف والنوع */}
+                    <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
+                      {isTraditional ? (
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500 text-white shadow-xs">
+                          تقليدي أصيل
+                        </span>
+                      ) : (
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white/95 text-stone-800 shadow-xs border border-pink-100">
+                          {item.categoryAr || item.category}
+                        </span>
+                      )}
+
+                      {item.isCustomizable && (
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#E84375] text-white shadow-xs flex items-center gap-1">
+                          <Sparkles className="w-2.5 h-2.5 text-pink-200" />
+                          <span>تخصيص 3D</span>
+                        </span>
+                      )}
+                    </div>
+
+                    {/* منشأ الحلوى ومدينة الصنع */}
+                    <div className="absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded-lg text-[10px] font-medium bg-stone-950/75 text-white backdrop-blur-xs flex items-center gap-1 z-10">
+                      <MapPin className="w-3 h-3 text-pink-400" />
+                      <span>{artisan?.wilayaNameAr || artisan?.wilayaName || 'الجزائر'}</span>
+                    </div>
+                  </div>
+
+                  {/* تفاصيل الحلوى */}
+                  <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                    <div>
+                      {artisan && (
+                        <span className="text-[10px] font-bold text-[#E84375] block mb-1">
+                          {artisan.storeNameAr || artisan.storeName}
+                        </span>
+                      )}
+
+                      <h3 className="font-bold text-base text-stone-900 group-hover:text-[#E84375] transition-colors line-clamp-1 leading-snug">
+                        {item.nameAr || item.name}
+                      </h3>
+
+                      <p className="text-xs text-stone-500 line-clamp-2 mt-1.5 font-light leading-relaxed">
+                        {item.descriptionAr || item.description}
+                      </p>
+                    </div>
+
+                    {/* المواصفات السريعة: الحصص والتحضير */}
+                    <div className="pt-2 border-t border-pink-50 space-y-3">
+                      <div className="flex items-center justify-between text-[11px] text-stone-500">
+                        <span className="flex items-center gap-1 font-medium">
+                          <Clock className="w-3 h-3 text-stone-400" />
+                          <span>تحضير: {item.prepTimeDays} أيام</span>
+                        </span>
+                        <span className="bg-stone-50 px-2 py-0.5 rounded-md border border-stone-200 text-stone-700 font-medium">
+                          {item.servings} قطعة / فرد
+                        </span>
+                      </div>
+
+                      {/* السعر بالدينار الجزائري */}
+                      <div className="flex items-baseline justify-between" dir="rtl">
+                        <span className="text-xs font-bold text-stone-400">السعر الإجمالي:</span>
+                        <div className="inline-flex items-baseline gap-1">
+                          <span dir="ltr" className="text-xl font-mono font-bold text-stone-900">
+                            {formatDZD(item.priceDZD)}
+                          </span>
+                          <span className="text-xs font-bold text-[#E84375]">دج</span>
+                        </div>
+                      </div>
+
+                      {/* الزر الرئيسي المطلوب بدقة: تحت كل حلوة اضغط للطلب */}
+                      <div className="flex items-center gap-2 pt-1">
+                        {item.isCustomizable && (
+                          <button
+                            onClick={() => onNavigate('customizer')}
+                            title="تخصيص الكعكة في الورشة ثلاثية الأبعاد 3D"
+                            className="p-3 rounded-2xl bg-pink-50 hover:bg-pink-100 text-[#E84375] border border-pink-200 transition-all cursor-pointer shadow-2xs hover:scale-105"
+                          >
+                            <Sparkles className="w-4 h-4" />
+                          </button>
+                        )}
+
+                        <button
+                          onClick={() => handleSelectProduct(item)}
+                          className="flex-1 py-3 px-4 bg-[#E84375] hover:bg-[#D83264] text-white font-bold rounded-2xl text-xs sm:text-sm shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center gap-2 group/btn cursor-pointer active:scale-95"
+                        >
+                          <ShoppingBag className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
+                          <span>اضغط للطلب</span>
+                        </button>
+                      </div>
+
+                    </div>
+                  </div>
+
+                </div>
+              );
+            })}
+          </div>
+        )}
+
       </section>
 
     </div>
