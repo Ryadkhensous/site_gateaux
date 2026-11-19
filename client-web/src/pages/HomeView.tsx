@@ -35,16 +35,29 @@ export const HomeView: React.FC<HomeViewProps> = ({
   artisans = [],
   onSelectProductToOrder
 }) => {
-  // دمج المنتجات المتوفرة مع قائمة البيانات الأولية لضمان عرض الـ 22 حلوى بالكامل
-  const allProducts: Product[] = useMemo(() => {
-    if (featuredProducts && featuredProducts.length > 0) {
-      return featuredProducts;
-    }
-    return INITIAL_PRODUCTS;
+  // فرز وتقديم الحلويات التقليدية الأصيلة في الصدارة مع تقليص الباتيسري الغربية
+  const curatedProducts: Product[] = useMemo(() => {
+    const raw = featuredProducts && featuredProducts.length > 0 ? featuredProducts : INITIAL_PRODUCTS;
+    // تقليص الباتيسري الغربية وإبقاء الكعكات الملوكية المناسباتية الأساسية فقط
+    const filtered = raw.filter((p) => {
+      if (p.category === 'TRADITIONNEL') return true;
+      // إبقاء كعكة الزفاف الملكية، نمبر كيك، وبينتو كيك فقط
+      if (p.id === 'prod-1' || p.id === 'prod-2' || p.id === 'prod-14') return true;
+      return false;
+    });
+
+    // الترتيب: صواني الأعراس أولاً، ثم الحلويات التقليدية الكلاسيكية، ثم كعكات الزفاف
+    return filtered.sort((a, b) => {
+      if (a.tags.includes('صواني') && !b.tags.includes('صواني')) return -1;
+      if (!a.tags.includes('صواني') && b.tags.includes('صواني')) return 1;
+      if (a.category === 'TRADITIONNEL' && b.category !== 'TRADITIONNEL') return -1;
+      if (a.category !== 'TRADITIONNEL' && b.category === 'TRADITIONNEL') return 1;
+      return 0;
+    });
   }, [featuredProducts]);
 
-  // حالة التصفية والبحث في الصفحة الثالثة (تسوق الآن)
-  const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
+  // حالة التصفية والبحث في الصفحة الثالثة: البداية الافتراضية مع الحلويات التقليدية
+  const [selectedCategory, setSelectedCategory] = useState<string>('TRADITIONNEL');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [wishlist, setWishlist] = useState<string[]>([]);
 
@@ -55,9 +68,9 @@ export const HomeView: React.FC<HomeViewProps> = ({
     );
   };
 
-  // تصفية المنتجات حسب الفئة والبحث
+  // تصفية المنتجات حسب الفئة والبحث مع إعطاء الأسبقية للحلويات التقليدية
   const filteredProducts = useMemo(() => {
-    return allProducts.filter((product) => {
+    return curatedProducts.filter((product) => {
       const matchCategory =
         selectedCategory === 'ALL' ||
         (selectedCategory === 'TRADITIONNEL' && product.category === 'TRADITIONNEL') ||
@@ -74,7 +87,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
 
       return matchCategory && matchSearch;
     });
-  }, [allProducts, selectedCategory, searchQuery]);
+  }, [curatedProducts, selectedCategory, searchQuery]);
 
   // إجراء الطلب السريع عند الضغط على "اضغط للطلب"
   const handleSelectProduct = (product: Product) => {
@@ -427,39 +440,18 @@ export const HomeView: React.FC<HomeViewProps> = ({
           </div>
         </div>
 
-        {/* أزرار فلاتر الأصناف */}
+        {/* أزرار فلاتر الأصناف - مع تقديم الحلويات التقليدية في الصدارة */}
         <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
           <button
-            onClick={() => setSelectedCategory('ALL')}
-            className={`px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-              selectedCategory === 'ALL'
-                ? 'bg-[#E84375] text-white shadow-md shadow-pink-200'
-                : 'bg-white text-stone-700 hover:bg-pink-50 border border-stone-200'
-            }`}
-          >
-            كافة المعروضات ({allProducts.length})
-          </button>
-
-          <button
             onClick={() => setSelectedCategory('TRADITIONNEL')}
-            className={`px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+            className={`px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer flex items-center gap-2 ${
               selectedCategory === 'TRADITIONNEL'
                 ? 'bg-amber-600 text-white shadow-md shadow-amber-200'
                 : 'bg-white text-stone-700 hover:bg-amber-50 border border-stone-200'
             }`}
           >
-            حلويات تقليدية أصيلة ({allProducts.filter((p) => p.category === 'TRADITIONNEL').length})
-          </button>
-
-          <button
-            onClick={() => setSelectedCategory('MODERNE')}
-            className={`px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-              selectedCategory === 'MODERNE'
-                ? 'bg-[#E84375] text-white shadow-md shadow-pink-200'
-                : 'bg-white text-stone-700 hover:bg-pink-50 border border-stone-200'
-            }`}
-          >
-            كعكات المناسبات العصرية ({allProducts.filter((p) => p.category !== 'TRADITIONNEL').length})
+            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+            <span>حلويات تقليدية أصيلة ({curatedProducts.filter((p) => p.category === 'TRADITIONNEL').length})</span>
           </button>
 
           <button
@@ -470,8 +462,59 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 : 'bg-white text-stone-700 hover:bg-purple-50 border border-stone-200'
             }`}
           >
-            صواني الأعراس والمهيبة
+            صواني ومجموعات الأعراس والمهيبة
           </button>
+
+          <button
+            onClick={() => setSelectedCategory('ALL')}
+            className={`px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+              selectedCategory === 'ALL'
+                ? 'bg-[#E84375] text-white shadow-md shadow-pink-200'
+                : 'bg-white text-stone-700 hover:bg-pink-50 border border-stone-200'
+            }`}
+          >
+            كافة المعروضات المختارة ({curatedProducts.length})
+          </button>
+
+          <button
+            onClick={() => setSelectedCategory('MODERNE')}
+            className={`px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+              selectedCategory === 'MODERNE'
+                ? 'bg-[#E84375] text-white shadow-md shadow-pink-200'
+                : 'bg-white text-stone-700 hover:bg-pink-50 border border-stone-200'
+            }`}
+          >
+            كعكات المناسبات الخاصة ({curatedProducts.filter((p) => p.category !== 'TRADITIONNEL').length})
+          </button>
+        </div>
+
+        {/* لافتة فخر التراث والحلويات الجزائرية الأصيلة */}
+        <div className="relative rounded-3xl bg-gradient-to-r from-amber-950 via-stone-900 to-amber-950 p-6 sm:p-8 text-amber-50 shadow-xl border border-amber-500/30 overflow-hidden text-right">
+          <div className="absolute -top-12 -left-12 w-48 h-48 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
+          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="space-y-2 text-right">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-bold border border-amber-400/30">
+                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                <span>تراث جزائري 100% — فخر الأصالة والعراقة</span>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-serif font-bold text-amber-100">
+                أرقى الحلويات الجزائرية التقليدية بأيدي أمهر الحرفيات
+              </h3>
+              <p className="text-xs sm:text-sm text-stone-300 font-light max-w-2xl leading-relaxed">
+                مصنوعة يومياً بأجود المكونات الطبيعية: لوز جزائري بلدي، عسل النحل الصافي، ماء الزهر المقطر، وسمن طبيعي فاخر — جاهزة لطلبياتكم مع إمكانية دفع عربون واستلام وصل رسمي موثق.
+              </p>
+            </div>
+            <div className="flex items-center gap-3 shrink-0">
+              <div className="text-center px-4 py-2 rounded-2xl bg-white/5 border border-amber-400/20">
+                <span className="block text-2xl font-mono font-bold text-amber-300">16</span>
+                <span className="text-[11px] text-stone-300">صنف تقليدي أصيل</span>
+              </div>
+              <div className="text-center px-4 py-2 rounded-2xl bg-white/5 border border-amber-400/20">
+                <span className="block text-2xl font-mono font-bold text-amber-300">100%</span>
+                <span className="text-[11px] text-stone-300">لوز بلدي خالص</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* شبكة المنتجات الكاملة (تحت كل حلوة اضغط للطلب) */}
@@ -520,9 +563,15 @@ export const HomeView: React.FC<HomeViewProps> = ({
                     {/* شارات الصنف والنوع */}
                     <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
                       {isTraditional ? (
-                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500 text-white shadow-xs">
-                          تقليدي أصيل
-                        </span>
+                        <>
+                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-amber-600 to-amber-500 text-white shadow-xs flex items-center gap-1 border border-amber-300/40">
+                            <Sparkles className="w-2.5 h-2.5 text-amber-200" />
+                            <span>تراث جزائري أصيل</span>
+                          </span>
+                          <span className="px-2.5 py-0.5 rounded-full text-[9px] font-bold bg-stone-900/85 text-amber-200 backdrop-blur-xs shadow-xs border border-amber-400/30">
+                            لوز بلدي وعسل حر
+                          </span>
+                        </>
                       ) : (
                         <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white/95 text-stone-800 shadow-xs border border-pink-100">
                           {item.categoryAr || item.category}
